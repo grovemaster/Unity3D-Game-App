@@ -7,7 +7,7 @@ using System;
 
 namespace Service.Piece
 {
-    class PieceService
+    public class PieceService
     {
         public static PieceEV FindPieceEV(int entityId, IEntitiesDB entitiesDB)
         {
