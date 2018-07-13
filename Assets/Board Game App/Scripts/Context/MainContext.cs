@@ -1,6 +1,10 @@
-﻿using Data.Step;
+﻿using Data.Enum;
+using Data.Step;
+using Data.Step.Piece.Move;
+using ECS.Engine.Board;
 using ECS.Engine.Board.Tile;
 using ECS.Engine.Piece;
+using ECS.Engine.Piece.Move;
 using ECS.EntityDescriptor.Piece;
 using ECS.Implementor;
 using PrefabUtil;
@@ -75,29 +79,66 @@ namespace Context
             //engines. The ISequencer is also not the common way to communicate
             //between engines
             //...Then what is the common way to communicate between engines?  Querying entities?
-            Sequencer piecePressSequence = new Sequencer();
+            Sequencer boardPressSequence = new Sequencer();
 
-            var piecePressEngine = new PiecePressEngine(piecePressSequence);
-            var pieceHighlightEngine = new PieceHighlightEngine(piecePressSequence);
-            var tileHighlightEngine = new TileHighlightEngine(piecePressSequence);
-            
-            piecePressSequence.SetSequence(
-                new Steps //sequence of steps, this is a dictionary!
+            var piecePressEngine = new PiecePressEngine(boardPressSequence);
+            var tilePressEngine = new TilePressEngine(boardPressSequence);
+            var boardPressEngine = new BoardPressEngine(boardPressSequence);
+            var pieceHighlightEngine = new PieceHighlightEngine(boardPressSequence);
+            var tileHighlightEngine = new TileHighlightEngine(boardPressSequence);
+
+            var unHighlightEngine = new UnHighlightEngine();
+            var movePieceEngine = new MovePieceEngine();
+            var movePieceCleanupEngine = new MovePieceCleanupEngine();
+
+            boardPressSequence.SetSequence(
+                //new Steps //sequence of steps, this is a dictionary!
+                //{
+                //    { //first step
+                //        /*from: */piecePressEngine, //this step can be triggered only by this engine through the Next function
+                //        /*to:   */new To //this step can lead only to one branch
+                //        {
+                //            //all these engines in the list will be called. The order of the engines triggered is guaranteed.
+                //            new IStep<PressState>[] { pieceHighlightEngine, tileHighlightEngine }
+                //        }
+                //    }
+                //}
+                new Steps
                 {
-                    { //first step
-                        /*from: */piecePressEngine, //this step can be triggered only by this engine through the Next function
-                        /*to:   */new To //this step can lead only to one branch
+                    { // first step
+                        piecePressEngine,
+                        new To
                         {
-                            //all these engines in the list will be called. The order of the engines triggered is guaranteed.
-                            new IStep<PressState>[] { pieceHighlightEngine, tileHighlightEngine }
+                            boardPressEngine
+                        }
+                    },
+                    { // also first step
+                        tilePressEngine,
+                        new To
+                        {
+                            boardPressEngine
+                        }
+                    },
+                    {
+                        boardPressEngine,
+                        new To
+                        {
+                            { (int)BoardPress.CLICK_HIGHLIGHT, new IStep<PressState>[] { pieceHighlightEngine, tileHighlightEngine } },
+                            { (int)BoardPress.MOVE_PIECE, new IStep<MovePieceInfo>[] { unHighlightEngine, movePieceEngine, movePieceCleanupEngine } }
                         }
                     }
                 }
                 );
 
             enginesRoot.AddEngine(piecePressEngine);
+            enginesRoot.AddEngine(tilePressEngine);
+            enginesRoot.AddEngine(boardPressEngine);
             enginesRoot.AddEngine(pieceHighlightEngine);
             enginesRoot.AddEngine(tileHighlightEngine);
+
+            enginesRoot.AddEngine(unHighlightEngine);
+            enginesRoot.AddEngine(movePieceEngine);
+            enginesRoot.AddEngine(movePieceCleanupEngine);
         }
 
         private void SetupEntities() {

@@ -2,6 +2,7 @@
 using Data.Piece;
 using Data.Piece.Front.Pawn;
 using ECS.EntityView.Piece;
+using Service.Common;
 using Svelto.ECS;
 using System;
 
@@ -11,10 +12,7 @@ namespace Service.Piece
     {
         public static PieceEV FindPieceEV(int entityId, IEntitiesDB entitiesDB)
         {
-            uint index;
-            var entityViews = entitiesDB.QueryEntitiesAndIndex<PieceEV>(new EGID(entityId), out index);
-
-            return entityViews[index];
+            return CommonService.FindEntity<PieceEV>(entityId, entitiesDB);
         }
 
         public static IPieceData CreateIPieceData(PieceType pieceType)
@@ -26,6 +24,11 @@ namespace Service.Piece
                 default:
                     throw new InvalidOperationException("Invalid PieceType when creating IPieceData");
             }
+        }
+
+        public static PieceEV[] FindAllPieceEVs(IEntitiesDB entitiesDB, out int count)
+        {
+            return CommonService.FindAllEntities<PieceEV>(entitiesDB, out count);
         }
     }
 }

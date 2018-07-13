@@ -1,4 +1,5 @@
-﻿using ECS.Component.SharedComponent;
+﻿using ECS.Component.Board.Tile;
+using ECS.Component.SharedComponent;
 using Svelto.ECS;
 
 namespace ECS.EntityView.Board.Tile
@@ -7,6 +8,7 @@ namespace ECS.EntityView.Board.Tile
     {
         public EGID ID { get; set; }
 
+        public ITile tile;
         public ILocation location;
         public IHighlight highlight;
     }

@@ -1,16 +1,16 @@
 ﻿using Data.Step.Board;
-using ECS.EntityView.Piece;
+using ECS.EntityView.Board.Tile;
 using Svelto.ECS;
 
-namespace ECS.Engine.Piece
+namespace ECS.Engine.Board.Tile
 {
-    class PiecePressEngine : SingleEntityEngine<PieceEV>, IQueryingEntitiesEngine
+    class TilePressEngine : SingleEntityEngine<TileEV>, IQueryingEntitiesEngine
     {
         private readonly ISequencer boardPressSequence;
 
         public IEntitiesDB entitiesDB { private get; set; }
 
-        public PiecePressEngine(ISequencer boardPressSequence)
+        public TilePressEngine(ISequencer boardPressSequence)
         {
             this.boardPressSequence = boardPressSequence;
         }
@@ -18,12 +18,12 @@ namespace ECS.Engine.Piece
         public void Ready()
         { }
 
-        protected override void Add(ref PieceEV entityView)
+        protected override void Add(ref TileEV entityView)
         {
             entityView.highlight.IsHighlighted.NotifyOnValueSet(OnPressed);
         }
 
-        protected override void Remove(ref PieceEV entityView)
+        protected override void Remove(ref TileEV entityView)
         {
             entityView.highlight.IsHighlighted.StopNotify(OnPressed);
         }
@@ -32,12 +32,11 @@ namespace ECS.Engine.Piece
         {
             var pressState = new BoardPressState
             {
-                pieceEntityId = entityId,
-                tileEntityId = null
+                pieceEntityId = null,
+                tileEntityId = entityId
             };
-            
-            boardPressSequence.Next(this, ref pressState);
 
+            boardPressSequence.Next(this, ref pressState);
         }
     }
 }

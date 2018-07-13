@@ -1,12 +1,14 @@
-﻿using Data.Enum;
+﻿using Data.Constants.Board;
+using Data.Enum;
 using ECS.Component.Piece;
+using ECS.Component.Piece.Move;
 using ECS.Component.SharedComponent;
 using Svelto.ECS;
 using UnityEngine;
 
 namespace ECS.Implementor.Piece
 {
-    class PieceImpl : MonoBehaviour, IImplementor, IPiece, IHighlight, ILocation
+    class PieceImpl : MonoBehaviour, IImplementor, IPiece, IHighlight, IMovePiece, ILocation
     {
         public PieceType PieceType { get; set; }
 
@@ -18,6 +20,14 @@ namespace ECS.Implementor.Piece
 
         public Vector3 Location { get; set; }
 
+        public Vector3 NewLocation
+        {
+            set
+            {
+                SetNewLocation(value);
+            }
+        }
+
         void Awake()
         {
             PieceType = PieceType.PAWN;
@@ -27,7 +37,7 @@ namespace ECS.Implementor.Piece
             CurrentColor = new DispatchOnSet<HighlightState>(gameObject.GetInstanceID());
             Location = new Vector3(0, 0, 1);
 
-            CurrentColor.NotifyOnValueSet(changeColor);
+            CurrentColor.NotifyOnValueSet(ChangeColor);
         }
 
         void OnMouseDown()
@@ -36,7 +46,7 @@ namespace ECS.Implementor.Piece
             IsHighlighted.value = !IsHighlighted.value;
         }
 
-        private void changeColor(int id, HighlightState state)
+        private void ChangeColor(int id, HighlightState state)
         {
             Debug.Log("Changing color of Pawn");
             var sprite = GetComponentInChildren<SpriteRenderer>();
@@ -48,6 +58,14 @@ namespace ECS.Implementor.Piece
             {
                 sprite.color = Color.blue;
             }
+        }
+
+        private void SetNewLocation(Vector3 newLocation)
+        {
+            gameObject.transform.position = new Vector3(
+                BoardConst.TOP_LEFT_CORNER.x + BoardConst.TILE_SIZE * newLocation.x,
+                BoardConst.TOP_LEFT_CORNER.y + BoardConst.TILE_SIZE * newLocation.y,
+                0);
         }
     }
 }

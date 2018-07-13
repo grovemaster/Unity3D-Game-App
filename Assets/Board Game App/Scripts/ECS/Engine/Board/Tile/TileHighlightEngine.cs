@@ -52,6 +52,14 @@ namespace ECS.Engine.Board.Tile
             {
                 tileEV.highlight.CurrentColor.value = token.piecePressState.Equals(PiecePressState.CLICKED)
                     ? HighlightState.CLICKED : HighlightState.DEFAULT;
+                int? pieceIdtoken = null;
+                if (token.piecePressState.Equals(PiecePressState.CLICKED))
+                {
+                    pieceIdtoken = token.pieceEntityId;
+                }
+
+                entitiesDB.ExecuteOnEntity<TileEV>(tileEV.ID,
+                    (ref TileEV tileEVToChange) => { tileEVToChange.tile.PieceRefEntityId = pieceIdtoken; } );
             }
         }
     }

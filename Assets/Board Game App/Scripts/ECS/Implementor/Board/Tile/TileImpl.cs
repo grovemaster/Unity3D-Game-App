@@ -1,17 +1,20 @@
 ﻿using Data.Enum;
+using ECS.Component.Board.Tile;
 using ECS.Component.SharedComponent;
 using Svelto.ECS;
 using UnityEngine;
 
 namespace ECS.Implementor.Board.Tile
 {
-    class TileImpl : MonoBehaviour, IImplementor, IHighlight, ILocation
+    class TileImpl : MonoBehaviour, IImplementor, ITile, IHighlight, ILocation
     {
         public DispatchOnSet<bool> IsHighlighted { get; set; }
 
         public DispatchOnSet<HighlightState> CurrentColor { get; set; }
 
         public Vector3 Location { get; set; }
+
+        public int? PieceRefEntityId { get; set; }
 
         void Awake()
         {
@@ -20,10 +23,16 @@ namespace ECS.Implementor.Board.Tile
             CurrentColor = new DispatchOnSet<HighlightState>(gameObject.GetInstanceID());
             //Location = new Vector3(0, 0, 1);
 
-            CurrentColor.NotifyOnValueSet(changeColor);
+            CurrentColor.NotifyOnValueSet(ChangeColor);
         }
 
-        private void changeColor(int id, HighlightState state)
+        void OnMouseDown()
+        {
+            Debug.Log("Tile OnMouseDown");
+            IsHighlighted.value = !IsHighlighted.value;
+        }
+
+        private void ChangeColor(int id, HighlightState state)
         {
             Debug.Log("Changing color of Tile");
             var sprite = GetComponentInChildren<SpriteRenderer>();
