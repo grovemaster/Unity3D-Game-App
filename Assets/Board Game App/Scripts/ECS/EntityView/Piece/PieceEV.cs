@@ -2,6 +2,7 @@
 using ECS.Component.Piece;
 using ECS.Component.SharedComponent;
 using ECS.Component.Piece.Move;
+using ECS.Component.Player;
 
 namespace ECS.EntityView.Piece
 {
@@ -13,5 +14,6 @@ namespace ECS.EntityView.Piece
         public IMovePiece movePiece;
         public ILocation location;
         public IHighlight highlight;
+        public IPlayerComponent playerOwner;
     }
 }

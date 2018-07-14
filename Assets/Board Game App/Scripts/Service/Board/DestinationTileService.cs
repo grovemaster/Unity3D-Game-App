@@ -18,7 +18,7 @@ namespace Service.Board
             PieceEV pieceEV = PieceService.FindPieceEV(pieceEntityId, entitiesDB);
             
             List<Vector3> returnValue = GetRawDestinationLocations(pieceEV);
-            AdjustRawDataWithPieceLocation(pieceEV, returnValue);
+            AdjustRawDataWithPieceLocationAndDirection(pieceEV, returnValue);
 
             return returnValue;
         }
@@ -29,14 +29,15 @@ namespace Service.Board
                 .Select(x => new Vector3(x.x, x.y, 0)).ToList(); // Change z-value from >=1 to 0
         }
 
-        private static void AdjustRawDataWithPieceLocation(PieceEV pieceEV, List<Vector3> rawLocationData)
+        private static void AdjustRawDataWithPieceLocationAndDirection(
+            PieceEV pieceEV, List<Vector3> rawLocationData)
         {
             // Add piece's location to value
             for (int i = 0; i < rawLocationData.Count; ++i)
             {
                 rawLocationData[i] = new Vector3(
-                    rawLocationData[i].x + pieceEV.location.Location.x,
-                    rawLocationData[i].y + pieceEV.location.Location.y,
+                    pieceEV.location.Location.x + (rawLocationData[i].x * (int)pieceEV.piece.Direction),
+                    pieceEV.location.Location.y + (rawLocationData[i].y * (int)pieceEV.piece.Direction),
                     rawLocationData[i].z);
             }
         }

@@ -3,6 +3,7 @@ using ECS.EntityDescriptor.Board.Tile;
 using ECS.Implementor;
 using ECS.Implementor.Board.Tile;
 using PrefabUtil;
+using Service.Common;
 using Svelto.ECS;
 using UnityEngine;
 
@@ -30,16 +31,15 @@ namespace Service.Board.Context
             {
                 for (int fileNum = 0; fileNum < BoardConst.NUM_FILES_RANKS; ++fileNum)
                 {
-                    CreateTile(new Vector2(
-                        BoardConst.TOP_LEFT_CORNER.x + BoardConst.TILE_SIZE * fileNum,
-                        BoardConst.TOP_LEFT_CORNER.y + BoardConst.TILE_SIZE * rankNum),
+                    CreateTile(
+                        CommonService.CalcTransformPosition(fileNum, rankNum, 0),
                         fileNum,
                         rankNum);
                 }
             }
         }
 
-        private void CreateTile(Vector2 position, int fileNum, int rankNum)
+        private void CreateTile(Vector3 position, int fileNum, int rankNum)
         {
             var tile = prefabsDictionary.Instantiate("Board Tile");
             var tileImpl = tile.GetComponent<TileImpl>();

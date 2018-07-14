@@ -1,4 +1,6 @@
-﻿using Data.Enum;
+﻿using System;
+using Data.Enum;
+using Data.Enum.Player;
 using Data.Step;
 using Data.Step.Board;
 using Data.Step.Piece.Move;
@@ -6,10 +8,14 @@ using ECS.Engine.Board;
 using ECS.Engine.Board.Tile;
 using ECS.Engine.Piece;
 using ECS.Engine.Piece.Move;
+using ECS.Engine.Turn;
 using ECS.EntityDescriptor.Piece;
+using ECS.EntityDescriptor.Turn;
 using ECS.Implementor;
+using ECS.Implementor.Turn;
 using PrefabUtil;
 using Service.Board.Context;
+using Service.Piece.Context;
 using Svelto.Context;
 using Svelto.ECS;
 using Svelto.ECS.Schedulers.Unity;
@@ -92,6 +98,7 @@ namespace ECS.Context
             var unHighlightEngine = new UnHighlightEngine();
             var movePieceEngine = new MovePieceEngine();
             var movePieceCleanupEngine = new MovePieceCleanupEngine();
+            var turnEndEngine = new TurnEndEngine();
 
             boardPressSequence.SetSequence(
                 //new Steps //sequence of steps, this is a dictionary!
@@ -125,8 +132,12 @@ namespace ECS.Context
                         boardPressEngine,
                         new To
                         {
-                            { (int)BoardPress.CLICK_HIGHLIGHT, new IStep<PressStepState>[] { pieceHighlightEngine, tileHighlightEngine } },
-                            { (int)BoardPress.MOVE_PIECE, new IStep<MovePieceStepState>[] { unHighlightEngine, movePieceEngine, movePieceCleanupEngine } }
+                            { (int)BoardPress.CLICK_HIGHLIGHT,
+                                new IStep<PressStepState>[]
+                                { pieceHighlightEngine, tileHighlightEngine } },
+                            { (int)BoardPress.MOVE_PIECE,
+                                new IStep<MovePieceStepState>[]
+                                { unHighlightEngine, movePieceEngine, movePieceCleanupEngine, turnEndEngine } }
                         }
                     }
                 }
@@ -142,18 +153,20 @@ namespace ECS.Context
             enginesRoot.AddEngine(unHighlightEngine);
             enginesRoot.AddEngine(movePieceEngine);
             enginesRoot.AddEngine(movePieceCleanupEngine);
+            enginesRoot.AddEngine(turnEndEngine);
         }
 
         private void SetupEntities() {
             BuildPieceEntities();
             BuildTileEntities();
+            BuildTurnEntity();
         }
 
         private void BuildPieceEntities()
         {
-            var prefabsDictionary = new PrefabsDictionary();
+            //var prefabsDictionary = new PrefabsDictionary();
 
-            var pawn = prefabsDictionary.Instantiate("Pawn");
+            //var pawn = prefabsDictionary.Instantiate("Pawn");
             //pawn.transform.position = new Vector3(0, 0, 5);
 
             //Building entities explicitly should be always preferred
@@ -167,13 +180,26 @@ namespace ECS.Context
             //The Player Entity is made of EntityViewStruct+Implementors as monobehaviours and 
             //EntityStructs. The PlayerInputDataStruct doesn't need to be initialized (yay!!)
             //but the HealthEntityStruct does. Here I show the official method to do it
-            var initializer = entityFactory.BuildEntity<PieceED>(pawn.GetInstanceID(), pawn.GetComponents<IImplementor>());
+            //var initializer = entityFactory.BuildEntity<PieceED>(pawn.GetInstanceID(), pawn.GetComponents<IImplementor>());
+            var pieceCreateService = new PieceCreateService(entityFactory);
+            pieceCreateService.CreatePiece(PlayerColor.BLACK, 0, 0);
+            pieceCreateService.CreatePiece(PlayerColor.WHITE, 1, 8);
         }
 
         private void BuildTileEntities()
         {
             var boardCreateService = new BoardCreateService(entityFactory);
             boardCreateService.CreateBoard();
+        }
+
+        private void BuildTurnEntity()
+        {
+            var prefabsDictionary = new PrefabsDictionary();
+            var currentTurn = prefabsDictionary.Instantiate("Current Turn");
+            var currentTurnImpl = currentTurn.GetComponent<TurnImpl>();
+            entityFactory.BuildEntity<TurnED>(currentTurn.GetInstanceID(), currentTurn.GetComponents<IImplementor>());
+
+            currentTurnImpl.PlayerColor = PlayerColor.BLACK;
         }
     }
 }

@@ -19,23 +19,23 @@ namespace Service.Board
             pieceEV = PieceService.FindPieceEVById(token.pieceEntityId, entitiesDB);
             tileEV = TileService.FindTileEVById(token.tileEntityId, entitiesDB);
 
-            if (pieceEV == null
-                && tileEV != null
-                && ((TileEV)tileEV).tile.PieceRefEntityId != null
-                && ((TileEV)tileEV).tile.PieceRefEntityId != 0) // Find by tile information
+            if (!pieceEV.HasValue
+                && tileEV.HasValue
+                && tileEV.Value.tile.PieceRefEntityId.HasValue
+                && tileEV.Value.tile.PieceRefEntityId != 0) // Find by tile information
             {
-                pieceEV = PieceService.FindPieceEVById((int)((TileEV)tileEV).tile.PieceRefEntityId, entitiesDB);
+                pieceEV = PieceService.FindPieceEVById(tileEV.Value.tile.PieceRefEntityId.Value, entitiesDB);
             }
 
-            if (tileEV == null) // Find by piece information
+            if (!tileEV.HasValue) // Find by piece information
             {
-                var location = ((PieceEV)pieceEV).location;
+                var location = pieceEV.Value.location;
                 tileEV = TileService.FindTileEV(
                     new Vector3(location.Location.x, location.Location.y, 0),
                     entitiesDB);
             }
 
-            if (tileEV != null && pieceEV == null)
+            if (tileEV.HasValue && !pieceEV.HasValue)
             {
                 pieceEV = PieceService.FindPieceByLocation(((TileEV)tileEV).location.Location, entitiesDB);
             }

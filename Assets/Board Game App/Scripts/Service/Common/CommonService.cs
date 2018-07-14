@@ -1,5 +1,7 @@
 ﻿
+using Data.Constants.Board;
 using Svelto.ECS;
+using UnityEngine;
 
 namespace Service.Common
 {
@@ -22,12 +24,20 @@ namespace Service.Common
         {
             T returnValue = default(T);
 
-            if (entityId != null && entityId != 0)
+            if (entityId.HasValue && entityId != 0)
             {
                 returnValue = FindEntity<T>((int)entityId, entitiesDB);
             }
 
             return returnValue;
+        }
+
+        public static Vector3 CalcTransformPosition(int fileNum, int rankNum, int z)
+        {
+            return new Vector3(
+                BoardConst.TOP_LEFT_CORNER.x + BoardConst.TILE_SIZE * fileNum,
+                BoardConst.TOP_LEFT_CORNER.y + BoardConst.TILE_SIZE * rankNum,
+                z);
         }
     }
 }

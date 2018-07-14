@@ -4,14 +4,11 @@ using Data.Step.Board;
 using Data.Step.Piece.Move;
 using ECS.EntityView.Board.Tile;
 using ECS.EntityView.Piece;
+using ECS.EntityView.Turn;
 using Service.Board;
-using Service.Board.Tile;
-using Service.Piece;
+using Service.Turn;
 using Svelto.ECS;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using UnityEngine;
 
 namespace ECS.Engine.Board
 {
@@ -37,7 +34,9 @@ namespace ECS.Engine.Board
             TileEV? tileEV;
             PieceTileService.FindPieceTileEV(entitiesDB, ref token, out pieceEV, out tileEV);
 
-            BoardPress action = BoardPressService.DecideAction(pieceEV, tileEV);
+            TurnEV currentTurn = TurnService.GetCurrentTurnEV(entitiesDB);
+
+            BoardPress action = BoardPressService.DecideAction(pieceEV, tileEV, currentTurn);
             ExecuteNextAction(action, pieceEV, tileEV);
         }
 
@@ -58,10 +57,10 @@ namespace ECS.Engine.Board
             switch(action)
             {
                 case BoardPress.CLICK_HIGHLIGHT:
-                    NextActionHighlight((PieceEV)pieceEV);
+                    NextActionHighlight(pieceEV.Value);
                     break;
                 case BoardPress.MOVE_PIECE:
-                    NextActionMovePiece((PieceEV)pieceEV, (TileEV)tileEV);
+                    NextActionMovePiece(pieceEV.Value, tileEV.Value);
                     break;
                 case BoardPress.NOTHING:
                     break;

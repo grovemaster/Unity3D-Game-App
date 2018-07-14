@@ -33,12 +33,12 @@ namespace ECS.Implementor.Piece
         void Awake()
         {
             PieceType = PieceType.PAWN;
-            Direction = Direction.UP;
+            //Direction = Direction.UP;
             IsPressed = new DispatchOnSet<bool>(gameObject.GetInstanceID());
             IsHighlighted = false;
             CurrentColor = new DispatchOnSet<HighlightState>(gameObject.GetInstanceID());
             CurrentColor.value = HighlightState.DEFAULT;
-            Location = new Vector3(0, 0, 1);
+            //Location = new Vector3(0, 0, 1);
 
             CurrentColor.NotifyOnValueSet(ChangeColor);
         }
