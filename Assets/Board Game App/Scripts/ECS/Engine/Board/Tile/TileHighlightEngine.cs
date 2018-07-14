@@ -52,6 +52,7 @@ namespace ECS.Engine.Board.Tile
             {
                 tileEV.highlight.CurrentColor.value = token.piecePressState.Equals(PiecePressState.CLICKED)
                     ? HighlightState.CLICKED : HighlightState.DEFAULT;
+
                 int? pieceIdtoken = null;
                 if (token.piecePressState.Equals(PiecePressState.CLICKED))
                 {

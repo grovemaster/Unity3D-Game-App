@@ -21,6 +21,7 @@ namespace ECS.Implementor.Board.Tile
             IsHighlighted = new DispatchOnSet<bool>(gameObject.GetInstanceID());
             IsHighlighted.value = false;
             CurrentColor = new DispatchOnSet<HighlightState>(gameObject.GetInstanceID());
+            CurrentColor.value = HighlightState.DEFAULT;
             //Location = new Vector3(0, 0, 1);
 
             CurrentColor.NotifyOnValueSet(ChangeColor);
@@ -28,13 +29,13 @@ namespace ECS.Implementor.Board.Tile
 
         void OnMouseDown()
         {
-            Debug.Log("Tile OnMouseDown");
+            Debug.Log("Tile OnMouseDown " + Location.ToString());
             IsHighlighted.value = !IsHighlighted.value;
         }
 
         private void ChangeColor(int id, HighlightState state)
         {
-            Debug.Log("Changing color of Tile");
+            Debug.Log("Changing color of Tile " + Location.ToString());
             var sprite = GetComponentInChildren<SpriteRenderer>();
             if (state == HighlightState.DEFAULT)
             {

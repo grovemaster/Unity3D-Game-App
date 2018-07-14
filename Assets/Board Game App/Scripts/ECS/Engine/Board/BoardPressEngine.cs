@@ -112,7 +112,9 @@ namespace ECS.Engine.Board
 
             for (int i = 0; i < count; ++i)
             {
-                if (pieces[i].location.Location == location)
+                // Tile always on z=0, pieces always on z>=1
+                if (pieces[i].location.Location.x == location.x
+                    && pieces[i].location.Location.y == location.y)
                 {
                     returnValue = pieces[i];
                     break;
@@ -126,8 +128,20 @@ namespace ECS.Engine.Board
         {
             PieceEV pieceEV = PieceService.FindPieceEV(entityId, entitiesDB);
 
-            return PieceService.CreateIPieceData(pieceEV.piece.PieceType).Tiers()[0].Single()
+            // Raw data
+            List<Vector3> returnValue = PieceService.CreateIPieceData(pieceEV.piece.PieceType).Tiers()[0].Single()
                 .Select(x => new Vector3(x.x, x.y, 0)).ToList(); // Change z-value from 1 to 0
+
+            // Add piece's location to value
+            for (int i = 0; i < returnValue.Count; ++i)
+            {
+                returnValue[i] = new Vector3(
+                    returnValue[i].x + pieceEV.location.Location.x,
+                    returnValue[i].y + pieceEV.location.Location.y,
+                    returnValue[i].z);
+            }
+
+            return returnValue;
         }
 
         private BoardPress DecideAction(PieceEV? pieceEV, TileEV? tileEVParam)
@@ -135,14 +149,16 @@ namespace ECS.Engine.Board
             BoardPress returnValue = BoardPress.NOTHING;
             TileEV tileEV = (TileEV)tileEVParam;
             int tilePieceId = tileEV.tile.PieceRefEntityId ?? 0;
-
-            if (!tileEV.highlight.IsHighlighted.value && pieceEV != null)
-            {
-                returnValue = BoardPress.CLICK_HIGHLIGHT;
-            }
-            else if (tileEV.highlight.IsHighlighted.value && pieceEV != null && tilePieceId != 0)
+            
+            // Tile is clicked, tile highlighted, piece reference exists
+            if (tileEV.highlight.IsHighlighted.value && pieceEV != null && tilePieceId != 0)
             {
                 returnValue = BoardPress.MOVE_PIECE;
+            }
+            // NOT move scenario, Piece/Tile clicked, both piece and tile exist, piece reference does not exist
+            else if (pieceEV != null && tilePieceId == 0)
+            {
+                returnValue = BoardPress.CLICK_HIGHLIGHT;
             }
 
             return returnValue;
@@ -167,6 +183,7 @@ namespace ECS.Engine.Board
 
         private void NextActionHighlight(PieceEV pieceEV)
         {
+            // Give desired state, up to later engines to make changes accordingly
             var pressState = new PressState
             {
                 pieceEntityId = pieceEV.ID.entityID,
