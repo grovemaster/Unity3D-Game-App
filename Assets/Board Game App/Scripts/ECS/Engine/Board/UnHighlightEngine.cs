@@ -8,14 +8,14 @@ using Svelto.ECS;
 
 namespace ECS.Engine.Board
 {
-    class UnHighlightEngine : IStep<MovePieceInfo>, IQueryingEntitiesEngine
+    class UnHighlightEngine : IStep<MovePieceStepState>, IQueryingEntitiesEngine
     {
         public IEntitiesDB entitiesDB { private get; set; }
 
         public void Ready()
         { }
 
-        public void Step(ref MovePieceInfo token, int condition)
+        public void Step(ref MovePieceStepState token, int condition)
         {
             UnHighlightPieces();
             UnHighlightTiles();

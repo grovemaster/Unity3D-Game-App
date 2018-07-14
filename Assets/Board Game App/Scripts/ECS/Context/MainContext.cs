@@ -111,22 +111,22 @@ namespace ECS.Context
                         piecePressEngine,
                         new To
                         {
-                            new IStep<BoardPressState>[] { unPressEngine, boardPressEngine }
+                            new IStep<BoardPressStepState>[] { unPressEngine, boardPressEngine }
                         }
                     },
                     { // also first step
                         tilePressEngine,
                         new To
                         {
-                            new IStep<BoardPressState>[] { unPressEngine, boardPressEngine }
+                            new IStep<BoardPressStepState>[] { unPressEngine, boardPressEngine }
                         }
                     },
                     {
                         boardPressEngine,
                         new To
                         {
-                            { (int)BoardPress.CLICK_HIGHLIGHT, new IStep<PressState>[] { pieceHighlightEngine, tileHighlightEngine } },
-                            { (int)BoardPress.MOVE_PIECE, new IStep<MovePieceInfo>[] { unHighlightEngine, movePieceEngine, movePieceCleanupEngine } }
+                            { (int)BoardPress.CLICK_HIGHLIGHT, new IStep<PressStepState>[] { pieceHighlightEngine, tileHighlightEngine } },
+                            { (int)BoardPress.MOVE_PIECE, new IStep<MovePieceStepState>[] { unHighlightEngine, movePieceEngine, movePieceCleanupEngine } }
                         }
                     }
                 }

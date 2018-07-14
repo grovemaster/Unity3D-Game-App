@@ -12,7 +12,7 @@ namespace Service.Board
     {
         public static void FindPieceTileEV(
             IEntitiesDB entitiesDB,
-            ref BoardPressState token,
+            ref BoardPressStepState token,
             out PieceEV? pieceEV,
             out TileEV? tileEV)
         {

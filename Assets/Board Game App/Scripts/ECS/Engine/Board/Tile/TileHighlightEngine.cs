@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace ECS.Engine.Board.Tile
 {
-    public class TileHighlightEngine : IStep<PressState>, IQueryingEntitiesEngine
+    public class TileHighlightEngine : IStep<PressStepState>, IQueryingEntitiesEngine
     {
         private readonly ISequencer highlightSequence;
 
@@ -21,7 +21,7 @@ namespace ECS.Engine.Board.Tile
         public void Ready()
         { }
 
-        public void Step(ref PressState token, int condition)
+        public void Step(ref PressStepState token, int condition)
         {
             List<TileEV> tilesToChange = FindTilesToChange(token.affectedTiles);
             ChangeTileColor(tilesToChange, ref token);
@@ -46,7 +46,7 @@ namespace ECS.Engine.Board.Tile
             return returnValue;
         }
 
-        private void ChangeTileColor(List<TileEV> tilesToChange, ref PressState token)
+        private void ChangeTileColor(List<TileEV> tilesToChange, ref PressStepState token)
         {
             bool isClicked = token.piecePressState.Equals(PiecePressState.CLICKED);
 

@@ -15,7 +15,7 @@ using UnityEngine;
 
 namespace ECS.Engine.Board
 {
-    class BoardPressEngine : IStep<BoardPressState>, IQueryingEntitiesEngine
+    class BoardPressEngine : IStep<BoardPressStepState>, IQueryingEntitiesEngine
     {
         private readonly ISequencer boardPressSequence;
 
@@ -29,7 +29,7 @@ namespace ECS.Engine.Board
         public void Ready()
         { }
 
-        public void Step(ref BoardPressState token, int condition)
+        public void Step(ref BoardPressStepState token, int condition)
         {
             ConstraintCheck(ref token);
 
@@ -42,7 +42,7 @@ namespace ECS.Engine.Board
         }
 
         /// <exception cref="InvalidOperationException">Both token member variables are null/zero.</exception>
-        private void ConstraintCheck(ref BoardPressState token)
+        private void ConstraintCheck(ref BoardPressStepState token)
         {
             int pieceEntityId = token.pieceEntityId ?? 0;
             int tileEntityId = token.tileEntityId ?? 0;
@@ -73,7 +73,7 @@ namespace ECS.Engine.Board
         private void NextActionHighlight(PieceEV pieceEV)
         {
             // Give desired state, up to later engines to make changes accordingly
-            var pressState = new PressState
+            var pressState = new PressStepState
             {
                 pieceEntityId = pieceEV.ID.entityID,
                 piecePressState = pieceEV.highlight.IsHighlighted ? PiecePressState.UNCLICKED : PiecePressState.CLICKED,
@@ -85,7 +85,7 @@ namespace ECS.Engine.Board
 
         private void NextActionMovePiece(PieceEV pieceEV, TileEV tileEV)
         {
-            var movePieceInfo = new MovePieceInfo
+            var movePieceInfo = new MovePieceStepState
             {
                 pieceToMove = pieceEV,
                 destinationTile = tileEV

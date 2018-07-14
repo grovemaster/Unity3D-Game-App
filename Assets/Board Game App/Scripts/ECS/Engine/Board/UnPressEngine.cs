@@ -7,14 +7,14 @@ using Svelto.ECS;
 
 namespace ECS.Engine.Board
 {
-    class UnPressEngine : IStep<BoardPressState>, IQueryingEntitiesEngine
+    class UnPressEngine : IStep<BoardPressStepState>, IQueryingEntitiesEngine
     {
         public IEntitiesDB entitiesDB { private get; set; }
 
         public void Ready()
         { }
 
-        public void Step(ref BoardPressState token, int condition)
+        public void Step(ref BoardPressStepState token, int condition)
         {
             UnPressPieces();
             UnPressTiles();

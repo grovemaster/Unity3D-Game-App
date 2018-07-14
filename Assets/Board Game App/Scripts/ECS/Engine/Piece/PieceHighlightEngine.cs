@@ -6,7 +6,7 @@ using Svelto.ECS;
 
 namespace ECS.Engine.Piece
 {
-    public class PieceHighlightEngine : IStep<PressState>, IQueryingEntitiesEngine
+    public class PieceHighlightEngine : IStep<PressStepState>, IQueryingEntitiesEngine
     {
         private readonly ISequencer highlightSequence;
 
@@ -20,7 +20,7 @@ namespace ECS.Engine.Piece
         public void Ready()
         { }
 
-        public void Step(ref PressState token, int condition)
+        public void Step(ref PressStepState token, int condition)
         {
             PieceEV piece = PieceService.FindPieceEV(token.pieceEntityId, entitiesDB);
             bool isClicked = token.piecePressState.Equals(PiecePressState.CLICKED);

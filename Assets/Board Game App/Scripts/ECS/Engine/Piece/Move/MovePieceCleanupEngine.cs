@@ -5,14 +5,14 @@ using Svelto.ECS;
 
 namespace ECS.Engine.Piece.Move
 {
-    class MovePieceCleanupEngine : IStep<MovePieceInfo>, IQueryingEntitiesEngine
+    class MovePieceCleanupEngine : IStep<MovePieceStepState>, IQueryingEntitiesEngine
     {
         public IEntitiesDB entitiesDB { private get; set; }
 
         public void Ready()
         { }
 
-        public void Step(ref MovePieceInfo token, int condition)
+        public void Step(ref MovePieceStepState token, int condition)
         {
             ClearPieceReferenceFromTiles();
         }

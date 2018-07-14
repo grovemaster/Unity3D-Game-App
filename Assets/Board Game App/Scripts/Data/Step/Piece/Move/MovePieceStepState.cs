@@ -3,7 +3,7 @@ using ECS.EntityView.Piece;
 
 namespace Data.Step.Piece.Move
 {
-    public struct MovePieceInfo
+    public struct MovePieceStepState
     {
         public PieceEV pieceToMove;
         public TileEV destinationTile;

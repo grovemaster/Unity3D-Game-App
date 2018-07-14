@@ -35,7 +35,7 @@ namespace ECS.Engine.Board.Tile
                 return;
             }
 
-            var pressState = new BoardPressState
+            var pressState = new BoardPressStepState
             {
                 pieceEntityId = null,
                 tileEntityId = entityId

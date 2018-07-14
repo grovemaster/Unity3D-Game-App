@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Data.Step
 {
-    public struct PressState
+    public struct PressStepState
     {
         public int pieceEntityId;
         public PiecePressState piecePressState;
