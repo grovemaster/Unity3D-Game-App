@@ -1,4 +1,5 @@
-﻿using Data.Step.Piece.Move;
+﻿using Data.Enum;
+using Data.Step.Piece.Move;
 using ECS.EntityView.Board.Tile;
 using ECS.EntityView.Piece;
 using Service.Board.Tile;
@@ -27,10 +28,12 @@ namespace ECS.Engine.Board
 
             for (int i = 0; i < count; ++i)
             {
-                // TODO If setting to same value does not trigger notify, then remove if condition
-                if (pieceEVs[i].highlight.IsHighlighted.value)
+                if (pieceEVs[i].highlight.IsHighlighted)
                 {
-                    pieceEVs[i].highlight.IsHighlighted.value = false;
+                    entitiesDB.ExecuteOnEntity(
+                        pieceEVs[i].ID,
+                        (ref PieceEV pieceToChange) => { pieceToChange.highlight.IsHighlighted = false; });
+                    pieceEVs[i].highlight.CurrentColor.value = HighlightState.DEFAULT;
                 }
             }
         }
@@ -42,10 +45,12 @@ namespace ECS.Engine.Board
 
             for (int i = 0; i < count; ++i)
             {
-                // TODO If setting to same value does not trigger notify, then remove if condition
-                if (tileEVs[i].highlight.IsHighlighted.value)
+                if (tileEVs[i].highlight.IsHighlighted)
                 {
-                    tileEVs[i].highlight.IsHighlighted.value = false;
+                    entitiesDB.ExecuteOnEntity(
+                        tileEVs[i].ID,
+                        (ref TileEV tileToChange) => { tileToChange.highlight.IsHighlighted = false; });
+                    tileEVs[i].highlight.CurrentColor.value = HighlightState.DEFAULT;
                 }
             }
         }

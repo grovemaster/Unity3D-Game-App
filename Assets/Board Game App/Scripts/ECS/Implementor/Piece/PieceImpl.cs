@@ -14,7 +14,9 @@ namespace ECS.Implementor.Piece
 
         public Direction Direction { get; set; }
 
-        public DispatchOnSet<bool> IsHighlighted { get; set; }
+        public DispatchOnSet<bool> IsPressed { get; set; }
+
+        public bool IsHighlighted { get; set; }
 
         public DispatchOnSet<HighlightState> CurrentColor { get; set; }
 
@@ -32,9 +34,10 @@ namespace ECS.Implementor.Piece
         {
             PieceType = PieceType.PAWN;
             Direction = Direction.UP;
-            IsHighlighted = new DispatchOnSet<bool>(gameObject.GetInstanceID());
-            IsHighlighted.value = false;
+            IsPressed = new DispatchOnSet<bool>(gameObject.GetInstanceID());
+            IsHighlighted = false;
             CurrentColor = new DispatchOnSet<HighlightState>(gameObject.GetInstanceID());
+            CurrentColor.value = HighlightState.DEFAULT;
             Location = new Vector3(0, 0, 1);
 
             CurrentColor.NotifyOnValueSet(ChangeColor);
@@ -43,7 +46,7 @@ namespace ECS.Implementor.Piece
         void OnMouseDown()
         {
             Debug.Log("Pawn OnMouseDown");
-            IsHighlighted.value = !IsHighlighted.value;
+            IsPressed.value = true;
         }
 
         private void ChangeColor(int id, HighlightState state)
