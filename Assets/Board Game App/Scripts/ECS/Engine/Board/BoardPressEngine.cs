@@ -151,7 +151,7 @@ namespace ECS.Engine.Board
             int tilePieceId = tileEV.tile.PieceRefEntityId ?? 0;
             
             // Tile is clicked, tile highlighted, piece reference exists
-            if (tileEV.highlight.IsHighlighted.value && pieceEV != null && tilePieceId != 0)
+            if (tileEV.highlight.IsHighlighted && pieceEV != null && tilePieceId != 0)
             {
                 returnValue = BoardPress.MOVE_PIECE;
             }
@@ -187,7 +187,7 @@ namespace ECS.Engine.Board
             var pressState = new PressState
             {
                 pieceEntityId = pieceEV.ID.entityID,
-                piecePressState = pieceEV.highlight.IsHighlighted.value ? PiecePressState.CLICKED : PiecePressState.UNCLICKED,
+                piecePressState = pieceEV.highlight.IsHighlighted ? PiecePressState.UNCLICKED : PiecePressState.CLICKED,
                 affectedTiles = FindAffectedTiles(pieceEV.ID.entityID)
             };
 

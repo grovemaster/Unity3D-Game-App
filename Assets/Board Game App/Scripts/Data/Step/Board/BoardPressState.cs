@@ -1,8 +1,4 @@
-﻿using Data.Enum;
-using ECS.EntityView.Board.Tile;
-using ECS.EntityView.Piece;
-
-namespace Data.Step.Board
+﻿namespace Data.Step.Board
 {
     public struct BoardPressState
     {

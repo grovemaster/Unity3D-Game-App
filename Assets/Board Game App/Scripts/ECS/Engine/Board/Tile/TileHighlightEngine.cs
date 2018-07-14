@@ -48,18 +48,23 @@ namespace ECS.Engine.Board.Tile
 
         private void ChangeTileColor(List<TileEV> tilesToChange, ref PressState token)
         {
+            bool isClicked = token.piecePressState.Equals(PiecePressState.CLICKED);
+
             foreach (TileEV tileEV in tilesToChange)
             {
-                tileEV.highlight.CurrentColor.value = token.piecePressState.Equals(PiecePressState.CLICKED)
+                entitiesDB.ExecuteOnEntity(
+                    tileEV.ID,
+                    (ref TileEV pieceToChange) => { pieceToChange.highlight.IsHighlighted = isClicked ? true : false; });
+                tileEV.highlight.CurrentColor.value = isClicked
                     ? HighlightState.CLICKED : HighlightState.DEFAULT;
 
                 int? pieceIdtoken = null;
-                if (token.piecePressState.Equals(PiecePressState.CLICKED))
+                if (isClicked)
                 {
                     pieceIdtoken = token.pieceEntityId;
                 }
 
-                entitiesDB.ExecuteOnEntity<TileEV>(tileEV.ID,
+                entitiesDB.ExecuteOnEntity(tileEV.ID,
                     (ref TileEV tileEVToChange) => { tileEVToChange.tile.PieceRefEntityId = pieceIdtoken; } );
             }
         }

@@ -8,7 +8,9 @@ namespace ECS.Implementor.Board.Tile
 {
     class TileImpl : MonoBehaviour, IImplementor, ITile, IHighlight, ILocation
     {
-        public DispatchOnSet<bool> IsHighlighted { get; set; }
+        public DispatchOnSet<bool> IsPressed { get; set; }
+
+        public bool IsHighlighted { get; set; }
 
         public DispatchOnSet<HighlightState> CurrentColor { get; set; }
 
@@ -18,8 +20,8 @@ namespace ECS.Implementor.Board.Tile
 
         void Awake()
         {
-            IsHighlighted = new DispatchOnSet<bool>(gameObject.GetInstanceID());
-            IsHighlighted.value = false;
+            IsPressed = new DispatchOnSet<bool>(gameObject.GetInstanceID());
+            IsHighlighted = false;
             CurrentColor = new DispatchOnSet<HighlightState>(gameObject.GetInstanceID());
             CurrentColor.value = HighlightState.DEFAULT;
             //Location = new Vector3(0, 0, 1);
@@ -30,7 +32,7 @@ namespace ECS.Implementor.Board.Tile
         void OnMouseDown()
         {
             Debug.Log("Tile OnMouseDown " + Location.ToString());
-            IsHighlighted.value = !IsHighlighted.value;
+            IsPressed.value = true;
         }
 
         private void ChangeColor(int id, HighlightState state)

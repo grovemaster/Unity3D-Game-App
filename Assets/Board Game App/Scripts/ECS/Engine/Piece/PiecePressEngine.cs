@@ -20,16 +20,21 @@ namespace ECS.Engine.Piece
 
         protected override void Add(ref PieceEV entityView)
         {
-            entityView.highlight.IsHighlighted.NotifyOnValueSet(OnPressed);
+            entityView.highlight.IsPressed.NotifyOnValueSet(OnPressed);
         }
 
         protected override void Remove(ref PieceEV entityView)
         {
-            entityView.highlight.IsHighlighted.StopNotify(OnPressed);
+            entityView.highlight.IsPressed.StopNotify(OnPressed);
         }
 
-        private void OnPressed(int entityId, bool isHighlighted)
+        private void OnPressed(int entityId, bool isPressed)
         {
+            if (!isPressed)
+            {
+                return;
+            }
+
             var pressState = new BoardPressState
             {
                 pieceEntityId = entityId,

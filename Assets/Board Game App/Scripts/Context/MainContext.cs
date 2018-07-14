@@ -1,5 +1,7 @@
-﻿using Data.Enum;
+﻿using Assets.Board_Game_App.Scripts.ECS.Engine.Board;
+using Data.Enum;
 using Data.Step;
+using Data.Step.Board;
 using Data.Step.Piece.Move;
 using ECS.Engine.Board;
 using ECS.Engine.Board.Tile;
@@ -83,6 +85,7 @@ namespace Context
 
             var piecePressEngine = new PiecePressEngine(boardPressSequence);
             var tilePressEngine = new TilePressEngine(boardPressSequence);
+            var unPressEngine = new UnPressEngine();
             var boardPressEngine = new BoardPressEngine(boardPressSequence);
             var pieceHighlightEngine = new PieceHighlightEngine(boardPressSequence);
             var tileHighlightEngine = new TileHighlightEngine(boardPressSequence);
@@ -109,14 +112,14 @@ namespace Context
                         piecePressEngine,
                         new To
                         {
-                            boardPressEngine
+                            new IStep<BoardPressState>[] { unPressEngine, boardPressEngine }
                         }
                     },
                     { // also first step
                         tilePressEngine,
                         new To
                         {
-                            boardPressEngine
+                            new IStep<BoardPressState>[] { unPressEngine, boardPressEngine }
                         }
                     },
                     {
@@ -132,6 +135,7 @@ namespace Context
 
             enginesRoot.AddEngine(piecePressEngine);
             enginesRoot.AddEngine(tilePressEngine);
+            enginesRoot.AddEngine(unPressEngine);
             enginesRoot.AddEngine(boardPressEngine);
             enginesRoot.AddEngine(pieceHighlightEngine);
             enginesRoot.AddEngine(tileHighlightEngine);
