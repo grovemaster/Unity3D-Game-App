@@ -25,6 +25,7 @@ namespace Service.Piece.Context
         {
             var piece = prefabsDictionary.Instantiate("Pawn");
             var pieceImpl = piece.GetComponent<PieceImpl>();
+            var pieceHighlightMoveImpl = piece.GetComponent<PieceHighlightMoveImpl>();
             var pieceOwnerImpl = piece.GetComponent<PieceOwnerImpl>();
             entityFactory.BuildEntity<PieceED>(piece.GetInstanceID(), piece.GetComponents<IImplementor>());
 
@@ -32,7 +33,7 @@ namespace Service.Piece.Context
             pieceOwnerImpl.PlayerColor = playerOwner;
 
             piece.transform.position = CommonService.CalcTransformPosition(fileNum, rankNum, 1);
-            pieceImpl.Location = new Vector3(fileNum, rankNum, 1);
+            pieceHighlightMoveImpl.Location = new Vector3(fileNum, rankNum, 1);
         }
     }
 }
