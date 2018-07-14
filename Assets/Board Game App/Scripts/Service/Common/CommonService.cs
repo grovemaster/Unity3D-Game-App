@@ -3,7 +3,7 @@ using Svelto.ECS;
 
 namespace Service.Common
 {
-    public class CommonService
+    public static class CommonService
     {
         public static T FindEntity<T>(int entityId, IEntitiesDB entitiesDB) where T : IEntityViewStruct
         {
@@ -16,6 +16,18 @@ namespace Service.Common
         public static T[] FindAllEntities<T>(IEntitiesDB entitiesDB, out int count) where T : IEntityViewStruct
         {
             return entitiesDB.QueryEntities<T>(out count);
+        }
+
+        public static T FindEntityById<T>(int? entityId, IEntitiesDB entitiesDB) where T : IEntityViewStruct
+        {
+            T returnValue = default(T);
+
+            if (entityId != null && entityId != 0)
+            {
+                returnValue = FindEntity<T>((int)entityId, entitiesDB);
+            }
+
+            return returnValue;
         }
     }
 }

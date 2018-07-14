@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Service.Board.Tile
 {
-    public class TileService
+    public static class TileService
     {
         public static TileEV FindTileEV(int entityId, IEntitiesDB entitiesDB)
         {
@@ -32,6 +32,13 @@ namespace Service.Board.Tile
         public static TileEV[] FindAllTileEVs(IEntitiesDB entitiesDB, out int count)
         {
             return CommonService.FindAllEntities<TileEV>(entitiesDB, out count);
+        }
+
+        public static TileEV? FindTileEVById(int? entityId, IEntitiesDB entitiesDB)
+        {
+            TileEV returnValue = CommonService.FindEntityById<TileEV>(entityId, entitiesDB);
+
+            return returnValue.ID.entityID != 0 ? (TileEV?)returnValue : null;
         }
     }
 }

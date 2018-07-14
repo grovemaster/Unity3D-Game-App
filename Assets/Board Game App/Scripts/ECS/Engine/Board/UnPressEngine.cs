@@ -5,7 +5,7 @@ using Service.Board.Tile;
 using Service.Piece;
 using Svelto.ECS;
 
-namespace Assets.Board_Game_App.Scripts.ECS.Engine.Board
+namespace ECS.Engine.Board
 {
     class UnPressEngine : IStep<BoardPressState>, IQueryingEntitiesEngine
     {

@@ -1,5 +1,4 @@
-﻿using Assets.Board_Game_App.Scripts.ECS.Engine.Board;
-using Data.Enum;
+﻿using Data.Enum;
 using Data.Step;
 using Data.Step.Board;
 using Data.Step.Piece.Move;
