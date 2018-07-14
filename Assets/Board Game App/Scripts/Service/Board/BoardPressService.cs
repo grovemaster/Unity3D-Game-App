@@ -11,7 +11,7 @@ namespace Service.Board
         {
             BoardPress returnValue = BoardPress.NOTHING;
             TileEV tileEV = tileEVParam.Value;
-            int tilePieceId = tileEV.tile.PieceRefEntityId ?? 0;
+            int tilePieceId = tileEV.tile.PieceRefEntityId.GetValueOrDefault();
 
             // Tile is clicked, tile highlighted, piece reference exists
             if (tileEV.highlight.IsHighlighted

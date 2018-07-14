@@ -43,10 +43,8 @@ namespace ECS.Engine.Board
         /// <exception cref="InvalidOperationException">Both token member variables are null/zero.</exception>
         private void ConstraintCheck(ref BoardPressStepState token)
         {
-            int pieceEntityId = token.pieceEntityId ?? 0;
-            int tileEntityId = token.tileEntityId ?? 0;
-
-            if (pieceEntityId == 0 && tileEntityId == 0)
+            if (token.pieceEntityId.GetValueOrDefault() == 0
+                && token.tileEntityId.GetValueOrDefault() == 0)
             {
                 throw new InvalidOperationException("BoardPressEngine: Both piece and tile id are null");
             }
