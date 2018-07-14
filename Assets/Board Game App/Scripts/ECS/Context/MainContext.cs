@@ -17,7 +17,7 @@ using Svelto.ECS.Schedulers.Unity;
 using Svelto.Tasks;
 using UnityEngine;
 
-namespace Context
+namespace ECS.Context
 {
     /// <summary>
     ///At least One GameObject containing a UnityContext must be present in the scene.
