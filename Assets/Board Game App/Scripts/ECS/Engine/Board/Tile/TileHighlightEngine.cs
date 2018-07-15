@@ -10,14 +10,7 @@ namespace ECS.Engine.Board.Tile
 {
     public class TileHighlightEngine : IStep<PressStepState>, IQueryingEntitiesEngine
     {
-        private readonly ISequencer highlightSequence;
-
         public IEntitiesDB entitiesDB { private get; set; }
-
-        public TileHighlightEngine(ISequencer highlightSequence)
-        {
-            this.highlightSequence = highlightSequence;
-        }
 
         public void Ready()
         { }

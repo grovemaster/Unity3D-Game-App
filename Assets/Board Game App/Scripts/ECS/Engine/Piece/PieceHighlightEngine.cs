@@ -8,14 +8,7 @@ namespace ECS.Engine.Piece
 {
     public class PieceHighlightEngine : IStep<PressStepState>, IQueryingEntitiesEngine
     {
-        private readonly ISequencer highlightSequence;
-
         public IEntitiesDB entitiesDB { private get; set; }
-
-        public PieceHighlightEngine(ISequencer highlightSequence)
-        {
-            this.highlightSequence = highlightSequence;
-        }
 
         public void Ready()
         { }

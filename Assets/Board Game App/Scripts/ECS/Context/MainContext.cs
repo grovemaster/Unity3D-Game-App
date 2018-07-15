@@ -92,9 +92,9 @@ namespace ECS.Context
             var tilePressEngine = new TilePressEngine(boardPressSequence);
             var unPressEngine = new UnPressEngine();
             var boardPressEngine = new BoardPressEngine(boardPressSequence);
-            var deHighlightTeamPiecesEngine = new DeHighlightTeamPiecesEngine(boardPressSequence);
-            var pieceHighlightEngine = new PieceHighlightEngine(boardPressSequence);
-            var tileHighlightEngine = new TileHighlightEngine(boardPressSequence);
+            var deHighlightTeamPiecesEngine = new DeHighlightTeamPiecesEngine();
+            var pieceHighlightEngine = new PieceHighlightEngine();
+            var tileHighlightEngine = new TileHighlightEngine();
 
             var unHighlightEngine = new UnHighlightEngine();
             var movePieceEngine = new MovePieceEngine();
