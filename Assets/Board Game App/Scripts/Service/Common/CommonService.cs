@@ -1,6 +1,7 @@
 ﻿
 using Data.Constants.Board;
 using Svelto.ECS;
+using System.Linq;
 using UnityEngine;
 
 namespace Service.Common
@@ -15,9 +16,10 @@ namespace Service.Common
             return entityViews[index];
         }
 
-        public static T[] FindAllEntities<T>(IEntitiesDB entitiesDB, out int count) where T : IEntityViewStruct
+        public static T[] FindAllEntities<T>(IEntitiesDB entitiesDB) where T : IEntityViewStruct
         {
-            return entitiesDB.QueryEntities<T>(out count);
+            int count;
+            return entitiesDB.QueryEntities<T>(out count).Where(ev => ev.ID.entityID != 0).ToArray();
         }
 
         public static T FindEntityById<T>(int? entityId, IEntitiesDB entitiesDB) where T : IEntityViewStruct

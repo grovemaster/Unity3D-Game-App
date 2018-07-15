@@ -29,7 +29,7 @@ namespace Service.Piece.Context
             var pieceOwnerImpl = piece.GetComponent<PieceOwnerImpl>();
             entityFactory.BuildEntity<PieceED>(piece.GetInstanceID(), piece.GetComponents<IImplementor>());
 
-            pieceImpl.Direction = playerOwner.Equals(PlayerColor.BLACK) ? Direction.UP : Direction.DOWN;
+            pieceImpl.Direction = playerOwner == PlayerColor.BLACK ? Direction.UP : Direction.DOWN;
             pieceOwnerImpl.PlayerColor = playerOwner;
 
             piece.transform.position = CommonService.CalcTransformPosition(fileNum, rankNum, 1);

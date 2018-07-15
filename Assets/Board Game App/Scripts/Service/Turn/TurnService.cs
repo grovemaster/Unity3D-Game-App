@@ -15,8 +15,7 @@ namespace Service.Turn
 
         public static TurnEV GetCurrentTurnEV(IEntitiesDB entitiesDB)
         {
-            int count;
-            TurnEV[] turnEVs = CommonService.FindAllEntities<TurnEV>(entitiesDB, out count);
+            TurnEV[] turnEVs = CommonService.FindAllEntities<TurnEV>(entitiesDB);
 
             // The correct TurnEV should always be first.
             return turnEVs[0];
@@ -25,7 +24,7 @@ namespace Service.Turn
         private static void SetTurnEV(TurnEV currentTurn, IEntitiesDB entitiesDB)
         {
             PlayerColor nextTurnPlayer =
-                currentTurn.TurnPlayer.PlayerColor.Equals(PlayerColor.BLACK)
+                currentTurn.TurnPlayer.PlayerColor == PlayerColor.BLACK
                 ? PlayerColor.WHITE : PlayerColor.BLACK;
 
             entitiesDB.ExecuteOnEntity(

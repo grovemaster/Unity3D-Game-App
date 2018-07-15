@@ -1,10 +1,12 @@
 ﻿using Data.Enum;
+using Data.Enum.Player;
 using Data.Piece;
 using Data.Piece.Front.Pawn;
 using ECS.EntityView.Piece;
 using Service.Common;
 using Svelto.ECS;
 using System;
+using System.Linq;
 using UnityEngine;
 
 namespace Service.Piece
@@ -27,9 +29,9 @@ namespace Service.Piece
             }
         }
 
-        public static PieceEV[] FindAllPieceEVs(IEntitiesDB entitiesDB, out int count)
+        public static PieceEV[] FindAllPieceEVs(IEntitiesDB entitiesDB)
         {
-            return CommonService.FindAllEntities<PieceEV>(entitiesDB, out count);
+            return CommonService.FindAllEntities<PieceEV>(entitiesDB);
         }
 
         public static PieceEV? FindPieceEVById(int? entityId, IEntitiesDB entitiesDB)
@@ -44,10 +46,9 @@ namespace Service.Piece
         {
             PieceEV? returnValue = null;
 
-            int count;
-            PieceEV[] pieces = FindAllPieceEVs(entitiesDB, out count);
+            PieceEV[] pieces = FindAllPieceEVs(entitiesDB);
 
-            for (int i = 0; i < count; ++i)
+            for (int i = 0; i < pieces.Length; ++i)
             {
                 // Tile always on z=0, pieces always on z>=1
                 if (pieces[i].location.Location.x == location.x
@@ -59,6 +60,12 @@ namespace Service.Piece
             }
 
             return returnValue;
+        }
+
+        public static PieceEV[] FindPiecesByTeam(PlayerColor team, IEntitiesDB entitiesDB)
+        {
+            return FindAllPieceEVs(entitiesDB)
+                .Where(piece => piece.playerOwner.PlayerColor == team).ToArray();
         }
     }
 }

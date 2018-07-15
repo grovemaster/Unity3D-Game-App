@@ -1,6 +1,7 @@
 ﻿using Data.Enum;
 using Data.Step;
 using ECS.EntityView.Board.Tile;
+using Service.Board.Tile;
 using Svelto.ECS;
 using System.Collections.Generic;
 using UnityEngine;
@@ -32,10 +33,9 @@ namespace ECS.Engine.Board.Tile
             List<TileEV> returnValue = new List<TileEV>();
 
             // TODO Cache all Tiles, since they will not change
-            int count;
-            var entityViews = entitiesDB.QueryEntities<TileEV>(out count);
+            var entityViews = TileService.FindAllTileEVs(entitiesDB);
 
-            for (int i = 0; i < count; ++i)
+            for (int i = 0; i < entityViews.Length; ++i)
             {
                 if (affectedTiles.Contains(entityViews[i].location.Location))
                 {
@@ -48,7 +48,7 @@ namespace ECS.Engine.Board.Tile
 
         private void ChangeTileColor(List<TileEV> tilesToChange, ref PressStepState token)
         {
-            bool isClicked = token.piecePressState.Equals(PiecePressState.CLICKED);
+            bool isClicked = token.piecePressState == PiecePressState.CLICKED;
 
             foreach (TileEV tileEV in tilesToChange)
             {

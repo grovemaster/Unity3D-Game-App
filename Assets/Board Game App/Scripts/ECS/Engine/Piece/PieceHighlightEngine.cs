@@ -23,7 +23,7 @@ namespace ECS.Engine.Piece
         public void Step(ref PressStepState token, int condition)
         {
             PieceEV piece = PieceService.FindPieceEV(token.pieceEntityId, entitiesDB);
-            bool isClicked = token.piecePressState.Equals(PiecePressState.CLICKED);
+            bool isClicked = token.piecePressState == PiecePressState.CLICKED;
 
             entitiesDB.ExecuteOnEntity(
                 piece.ID,

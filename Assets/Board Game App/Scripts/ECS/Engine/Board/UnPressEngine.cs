@@ -22,10 +22,9 @@ namespace ECS.Engine.Board
 
         private void UnPressPieces()
         {
-            int count;
-            PieceEV[] pieceEVs = PieceService.FindAllPieceEVs(entitiesDB, out count);
+            PieceEV[] pieceEVs = PieceService.FindAllPieceEVs(entitiesDB);
 
-            for (int i = 0; i < count; ++i)
+            for (int i = 0; i < pieceEVs.Length; ++i)
             {
                 if (pieceEVs[i].highlight.IsPressed.value)
                 {
@@ -36,10 +35,9 @@ namespace ECS.Engine.Board
 
         private void UnPressTiles()
         {
-            int count;
-            TileEV[] tileEVs = TileService.FindAllTileEVs(entitiesDB, out count);
+            TileEV[] tileEVs = TileService.FindAllTileEVs(entitiesDB);
 
-            for (int i = 0; i < count; ++i)
+            for (int i = 0; i < tileEVs.Length; ++i)
             {
                 if (tileEVs[i].highlight.IsPressed.value)
                 {

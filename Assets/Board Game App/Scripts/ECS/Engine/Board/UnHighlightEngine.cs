@@ -23,10 +23,9 @@ namespace ECS.Engine.Board
 
         private void UnHighlightPieces()
         {
-            int count;
-            PieceEV[] pieceEVs = PieceService.FindAllPieceEVs(entitiesDB, out count);
+            PieceEV[] pieceEVs = PieceService.FindAllPieceEVs(entitiesDB);
 
-            for (int i = 0; i < count; ++i)
+            for (int i = 0; i < pieceEVs.Length; ++i)
             {
                 if (pieceEVs[i].highlight.IsHighlighted)
                 {
@@ -40,10 +39,9 @@ namespace ECS.Engine.Board
 
         private void UnHighlightTiles()
         {
-            int count;
-            TileEV[] tileEVs = TileService.FindAllTileEVs(entitiesDB, out count);
+            TileEV[] tileEVs = TileService.FindAllTileEVs(entitiesDB);
 
-            for (int i = 0; i < count; ++i)
+            for (int i = 0; i < tileEVs.Length; ++i)
             {
                 if (tileEVs[i].highlight.IsHighlighted)
                 {

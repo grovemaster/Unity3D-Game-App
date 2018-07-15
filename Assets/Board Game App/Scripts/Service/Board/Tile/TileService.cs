@@ -15,8 +15,7 @@ namespace Service.Board.Tile
 
         public static TileEV FindTileEV(Vector3 location, IEntitiesDB entitiesDB)
         {
-            int count;
-            var tiles = entitiesDB.QueryEntities<TileEV>(out count);
+            var tiles = FindAllTileEVs(entitiesDB);
 
             for (int i = 0; i < tiles.Length; ++i)
             {
@@ -29,9 +28,9 @@ namespace Service.Board.Tile
             throw new ArgumentOutOfRangeException("No matching location for finding TilEV");
         }
 
-        public static TileEV[] FindAllTileEVs(IEntitiesDB entitiesDB, out int count)
+        public static TileEV[] FindAllTileEVs(IEntitiesDB entitiesDB)
         {
-            return CommonService.FindAllEntities<TileEV>(entitiesDB, out count);
+            return CommonService.FindAllEntities<TileEV>(entitiesDB);
         }
 
         public static TileEV? FindTileEVById(int? entityId, IEntitiesDB entitiesDB)

@@ -17,7 +17,7 @@ namespace Service.Board
             if (tileEV.highlight.IsHighlighted
                 && pieceEV.HasValue
                 && tilePieceId != 0
-                && pieceEV.Value.playerOwner.PlayerColor.Equals(currentTurn.TurnPlayer.PlayerColor))
+                && pieceEV.Value.playerOwner.PlayerColor == currentTurn.TurnPlayer.PlayerColor)
             {
                 returnValue = BoardPress.MOVE_PIECE;
             }

@@ -92,6 +92,7 @@ namespace ECS.Context
             var tilePressEngine = new TilePressEngine(boardPressSequence);
             var unPressEngine = new UnPressEngine();
             var boardPressEngine = new BoardPressEngine(boardPressSequence);
+            var deHighlightTeamPiecesEngine = new DeHighlightTeamPiecesEngine(boardPressSequence);
             var pieceHighlightEngine = new PieceHighlightEngine(boardPressSequence);
             var tileHighlightEngine = new TileHighlightEngine(boardPressSequence);
 
@@ -101,17 +102,6 @@ namespace ECS.Context
             var turnEndEngine = new TurnEndEngine();
 
             boardPressSequence.SetSequence(
-                //new Steps //sequence of steps, this is a dictionary!
-                //{
-                //    { //first step
-                //        /*from: */piecePressEngine, //this step can be triggered only by this engine through the Next function
-                //        /*to:   */new To //this step can lead only to one branch
-                //        {
-                //            //all these engines in the list will be called. The order of the engines triggered is guaranteed.
-                //            new IStep<PressState>[] { pieceHighlightEngine, tileHighlightEngine }
-                //        }
-                //    }
-                //}
                 new Steps
                 {
                     { // first step
@@ -134,7 +124,7 @@ namespace ECS.Context
                         {
                             { (int)BoardPress.CLICK_HIGHLIGHT,
                                 new IStep<PressStepState>[]
-                                { pieceHighlightEngine, tileHighlightEngine } },
+                                { deHighlightTeamPiecesEngine, pieceHighlightEngine, tileHighlightEngine } },
                             { (int)BoardPress.MOVE_PIECE,
                                 new IStep<MovePieceStepState>[]
                                 { unHighlightEngine, movePieceEngine, movePieceCleanupEngine, turnEndEngine } }
@@ -147,6 +137,7 @@ namespace ECS.Context
             enginesRoot.AddEngine(tilePressEngine);
             enginesRoot.AddEngine(unPressEngine);
             enginesRoot.AddEngine(boardPressEngine);
+            enginesRoot.AddEngine(deHighlightTeamPiecesEngine);
             enginesRoot.AddEngine(pieceHighlightEngine);
             enginesRoot.AddEngine(tileHighlightEngine);
 
@@ -183,7 +174,11 @@ namespace ECS.Context
             //var initializer = entityFactory.BuildEntity<PieceED>(pawn.GetInstanceID(), pawn.GetComponents<IImplementor>());
             var pieceCreateService = new PieceCreateService(entityFactory);
             pieceCreateService.CreatePiece(PlayerColor.BLACK, 0, 0);
+            pieceCreateService.CreatePiece(PlayerColor.BLACK, 2, 1);
+            pieceCreateService.CreatePiece(PlayerColor.BLACK, 4, 2);
             pieceCreateService.CreatePiece(PlayerColor.WHITE, 1, 8);
+            pieceCreateService.CreatePiece(PlayerColor.WHITE, 3, 7);
+            pieceCreateService.CreatePiece(PlayerColor.WHITE, 4, 6);
         }
 
         private void BuildTileEntities()

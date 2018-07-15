@@ -19,10 +19,9 @@ namespace ECS.Engine.Piece.Move
 
         private void ClearPieceReferenceFromTiles()
         {
-            int count;
-            TileEV[] tileEVs = TileService.FindAllTileEVs(entitiesDB, out count);
+            TileEV[] tileEVs = TileService.FindAllTileEVs(entitiesDB);
 
-            for (int i = 0; i < count; ++i)
+            for (int i = 0; i < tileEVs.Length; ++i)
             {
                 tileEVs[i].tile.PieceRefEntityId = null;
             }
