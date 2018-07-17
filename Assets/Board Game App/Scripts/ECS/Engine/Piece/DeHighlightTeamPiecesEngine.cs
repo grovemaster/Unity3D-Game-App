@@ -4,6 +4,7 @@ using Data.Step;
 using ECS.EntityView.Board.Tile;
 using ECS.EntityView.Piece;
 using Service.Board.Tile;
+using Service.Highlight;
 using Service.Piece;
 using Svelto.ECS;
 using System.Collections.Generic;
@@ -61,9 +62,12 @@ namespace ECS.Engine.Piece
 
         private void DeHighlightOtherTeamTilePieces(List<PieceEV> alteredPieces, PlayerColor pieceTeam)
         {
+            HighlightState highlightStateToRemove = HighlightService.CalcHighlightState(pieceTeam);
+
+            // TODO Remove team highlights based on Team Color, not piece ref id
             List<TileEV> tiles = TileService.FindAllTileEVs(entitiesDB)
                 .Where(tile => tile.highlight.IsHighlighted
-                && alteredPieces.FindIndex(piece => piece.ID.entityID == tile.tile.PieceRefEntityId.GetValueOrDefault()) >= 0
+                && tile.highlight.CurrentColorStates.Contains(highlightStateToRemove)
                 ).ToList();
 
             foreach (TileEV tile in tiles)
@@ -72,8 +76,12 @@ namespace ECS.Engine.Piece
                     tile.ID,
                     (ref TileEV tileToChange) =>
                     {
-                        tileToChange.highlight.IsHighlighted = false;
-                        tileToChange.highlight.CurrentColorStates.Clear();
+                        tileToChange.highlight.CurrentColorStates.Remove(highlightStateToRemove);
+
+                        if (!tileToChange.highlight.CurrentColorStates.Any())
+                        {
+                            tileToChange.highlight.IsHighlighted = false;
+                        }
                     });
 
                 tile.changeColorComponent.PlayChangeColor = true;

@@ -1,5 +1,4 @@
-﻿using System;
-using Data.Enum;
+﻿using Data.Enum;
 using Data.Enum.Player;
 using Data.Step;
 using Data.Step.Board;
@@ -9,7 +8,6 @@ using ECS.Engine.Board.Tile;
 using ECS.Engine.Piece;
 using ECS.Engine.Piece.Move;
 using ECS.Engine.Turn;
-using ECS.EntityDescriptor.Piece;
 using ECS.EntityDescriptor.Turn;
 using ECS.Implementor;
 using ECS.Implementor.Turn;

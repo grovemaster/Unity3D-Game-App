@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using Data.Enum;
 using ECS.Component.Board.Tile;
 using ECS.Component.SharedComponent;
@@ -49,9 +48,21 @@ namespace ECS.Implementor.Board.Tile
         {
             Debug.Log("Changing color of Tile " + Location.ToString());
             var sprite = GetComponentInChildren<SpriteRenderer>();
-            if (CurrentColorStates.Any())
+
+            bool hasBlackClick = CurrentColorStates.Contains(HighlightState.PLAYER_BLACK_CLICK_HIGHLIGHT);
+            bool hasWhiteClick = CurrentColorStates.Contains(HighlightState.PLAYER_WHITE_CLICK_HIGHLIGHT);
+
+            if (hasBlackClick && hasWhiteClick)
             {
                 sprite.color = Color.yellow;
+            }
+            else if (hasBlackClick)
+            {
+                sprite.color = Color.magenta;
+            }
+            else if (hasWhiteClick)
+            {
+                sprite.color = Color.red;
             }
             else // HighlightState.DEFAULT or nothing
             {

@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using Data.Enum;
 using ECS.Component.SharedComponent;
 using Svelto.ECS;
@@ -43,9 +42,21 @@ namespace ECS.Implementor.Piece
         {
             Debug.Log("Changing color of Pawn");
             var sprite = GetComponentInChildren<SpriteRenderer>();
-            if (CurrentColorStates.Any())
+
+            bool hasBlackClick = CurrentColorStates.Contains(HighlightState.PLAYER_BLACK_CLICK_HIGHLIGHT);
+            bool hasWhiteClick = CurrentColorStates.Contains(HighlightState.PLAYER_WHITE_CLICK_HIGHLIGHT);
+
+            if (hasBlackClick && hasWhiteClick)
+            {
+                sprite.color = Color.cyan;
+            }
+            else if (hasBlackClick)
             {
                 sprite.color = Color.blue;
+            }
+            else if (hasWhiteClick)
+            {
+                sprite.color = Color.green;
             }
             else // HighlightState.DEFAULT or nothing
             {
