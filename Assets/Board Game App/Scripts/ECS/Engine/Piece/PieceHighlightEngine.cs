@@ -20,9 +20,21 @@ namespace ECS.Engine.Piece
 
             entitiesDB.ExecuteOnEntity(
                 piece.ID,
-                (ref PieceEV pieceToChange) => { pieceToChange.highlight.IsHighlighted = isClicked ? true : false; });
-            piece.highlight.CurrentColor.value = isClicked
-                ? HighlightState.CLICKED : HighlightState.DEFAULT;
+                (ref PieceEV pieceToChange) =>
+                {
+                    pieceToChange.highlight.IsHighlighted = isClicked ? true : false;
+
+                    if (isClicked)
+                    {
+                        pieceToChange.highlight.CurrentColorStates.Add(HighlightState.CLICKED);
+                    }
+                    else
+                    {
+                        pieceToChange.highlight.CurrentColorStates.Clear();
+                    }
+                });
+
+            piece.changeColorComponent.PlayChangeColor = true;
         }
     }
 }

@@ -14,6 +14,7 @@ namespace ECS.EntityView.Piece
         public IMovePiece movePiece;
         public ILocation location;
         public IHighlight highlight;
+        public IChangeColorComponent changeColorComponent;
         public IPlayerComponent playerOwner;
     }
 }

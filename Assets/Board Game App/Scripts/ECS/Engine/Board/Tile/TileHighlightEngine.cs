@@ -28,6 +28,7 @@ namespace ECS.Engine.Board.Tile
             // TODO Cache all Tiles, since they will not change
             var entityViews = TileService.FindAllTileEVs(entitiesDB);
 
+            // TODO Use Linq Where() filtering
             for (int i = 0; i < entityViews.Length; ++i)
             {
                 if (affectedTiles.Contains(entityViews[i].location.Location))
@@ -43,22 +44,28 @@ namespace ECS.Engine.Board.Tile
         {
             bool isClicked = token.piecePressState == PiecePressState.CLICKED;
 
+            int? pieceIdtoken = isClicked ? (int?)token.pieceEntityId : null;
+
             foreach (TileEV tileEV in tilesToChange)
             {
                 entitiesDB.ExecuteOnEntity(
                     tileEV.ID,
-                    (ref TileEV pieceToChange) => { pieceToChange.highlight.IsHighlighted = isClicked ? true : false; });
-                tileEV.highlight.CurrentColor.value = isClicked
-                    ? HighlightState.CLICKED : HighlightState.DEFAULT;
+                    (ref TileEV tileToChange) =>
+                    {
+                        tileToChange.tile.PieceRefEntityId = pieceIdtoken;
+                        tileToChange.highlight.IsHighlighted = isClicked ? true : false;
 
-                int? pieceIdtoken = null;
-                if (isClicked)
-                {
-                    pieceIdtoken = token.pieceEntityId;
-                }
+                        if (isClicked)
+                        {
+                            tileToChange.highlight.CurrentColorStates.Add(HighlightState.CLICKED);
+                        }
+                        else
+                        {
+                            tileToChange.highlight.CurrentColorStates.Clear();
+                        }
+                    });
 
-                entitiesDB.ExecuteOnEntity(tileEV.ID,
-                    (ref TileEV tileEVToChange) => { tileEVToChange.tile.PieceRefEntityId = pieceIdtoken; } );
+                tileEV.changeColorComponent.PlayChangeColor = true;
             }
         }
     }

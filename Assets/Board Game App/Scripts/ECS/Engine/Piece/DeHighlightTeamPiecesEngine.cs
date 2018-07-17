@@ -47,8 +47,13 @@ namespace ECS.Engine.Piece
             {
                 entitiesDB.ExecuteOnEntity(
                     piece.ID,
-                    (ref PieceEV pieceToChange) => { pieceToChange.highlight.IsHighlighted = false; });
-                piece.highlight.CurrentColor.value = HighlightState.DEFAULT;
+                    (ref PieceEV pieceToChange) =>
+                    {
+                        pieceToChange.highlight.IsHighlighted = false;
+                        pieceToChange.highlight.CurrentColorStates.Clear();
+                    });
+
+                piece.changeColorComponent.PlayChangeColor = true;
             }
 
             return pieces;
@@ -65,8 +70,13 @@ namespace ECS.Engine.Piece
             {
                 entitiesDB.ExecuteOnEntity(
                     tile.ID,
-                    (ref TileEV tileToChange) => { tileToChange.highlight.IsHighlighted = false; });
-                tile.highlight.CurrentColor.value = HighlightState.DEFAULT;
+                    (ref TileEV tileToChange) =>
+                    {
+                        tileToChange.highlight.IsHighlighted = false;
+                        tileToChange.highlight.CurrentColorStates.Clear();
+                    });
+
+                tile.changeColorComponent.PlayChangeColor = true;
             }
         }
     }

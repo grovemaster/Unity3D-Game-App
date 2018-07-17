@@ -11,5 +11,6 @@ namespace ECS.EntityView.Board.Tile
         public ITile tile;
         public ILocation location;
         public IHighlight highlight;
+        public IChangeColorComponent changeColorComponent;
     }
 }

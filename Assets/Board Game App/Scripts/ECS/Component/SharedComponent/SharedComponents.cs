@@ -1,19 +1,19 @@
 ﻿using Data.Enum;
 using Svelto.ECS;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace ECS.Component.SharedComponent
 {
-    public interface ILocation: IComponent
+    public interface ILocation : IComponent
     {
         Vector3 Location { get; set; }
     }
 
-    public interface IHighlight: IComponent
+    public interface IHighlight : IComponent
     {
         DispatchOnSet<bool> IsPressed { get; set; } // Impl sets IsPressed = true, Engine does logic, then sets IsPressed = false
         bool IsHighlighted { get; set; }
-        DispatchOnSet<HighlightState> CurrentColor { get; set; } // Engine sets value, Impl makes actual change
-        // TODO Eventually will need a HighlightAnimationComponent specifically for color change effects
+        HashSet<HighlightState> CurrentColorStates { get; set; } // Engine sets values, Impl makes actual change in animation component
     }
 }

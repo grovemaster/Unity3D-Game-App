@@ -31,8 +31,13 @@ namespace ECS.Engine.Board
                 {
                     entitiesDB.ExecuteOnEntity(
                         pieceEVs[i].ID,
-                        (ref PieceEV pieceToChange) => { pieceToChange.highlight.IsHighlighted = false; });
-                    pieceEVs[i].highlight.CurrentColor.value = HighlightState.DEFAULT;
+                        (ref PieceEV pieceToChange) =>
+                        {
+                            pieceToChange.highlight.IsHighlighted = false;
+                            pieceToChange.highlight.CurrentColorStates.Clear();
+                        });
+
+                    pieceEVs[i].changeColorComponent.PlayChangeColor = true;
                 }
             }
         }
@@ -47,8 +52,13 @@ namespace ECS.Engine.Board
                 {
                     entitiesDB.ExecuteOnEntity(
                         tileEVs[i].ID,
-                        (ref TileEV tileToChange) => { tileToChange.highlight.IsHighlighted = false; });
-                    tileEVs[i].highlight.CurrentColor.value = HighlightState.DEFAULT;
+                        (ref TileEV tileToChange) =>
+                        {
+                            tileToChange.highlight.IsHighlighted = false;
+                            tileToChange.highlight.CurrentColorStates.Clear();
+                        });
+
+                    tileEVs[i].changeColorComponent.PlayChangeColor = true;
                 }
             }
         }
