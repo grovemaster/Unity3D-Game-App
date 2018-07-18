@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Data.Constants.ColorConst;
 using Data.Enum;
 using ECS.Component.SharedComponent;
 using Svelto.ECS;
@@ -61,15 +62,15 @@ namespace ECS.Implementor.Board.Tile
             }
             else if (hasBlackRange && hasWhiteRange)
             {
-                sprite.color = new Color(0.169f, 0.694f, 0.824f);
+                sprite.color = ColorConst.LightBlue;
             }
             else if (hasBlackRange)
             {
-                sprite.color =  new Color(0.6f, 1f, 0.6f);
+                sprite.color =  ColorConst.LightGreen;
             }
             else if (hasWhiteRange)
             {
-                sprite.color =  new Color(0.8f, 0.6f, 1f);
+                sprite.color =  ColorConst.LightPink;
             }
             else // HighlightState.DEFAULT or nothing
             {
