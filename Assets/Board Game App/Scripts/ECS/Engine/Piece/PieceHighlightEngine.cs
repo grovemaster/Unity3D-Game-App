@@ -18,7 +18,7 @@ namespace ECS.Engine.Piece
         {
             PieceEV piece = PieceService.FindPieceEV(token.pieceEntityId, entitiesDB);
             bool isClicked = token.piecePressState == PiecePressState.CLICKED;
-            HighlightState colorToChange = HighlightService.CalcHighlightState(piece.playerOwner.PlayerColor);
+            HighlightState colorToChange = HighlightService.CalcClickHighlightState(piece.playerOwner.PlayerColor);
 
             entitiesDB.ExecuteOnEntity(
                 piece.ID,

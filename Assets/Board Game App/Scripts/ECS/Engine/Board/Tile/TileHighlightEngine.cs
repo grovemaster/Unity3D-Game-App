@@ -1,5 +1,4 @@
 ﻿using Data.Enum;
-using Data.Enum.Player;
 using Data.Step;
 using ECS.EntityView.Board.Tile;
 using ECS.EntityView.Piece;
@@ -51,7 +50,7 @@ namespace ECS.Engine.Board.Tile
             bool isClicked = token.piecePressState == PiecePressState.CLICKED;
             PieceEV piece = PieceService.FindPieceEV(token.pieceEntityId, entitiesDB);
             int pieceIdtoken = token.pieceEntityId;
-            HighlightState newHighlightState = HighlightService.CalcHighlightState(piece.playerOwner.PlayerColor);
+            HighlightState newHighlightState = HighlightService.CalcClickHighlightState(piece.playerOwner.PlayerColor);
             TurnEV currentTurn = TurnService.GetCurrentTurnEV(entitiesDB);
             bool doesPieceBelongToTurnPlayer = currentTurn.TurnPlayer.PlayerColor == piece.playerOwner.PlayerColor;
 

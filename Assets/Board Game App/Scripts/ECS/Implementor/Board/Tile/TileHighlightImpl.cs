@@ -44,6 +44,9 @@ namespace ECS.Implementor.Board.Tile
             bool hasBlackClick = CurrentColorStates.Contains(HighlightState.PLAYER_BLACK_CLICK_HIGHLIGHT);
             bool hasWhiteClick = CurrentColorStates.Contains(HighlightState.PLAYER_WHITE_CLICK_HIGHLIGHT);
 
+            bool hasBlackRange = CurrentColorStates.Contains(HighlightState.PLAYER_BLACK_RANGE_HIGHLIGHT);
+            bool hasWhiteRange = CurrentColorStates.Contains(HighlightState.PLAYER_WHITE_RANGE_HIGHLIGHT);
+
             if (hasBlackClick && hasWhiteClick)
             {
                 sprite.color = Color.yellow;
@@ -55,6 +58,18 @@ namespace ECS.Implementor.Board.Tile
             else if (hasWhiteClick)
             {
                 sprite.color = Color.red;
+            }
+            else if (hasBlackRange && hasWhiteRange)
+            {
+                sprite.color = new Color(0.169f, 0.694f, 0.824f);
+            }
+            else if (hasBlackRange)
+            {
+                sprite.color =  new Color(0.6f, 1f, 0.6f);
+            }
+            else if (hasWhiteRange)
+            {
+                sprite.color =  new Color(0.8f, 0.6f, 1f);
             }
             else // HighlightState.DEFAULT or nothing
             {

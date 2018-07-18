@@ -74,7 +74,7 @@ namespace ECS.Engine.Board
             {
                 pieceEntityId = pieceEV.ID.entityID,
                 piecePressState = pieceEV.highlight.IsHighlighted ? PiecePressState.UNCLICKED : PiecePressState.CLICKED,
-                affectedTiles = DestinationTileService.FindDestinationTileLocations(pieceEV.ID.entityID, entitiesDB)
+                affectedTiles = DestinationTileService.CalcDestinationTileLocations(pieceEV.ID.entityID, entitiesDB)
             };
 
             boardPressSequence.Next(this, ref pressState, (int)BoardPress.CLICK_HIGHLIGHT);

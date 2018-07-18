@@ -62,7 +62,7 @@ namespace ECS.Engine.Piece
 
         private void DeHighlightOtherTeamTilePieces(List<PieceEV> alteredPieces, PlayerColor pieceTeam)
         {
-            HighlightState highlightStateToRemove = HighlightService.CalcHighlightState(pieceTeam);
+            HighlightState highlightStateToRemove = HighlightService.CalcClickHighlightState(pieceTeam);
 
             // TODO Remove team highlights based on Team Color, not piece ref id
             List<TileEV> tiles = TileService.FindAllTileEVs(entitiesDB)

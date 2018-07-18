@@ -13,12 +13,24 @@ namespace Service.Board
          * This will return values exceeding board boundaries (such as below the zero-th rank).  It is the
          * responsibility of the client to not abuse this data.
          */
-        public static List<Vector3> FindDestinationTileLocations(int pieceEntityId, IEntitiesDB entitiesDB)
+        public static List<Vector3> CalcDestinationTileLocations(int pieceEntityId, IEntitiesDB entitiesDB)
         {
             PieceEV pieceEV = PieceService.FindPieceEV(pieceEntityId, entitiesDB);
-            
+
             List<Vector3> returnValue = GetRawDestinationLocations(pieceEV);
             AdjustRawDataWithPieceLocationAndDirection(pieceEV, returnValue);
+
+            return returnValue;
+        }
+
+        public static HashSet<Vector3> CalcDestinationTileLocations(PieceEV[] pieces, IEntitiesDB entitiesDB)
+        {
+            HashSet<Vector3> returnValue = new HashSet<Vector3>();
+
+            for (int i = 0; i < pieces.Length; ++i)
+            {
+                returnValue.UnionWith(CalcDestinationTileLocations(pieces[i].ID.entityID, entitiesDB));
+            }
 
             return returnValue;
         }

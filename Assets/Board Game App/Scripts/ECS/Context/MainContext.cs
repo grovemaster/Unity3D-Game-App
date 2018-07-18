@@ -5,6 +5,7 @@ using Data.Step.Board;
 using Data.Step.Piece.Move;
 using ECS.Engine.Board;
 using ECS.Engine.Board.Tile;
+using ECS.Engine.Board.Tile.Highlight;
 using ECS.Engine.Piece;
 using ECS.Engine.Piece.Move;
 using ECS.Engine.Turn;
@@ -97,7 +98,9 @@ namespace ECS.Context
             var unHighlightEngine = new UnHighlightEngine();
             var movePieceEngine = new MovePieceEngine();
             var movePieceCleanupEngine = new MovePieceCleanupEngine();
-            var turnEndEngine = new TurnEndEngine();
+            var turnEndEngine = new TurnEndEngine(boardPressSequence);
+
+            var highlightAllDestinationTilesEngine = new HighlightAllDestinationTilesEngine();
 
             boardPressSequence.SetSequence(
                 new Steps
@@ -116,16 +119,24 @@ namespace ECS.Context
                             new IStep<BoardPressStepState>[] { unPressEngine, boardPressEngine }
                         }
                     },
-                    {
+                    {   // Clicking on board results in...
                         boardPressEngine,
                         new To
-                        {
+                        {   // Highlight piece and tile(s)
                             { (int)BoardPress.CLICK_HIGHLIGHT,
                                 new IStep<PressStepState>[]
                                 { deHighlightTeamPiecesEngine, pieceHighlightEngine, tileHighlightEngine } },
+                            // Move piece
                             { (int)BoardPress.MOVE_PIECE,
                                 new IStep<MovePieceStepState>[]
                                 { unHighlightEngine, movePieceEngine, movePieceCleanupEngine, turnEndEngine } }
+                        }
+                    },
+                    {   // Turn Start
+                        turnEndEngine,
+                        new To
+                        {
+                            highlightAllDestinationTilesEngine
                         }
                     }
                 }
@@ -143,6 +154,8 @@ namespace ECS.Context
             enginesRoot.AddEngine(movePieceEngine);
             enginesRoot.AddEngine(movePieceCleanupEngine);
             enginesRoot.AddEngine(turnEndEngine);
+
+            enginesRoot.AddEngine(highlightAllDestinationTilesEngine);
         }
 
         private void SetupEntities() {
