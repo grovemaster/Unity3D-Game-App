@@ -10,7 +10,8 @@ namespace PrefabUtil
 
         public PrefabsDictionary()
         {
-            string json = File.ReadAllText("prefabs.json");
+            //string json = File.ReadAllText("prefabs.json");
+            string json = PrefabsSerializer.PrefabsJson;
 
             var gameobjects = JsonHelper.getJsonArray<GameObject>(json);
 

@@ -6,6 +6,7 @@ namespace PrefabUtil
     public class PrefabsSerializer : MonoBehaviour
     {
         public GameObject[] prefabs;
+        public static string PrefabsJson;
 
         static bool serializedOnce;
 
@@ -22,7 +23,8 @@ namespace PrefabUtil
 
             Utility.Console.Log(json);
 
-            System.IO.File.WriteAllText("prefabs.json", json);
+            //System.IO.File.WriteAllText("prefabs.json", json);
+            PrefabsJson = json;
         }
 
         public void Init()

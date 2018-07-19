@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using Data.Enum;
-using ECS.Component.Board.Tile;
+﻿using ECS.Component.Board.Tile;
 using ECS.Component.SharedComponent;
 using UnityEngine;
 
