@@ -3,6 +3,7 @@ using ECS.Component.Piece;
 using ECS.Component.SharedComponent;
 using ECS.Component.Piece.Move;
 using ECS.Component.Player;
+using ECS.Component.Visibility;
 
 namespace ECS.EntityView.Piece
 {
@@ -16,5 +17,6 @@ namespace ECS.EntityView.Piece
         public IHighlight highlight;
         public IChangeColorComponent changeColorComponent;
         public IPlayerComponent playerOwner;
+        public IVisibility visibility;
     }
 }

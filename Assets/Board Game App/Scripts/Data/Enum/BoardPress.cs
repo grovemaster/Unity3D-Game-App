@@ -4,6 +4,7 @@
     {
         NOTHING = 0,
         CLICK_HIGHLIGHT = 1,
-        MOVE_PIECE = 2
+        MOVE_PIECE = 2,
+        MOBILE_CAPTURE = 3
     }
 }

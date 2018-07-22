@@ -37,6 +37,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4926266969219554}
   - component: {fileID: 23748046303066106}
+  - component: {fileID: 114186546710335224}
   m_Layer: 0
   m_Name: Hand Piece
   m_TagString: Untagged
@@ -366,6 +367,17 @@ TextMesh:
   m_Color:
     serializedVersion: 2
     rgba: 4278190080
+--- !u!114 &114186546710335224
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1386086649359902}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eea4d40d8966f4d44b4dc3b701319de3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!212 &212499285152788214
 SpriteRenderer:
   m_ObjectHideFlags: 1

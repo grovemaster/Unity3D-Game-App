@@ -1,6 +1,7 @@
 ﻿using Data.Enum;
 using Data.Step;
 using Data.Step.Board;
+using Data.Step.Piece.Capture;
 using Data.Step.Piece.Move;
 using ECS.EntityView.Board.Tile;
 using ECS.EntityView.Piece;
@@ -32,12 +33,13 @@ namespace ECS.Engine.Board
 
             PieceEV? pieceEV;
             TileEV? tileEV;
-            PieceTileService.FindPieceTileEV(entitiesDB, ref token, out pieceEV, out tileEV);
+            PieceEV? pieceAtDestination;
+            PieceTileService.FindPieceTileEV(entitiesDB, ref token, out pieceEV, out tileEV, out pieceAtDestination);
 
             TurnEV currentTurn = TurnService.GetCurrentTurnEV(entitiesDB);
 
-            BoardPress action = BoardPressService.DecideAction(pieceEV, tileEV, currentTurn);
-            ExecuteNextAction(action, pieceEV, tileEV);
+            BoardPress action = BoardPressService.DecideAction(pieceEV, tileEV, pieceAtDestination, currentTurn);
+            ExecuteNextAction(action, pieceEV, tileEV, pieceAtDestination);
         }
 
         /// <exception cref="InvalidOperationException">Both token member variables are null/zero.</exception>
@@ -50,7 +52,7 @@ namespace ECS.Engine.Board
             }
         }
 
-        private void ExecuteNextAction(BoardPress action, PieceEV? pieceEV, TileEV? tileEV)
+        private void ExecuteNextAction(BoardPress action, PieceEV? pieceEV, TileEV? tileEV, PieceEV? pieceAtDestination)
         {
             switch(action)
             {
@@ -59,6 +61,9 @@ namespace ECS.Engine.Board
                     break;
                 case BoardPress.MOVE_PIECE:
                     NextActionMovePiece(pieceEV.Value, tileEV.Value);
+                    break;
+                case BoardPress.MOBILE_CAPTURE:
+                    NextActionMobileCapturePiece(pieceEV.Value, tileEV.Value, pieceAtDestination.Value);
                     break;
                 case BoardPress.NOTHING:
                     break;
@@ -89,6 +94,19 @@ namespace ECS.Engine.Board
             };
 
             boardPressSequence.Next(this, ref movePieceInfo, (int)BoardPress.MOVE_PIECE);
+        }
+
+        private void NextActionMobileCapturePiece(PieceEV pieceToMove, TileEV destinationTile, PieceEV pieceToCapture)
+        {
+            // TODO If the user clicks the piece, then the pieceToMove and pieceToCapture are both the pieceToCapture
+            var capturePieceInfo = new CapturePieceStepState
+            {
+                pieceToMove = pieceToMove,
+                destinationTile = destinationTile,
+                pieceToCapture = pieceToCapture
+            };
+
+            boardPressSequence.Next(this, ref capturePieceInfo, (int)BoardPress.MOBILE_CAPTURE);
         }
     }
 }

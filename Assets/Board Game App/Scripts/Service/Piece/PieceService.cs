@@ -1,4 +1,5 @@
-﻿using Data.Enum;
+﻿using Data.Constants.Board;
+using Data.Enum;
 using Data.Enum.Player;
 using Data.Piece;
 using Data.Piece.Front.Pawn;
@@ -29,7 +30,7 @@ namespace Service.Piece
             }
         }
 
-        public static PieceEV[] FindAllPieceEVs(IEntitiesDB entitiesDB)
+        public static PieceEV[] FindAllBoardPieces(IEntitiesDB entitiesDB)
         {
             return CommonService.FindAllEntities<PieceEV>(entitiesDB);
         }
@@ -46,7 +47,7 @@ namespace Service.Piece
         {
             PieceEV? returnValue = null;
 
-            PieceEV[] pieces = FindAllPieceEVs(entitiesDB);
+            PieceEV[] pieces = FindAllBoardPieces(entitiesDB);
 
             for (int i = 0; i < pieces.Length; ++i)
             {
@@ -64,8 +65,18 @@ namespace Service.Piece
 
         public static PieceEV[] FindPiecesByTeam(PlayerColor team, IEntitiesDB entitiesDB)
         {
-            return FindAllPieceEVs(entitiesDB)
+            return FindAllBoardPieces(entitiesDB)
                 .Where(piece => piece.playerOwner.PlayerColor == team).ToArray();
+        }
+
+        public static void SetPieceLocationToHandLocation(PieceEV pieceEV, IEntitiesDB entitiesDB)
+        {
+            entitiesDB.ExecuteOnEntity(
+                pieceEV.ID,
+                (ref PieceEV pieceToHand) =>
+                {
+                    pieceToHand.location.Location = BoardConst.HAND_LOCATION;
+                });
         }
     }
 }

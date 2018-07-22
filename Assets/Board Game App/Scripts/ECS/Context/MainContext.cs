@@ -2,11 +2,14 @@
 using Data.Enum.Player;
 using Data.Step;
 using Data.Step.Board;
+using Data.Step.Piece.Capture;
 using Data.Step.Piece.Move;
 using ECS.Engine.Board;
 using ECS.Engine.Board.Tile;
 using ECS.Engine.Board.Tile.Highlight;
+using ECS.Engine.Hand;
 using ECS.Engine.Piece;
+using ECS.Engine.Piece.Capture;
 using ECS.Engine.Piece.Move;
 using ECS.Engine.Turn;
 using ECS.EntityDescriptor.Turn;
@@ -14,6 +17,7 @@ using ECS.Implementor;
 using ECS.Implementor.Turn;
 using PrefabUtil;
 using Service.Board.Context;
+using Service.Hand.Context;
 using Service.Piece.Context;
 using Svelto.Context;
 using Svelto.ECS;
@@ -102,6 +106,16 @@ namespace ECS.Context
 
             var highlightAllDestinationTilesEngine = new HighlightAllDestinationTilesEngine();
 
+            var mobileCapturePieceEngine = new MobileCapturePieceEngine();
+            var addPieceToHandEngine = new AddPieceToHandEngine();
+            var gotoMovePieceEngine = new GotoMovePieceEngine(boardPressSequence);
+
+            var pressStep = new IStep<BoardPressStepState>[] { unPressEngine, boardPressEngine };
+            var movePieceStep = new IStep<MovePieceStepState>[]
+                { unHighlightEngine, movePieceEngine, movePieceCleanupEngine, turnEndEngine };
+            var capturePieceStep = new IStep<CapturePieceStepState>[]
+            { mobileCapturePieceEngine, addPieceToHandEngine, gotoMovePieceEngine };
+
             boardPressSequence.SetSequence(
                 new Steps
                 {
@@ -109,14 +123,14 @@ namespace ECS.Context
                         piecePressEngine,
                         new To
                         {
-                            new IStep<BoardPressStepState>[] { unPressEngine, boardPressEngine }
+                            pressStep
                         }
                     },
                     { // also first step
                         tilePressEngine,
                         new To
                         {
-                            new IStep<BoardPressStepState>[] { unPressEngine, boardPressEngine }
+                            pressStep
                         }
                     },
                     {   // Clicking on board results in...
@@ -127,9 +141,9 @@ namespace ECS.Context
                                 new IStep<PressStepState>[]
                                 { deHighlightTeamPiecesEngine, pieceHighlightEngine, tileHighlightEngine } },
                             // Move piece
-                            { (int)BoardPress.MOVE_PIECE,
-                                new IStep<MovePieceStepState>[]
-                                { unHighlightEngine, movePieceEngine, movePieceCleanupEngine, turnEndEngine } }
+                            { (int)BoardPress.MOVE_PIECE, movePieceStep },
+                            // Capture piece
+                            { (int)BoardPress.MOBILE_CAPTURE, capturePieceStep }
                         }
                     },
                     {   // Turn Start
@@ -137,6 +151,14 @@ namespace ECS.Context
                         new To
                         {
                             highlightAllDestinationTilesEngine
+                        }
+                    },
+                    {
+                        // After capturing opponent piece, still need to move turn piece
+                        gotoMovePieceEngine,
+                        new To
+                        {
+                            movePieceStep
                         }
                     }
                 }
@@ -156,12 +178,17 @@ namespace ECS.Context
             enginesRoot.AddEngine(turnEndEngine);
 
             enginesRoot.AddEngine(highlightAllDestinationTilesEngine);
+
+            enginesRoot.AddEngine(mobileCapturePieceEngine);
+            enginesRoot.AddEngine(addPieceToHandEngine);
+            enginesRoot.AddEngine(gotoMovePieceEngine);
         }
 
         private void SetupEntities() {
             BuildPieceEntities();
             BuildTileEntities();
             BuildTurnEntity();
+            BuildHandPieceEntities();
         }
 
         private void BuildPieceEntities()
@@ -206,6 +233,13 @@ namespace ECS.Context
             entityFactory.BuildEntity<TurnED>(currentTurn.GetInstanceID(), currentTurn.GetComponents<IImplementor>());
 
             currentTurnImpl.PlayerColor = PlayerColor.BLACK;
+        }
+
+        private void BuildHandPieceEntities()
+        {
+            var handPieceCreateService = new HandPieceCreateService(entityFactory);
+            handPieceCreateService.CreateHandPiece(PlayerColor.BLACK, PieceType.PAWN);
+            handPieceCreateService.CreateHandPiece(PlayerColor.WHITE, PieceType.PAWN);
         }
     }
 }

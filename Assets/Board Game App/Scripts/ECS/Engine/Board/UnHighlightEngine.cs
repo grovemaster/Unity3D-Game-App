@@ -23,7 +23,7 @@ namespace ECS.Engine.Board
 
         private void UnHighlightPieces()
         {
-            PieceEV[] pieceEVs = PieceService.FindAllPieceEVs(entitiesDB);
+            PieceEV[] pieceEVs = PieceService.FindAllBoardPieces(entitiesDB);
 
             for (int i = 0; i < pieceEVs.Length; ++i)
             {
