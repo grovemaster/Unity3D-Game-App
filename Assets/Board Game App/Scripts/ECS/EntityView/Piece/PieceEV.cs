@@ -11,10 +11,10 @@ namespace ECS.EntityView.Piece
     {
         public EGID ID { get; set; }
 
-        public IPiece piece;
-        public IMovePiece movePiece;
-        public ILocation location;
-        public IHighlight highlight;
+        public IPieceComponent piece;
+        public IMovePieceComponent movePiece;
+        public ILocationComponent location;
+        public IHighlightComponent highlight;
         public IChangeColorComponent changeColorComponent;
         public IPlayerComponent playerOwner;
         public IVisibility visibility;

@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace ECS.Implementor.Piece
 {
-    class PieceImpl : MonoBehaviour, IImplementor, IPiece
+    class PieceImpl : MonoBehaviour, IImplementor, IPieceComponent
     {
         public PieceType PieceType { get; set; }
 

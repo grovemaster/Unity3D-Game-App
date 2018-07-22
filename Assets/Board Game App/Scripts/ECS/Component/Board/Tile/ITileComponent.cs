@@ -1,6 +1,6 @@
 ﻿namespace ECS.Component.Board.Tile
 {
-    public interface ITile : IComponent
+    public interface ITileComponent : IComponent
     {
         int? PieceRefEntityId { get; set; } // Clicked piece may move to this tile
     }

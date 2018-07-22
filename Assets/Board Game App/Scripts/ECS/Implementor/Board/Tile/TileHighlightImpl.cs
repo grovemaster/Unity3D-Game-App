@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace ECS.Implementor.Board.Tile
 {
-    class TileHighlightImpl : MonoBehaviour, IImplementor, IHighlight, IChangeColorComponent
+    class TileHighlightImpl : MonoBehaviour, IImplementor, IHighlightComponent, IChangeColorComponent
     {
         public DispatchOnSet<bool> IsPressed { get; set; }
 

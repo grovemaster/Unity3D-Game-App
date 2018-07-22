@@ -8,7 +8,7 @@ namespace ECS.EntityView.Hand
     {
         public EGID ID { get; set; }
 
-        public IHandPiece handPiece;
+        public IHandPieceComponent handPiece;
         public IPlayerComponent playerOwner;
     }
 }

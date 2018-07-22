@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace ECS.Implementor.Piece
 {
-    class PieceHighlightImpl : MonoBehaviour, IImplementor, IHighlight, IChangeColorComponent
+    class PieceHighlightImpl : MonoBehaviour, IImplementor, IHighlightComponent, IChangeColorComponent
     {
         public DispatchOnSet<bool> IsPressed { get; set; }
 

@@ -5,12 +5,12 @@ using UnityEngine;
 
 namespace ECS.Component.SharedComponent
 {
-    public interface ILocation : IComponent
+    public interface ILocationComponent : IComponent
     {
         Vector3 Location { get; set; }
     }
 
-    public interface IHighlight : IComponent
+    public interface IHighlightComponent : IComponent
     {
         DispatchOnSet<bool> IsPressed { get; set; } // Impl sets IsPressed = true, Engine does logic, then sets IsPressed = false
         bool IsHighlighted { get; set; }

@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace ECS.Implementor.Hand
 {
-    class HandPieceImpl : MonoBehaviour, IImplementor, IHandPiece, IPlayerComponent
+    class HandPieceImpl : MonoBehaviour, IImplementor, IHandPieceComponent, IPlayerComponent
     {
         private PieceType pieceType;
 

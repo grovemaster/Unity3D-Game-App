@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace ECS.Implementor.Piece
 {
-    class PieceLocationMoveImpl : MonoBehaviour, IImplementor, IMovePiece, ILocation
+    class PieceLocationMoveImpl : MonoBehaviour, IImplementor, IMovePieceComponent, ILocationComponent
     {
         public Vector3 Location { get; set; }
 

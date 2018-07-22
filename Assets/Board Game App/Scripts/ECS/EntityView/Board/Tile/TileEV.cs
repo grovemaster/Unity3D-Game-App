@@ -8,9 +8,9 @@ namespace ECS.EntityView.Board.Tile
     {
         public EGID ID { get; set; }
 
-        public ITile tile;
-        public ILocation location;
-        public IHighlight highlight;
+        public ITileComponent tile;
+        public ILocationComponent location;
+        public IHighlightComponent highlight;
         public IChangeColorComponent changeColorComponent;
     }
 }
