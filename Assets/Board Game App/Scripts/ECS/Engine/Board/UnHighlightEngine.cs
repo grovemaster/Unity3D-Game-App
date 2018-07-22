@@ -48,18 +48,16 @@ namespace ECS.Engine.Board
 
             for (int i = 0; i < tileEVs.Length; ++i)
             {
-                if (tileEVs[i].highlight.IsHighlighted)
-                {
-                    entitiesDB.ExecuteOnEntity(
-                        tileEVs[i].ID,
-                        (ref TileEV tileToChange) =>
-                        {
-                            tileToChange.highlight.IsHighlighted = false;
-                            tileToChange.highlight.CurrentColorStates.Clear();
-                        });
+                // TODO Sloppy coding; if gated with an if statement, captured piece's range highlight remains.
+                entitiesDB.ExecuteOnEntity(
+                    tileEVs[i].ID,
+                    (ref TileEV tileToChange) =>
+                    {
+                        tileToChange.highlight.IsHighlighted = false;
+                        tileToChange.highlight.CurrentColorStates.Clear();
+                    });
 
-                    tileEVs[i].changeColorComponent.PlayChangeColor = true;
-                }
+                tileEVs[i].changeColorComponent.PlayChangeColor = true;
             }
         }
     }
