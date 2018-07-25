@@ -36,7 +36,7 @@ namespace ECS.Engine.Piece
                     }
                 });
 
-            piece.changeColorComponent.PlayChangeColor = true;
+            piece.changeColor.PlayChangeColor = true;
         }
     }
 }

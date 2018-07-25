@@ -2,12 +2,14 @@
 using Data.Enum.Player;
 using Data.Step;
 using Data.Step.Board;
+using Data.Step.Hand;
 using Data.Step.Piece.Capture;
 using Data.Step.Piece.Move;
 using ECS.Engine.Board;
 using ECS.Engine.Board.Tile;
 using ECS.Engine.Board.Tile.Highlight;
 using ECS.Engine.Hand;
+using ECS.Engine.Hand.Highlight;
 using ECS.Engine.Piece;
 using ECS.Engine.Piece.Capture;
 using ECS.Engine.Piece.Move;
@@ -90,6 +92,7 @@ namespace ECS.Context
             //between engines
             //...Then what is the common way to communicate between engines?  Querying entities?
             Sequencer boardPressSequence = new Sequencer();
+            Sequencer handPiecePressSequence = new Sequencer();
 
             var piecePressEngine = new PiecePressEngine(boardPressSequence);
             var tilePressEngine = new TilePressEngine(boardPressSequence);
@@ -109,6 +112,9 @@ namespace ECS.Context
             var mobileCapturePieceEngine = new MobileCapturePieceEngine();
             var addPieceToHandEngine = new AddPieceToHandEngine();
             var gotoMovePieceEngine = new GotoMovePieceEngine(boardPressSequence);
+
+            var handPiecePressEngine = new HandPiecePressEngine(handPiecePressSequence);
+            var handPieceHighlightEngine = new HandPieceHighlightEngine();
 
             var pressStep = new IStep<BoardPressStepState>[] { unPressEngine, boardPressEngine };
             var movePieceStep = new IStep<MovePieceStepState>[]
@@ -164,6 +170,20 @@ namespace ECS.Context
                 }
                 );
 
+            handPiecePressSequence.SetSequence(
+                new Steps
+                {
+                    { // first step
+                        handPiecePressEngine,
+                        new To
+                        {
+                            new IStep<HandPiecePressStepState>[]
+                            { deHighlightTeamPiecesEngine, handPieceHighlightEngine }
+                        }
+                    }
+                }
+                );
+
             enginesRoot.AddEngine(piecePressEngine);
             enginesRoot.AddEngine(tilePressEngine);
             enginesRoot.AddEngine(unPressEngine);
@@ -182,6 +202,9 @@ namespace ECS.Context
             enginesRoot.AddEngine(mobileCapturePieceEngine);
             enginesRoot.AddEngine(addPieceToHandEngine);
             enginesRoot.AddEngine(gotoMovePieceEngine);
+
+            enginesRoot.AddEngine(handPiecePressEngine);
+            enginesRoot.AddEngine(handPieceHighlightEngine);
         }
 
         private void SetupEntities() {

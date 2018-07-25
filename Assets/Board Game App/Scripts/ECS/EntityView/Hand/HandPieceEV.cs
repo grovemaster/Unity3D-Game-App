@@ -1,6 +1,7 @@
 ﻿using Svelto.ECS;
 using ECS.Component.Hand;
 using ECS.Component.Player;
+using ECS.Component.SharedComponent;
 
 namespace ECS.EntityView.Hand
 {
@@ -10,5 +11,7 @@ namespace ECS.EntityView.Hand
 
         public IHandPieceComponent handPiece;
         public IPlayerComponent playerOwner;
+        public IHighlightComponent highlight;
+        public IChangeColorComponent changeColor;
     }
 }

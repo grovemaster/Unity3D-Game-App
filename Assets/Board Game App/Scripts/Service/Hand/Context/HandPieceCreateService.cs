@@ -6,7 +6,6 @@ using ECS.Implementor;
 using ECS.Implementor.Hand;
 using PrefabUtil;
 using Svelto.ECS;
-using UnityEngine;
 
 namespace Service.Hand.Context
 {

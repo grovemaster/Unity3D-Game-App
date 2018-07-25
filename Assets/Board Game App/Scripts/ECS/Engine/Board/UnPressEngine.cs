@@ -1,7 +1,9 @@
 ﻿using Data.Step.Board;
 using ECS.EntityView.Board.Tile;
+using ECS.EntityView.Hand;
 using ECS.EntityView.Piece;
 using Service.Board.Tile;
+using Service.Hand;
 using Service.Piece;
 using Svelto.ECS;
 
@@ -9,6 +11,8 @@ namespace ECS.Engine.Board
 {
     class UnPressEngine : IStep<BoardPressStepState>, IQueryingEntitiesEngine
     {
+        private HandService handService = new HandService();
+
         public IEntitiesDB entitiesDB { private get; set; }
 
         public void Ready()
@@ -18,6 +22,7 @@ namespace ECS.Engine.Board
         {
             UnPressPieces();
             UnPressTiles();
+            UnPressHandPieces();
         }
 
         private void UnPressPieces()
@@ -41,7 +46,20 @@ namespace ECS.Engine.Board
             {
                 if (tileEVs[i].highlight.IsPressed.value)
                 {
-                    tileEVs[i].highlight.IsPressed.value = false; // Will trigger a PiecePressEngine, but IsPressed check will stop it
+                    tileEVs[i].highlight.IsPressed.value = false; // Will trigger a TilePressEngine, but IsPressed check will stop it
+                }
+            }
+        }
+
+        private void UnPressHandPieces()
+        {
+            HandPieceEV[] handPieceEVs = handService.FindAllHandPieces(entitiesDB);
+
+            for (int i = 0; i < handPieceEVs.Length; ++i)
+            {
+                if (handPieceEVs[i].highlight.IsPressed.value)
+                {
+                    handPieceEVs[i].highlight.IsPressed.value = false; // Will trigger a HandPiecePressEngine, but IsPressed check will stop it
                 }
             }
         }

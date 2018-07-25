@@ -1,19 +1,23 @@
 ﻿using Data.Enum;
-using Data.Enum.Player;
 using Data.Step;
-using ECS.EntityView.Board.Tile;
+using Data.Step.Hand;
+using ECS.EntityView.Hand;
 using ECS.EntityView.Piece;
-using Service.Board.Tile;
-using Service.Highlight;
+using Service.Board.Tile.Highlight;
+using Service.Hand;
 using Service.Piece;
+using Service.Piece.Highlight;
 using Svelto.ECS;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace ECS.Engine.Piece
 {
-    class DeHighlightTeamPiecesEngine : IStep<PressStepState>, IQueryingEntitiesEngine
+    class DeHighlightTeamPiecesEngine : IStep<HandPiecePressStepState>, IStep<PressStepState>, IQueryingEntitiesEngine
     {
+        private HandService handService = new HandService();
+        private PieceHighlightService pieceHighlightService = new PieceHighlightService();
+        private TileHighlightService tileHighlightService = new TileHighlightService();
+
         public IEntitiesDB entitiesDB { private get; set; }
 
         public void Ready()
@@ -29,63 +33,43 @@ namespace ECS.Engine.Piece
             }
 
             PieceEV piece = PieceService.FindPieceEV(token.pieceEntityId, entitiesDB);
+            DeHighlightPlayerPiecesAndTiles(piece);
+            UnHighlightHandPieces();
+        }
 
-            List<PieceEV> alteredPieces = DeHighlightOtherPlayerPieces(
-                token.pieceEntityId, piece.playerOwner.PlayerColor);
+        public void Step(ref HandPiecePressStepState token, int condition)
+        {
+            HandPieceEV handPieceToChange = handService.FindHandPiece(token.handPieceEntityId, entitiesDB);
+
+            List<PieceEV> alteredPieces = pieceHighlightService.DeHighlightPlayerPieces(
+                handPieceToChange.playerOwner.PlayerColor, entitiesDB);
 
             if (alteredPieces.Count > 0)
             {
-                DeHighlightOtherTeamTilePieces(alteredPieces, piece.playerOwner.PlayerColor);
+                tileHighlightService.DeHighlightOtherTeamTilePieces(
+                    alteredPieces, handPieceToChange.playerOwner.PlayerColor, entitiesDB);
+            }
+
+            List<HandPieceEV> otherHandPieces = handService.FindAllTeamHandPiecesExcept(
+                token.handPieceEntityId, handPieceToChange.playerOwner.PlayerColor, entitiesDB);
+            handService.DeHighlightHandPieces(otherHandPieces, entitiesDB);
+        }
+
+        private void DeHighlightPlayerPiecesAndTiles(PieceEV pieceToNotChange)
+        {
+            List<PieceEV> alteredPieces = pieceHighlightService.DeHighlightOtherPlayerPieces(
+                pieceToNotChange.ID.entityID, pieceToNotChange.playerOwner.PlayerColor, entitiesDB);
+
+            if (alteredPieces.Count > 0)
+            {
+                tileHighlightService.DeHighlightOtherTeamTilePieces(
+                    alteredPieces, pieceToNotChange.playerOwner.PlayerColor, entitiesDB);
             }
         }
 
-        private List<PieceEV> DeHighlightOtherPlayerPieces(int pieceEntityId, PlayerColor pieceTeam)
+        private void UnHighlightHandPieces()
         {
-            List<PieceEV> pieces = PieceService.FindPiecesByTeam(pieceTeam, entitiesDB)
-                .Where(piece => piece.ID.entityID != pieceEntityId && piece.highlight.IsHighlighted).ToList();
-
-            foreach (PieceEV piece in pieces)
-            {
-                entitiesDB.ExecuteOnEntity(
-                    piece.ID,
-                    (ref PieceEV pieceToChange) =>
-                    {
-                        pieceToChange.highlight.IsHighlighted = false;
-                        pieceToChange.highlight.CurrentColorStates.Clear();
-                    });
-
-                piece.changeColorComponent.PlayChangeColor = true;
-            }
-
-            return pieces;
-        }
-
-        private void DeHighlightOtherTeamTilePieces(List<PieceEV> alteredPieces, PlayerColor pieceTeam)
-        {
-            HighlightState highlightStateToRemove = HighlightService.CalcClickHighlightState(pieceTeam);
-
-            // TODO Remove team highlights based on Team Color, not piece ref id
-            List<TileEV> tiles = TileService.FindAllTileEVs(entitiesDB)
-                .Where(tile => tile.highlight.IsHighlighted
-                && tile.highlight.CurrentColorStates.Contains(highlightStateToRemove)
-                ).ToList();
-
-            foreach (TileEV tile in tiles)
-            {
-                entitiesDB.ExecuteOnEntity(
-                    tile.ID,
-                    (ref TileEV tileToChange) =>
-                    {
-                        tileToChange.highlight.CurrentColorStates.Remove(highlightStateToRemove);
-
-                        if (!tileToChange.highlight.CurrentColorStates.Any())
-                        {
-                            tileToChange.highlight.IsHighlighted = false;
-                        }
-                    });
-
-                tile.changeColorComponent.PlayChangeColor = true;
-            }
+            handService.UnHighlightAllHandPieces(entitiesDB);
         }
     }
 }

@@ -1,15 +1,20 @@
-﻿using Data.Enum;
-using Data.Step.Piece.Move;
+﻿using Data.Step.Piece.Move;
 using ECS.EntityView.Board.Tile;
+using ECS.EntityView.Hand;
 using ECS.EntityView.Piece;
 using Service.Board.Tile;
+using Service.Hand;
 using Service.Piece;
 using Svelto.ECS;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace ECS.Engine.Board
 {
     class UnHighlightEngine : IStep<MovePieceStepState>, IQueryingEntitiesEngine
     {
+        private HandService handService = new HandService();
+
         public IEntitiesDB entitiesDB { private get; set; }
 
         public void Ready()
@@ -19,6 +24,7 @@ namespace ECS.Engine.Board
         {
             UnHighlightPieces();
             UnHighlightTiles();
+            UnHighlightHandPieces();
         }
 
         private void UnHighlightPieces()
@@ -37,7 +43,7 @@ namespace ECS.Engine.Board
                             pieceToChange.highlight.CurrentColorStates.Clear();
                         });
 
-                    pieceEVs[i].changeColorComponent.PlayChangeColor = true;
+                    pieceEVs[i].changeColor.PlayChangeColor = true;
                 }
             }
         }
@@ -59,6 +65,11 @@ namespace ECS.Engine.Board
 
                 tileEVs[i].changeColorComponent.PlayChangeColor = true;
             }
+        }
+
+        private void UnHighlightHandPieces()
+        {
+            handService.UnHighlightAllHandPieces(entitiesDB);
         }
     }
 }
