@@ -1,17 +1,15 @@
-﻿using Data.Step.Piece.Move;
+﻿using Data.Step.Drop;
+using Data.Step.Piece.Move;
 using ECS.EntityView.Board.Tile;
-using ECS.EntityView.Hand;
 using ECS.EntityView.Piece;
 using Service.Board.Tile;
 using Service.Hand;
 using Service.Piece;
 using Svelto.ECS;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace ECS.Engine.Board
 {
-    class UnHighlightEngine : IStep<MovePieceStepState>, IQueryingEntitiesEngine
+    class UnHighlightEngine : IStep<MovePieceStepState>, IStep<DropStepState>, IQueryingEntitiesEngine
     {
         private HandService handService = new HandService();
 
@@ -21,6 +19,16 @@ namespace ECS.Engine.Board
         { }
 
         public void Step(ref MovePieceStepState token, int condition)
+        {
+            UnHighlightObjects();
+        }
+
+        public void Step(ref DropStepState token, int condition)
+        {
+            UnHighlightObjects();
+        }
+
+        private void UnHighlightObjects()
         {
             UnHighlightPieces();
             UnHighlightTiles();

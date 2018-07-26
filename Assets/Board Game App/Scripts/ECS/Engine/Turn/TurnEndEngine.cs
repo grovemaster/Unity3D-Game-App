@@ -1,11 +1,12 @@
-﻿using Data.Step.Piece.Move;
+﻿using Data.Step.Drop;
+using Data.Step.Piece.Move;
 using Data.Step.Turn;
 using Service.Turn;
 using Svelto.ECS;
 
 namespace ECS.Engine.Turn
 {
-    class TurnEndEngine : IStep<MovePieceStepState>, IQueryingEntitiesEngine
+    class TurnEndEngine : IStep<MovePieceStepState>, IStep<DropStepState>, IQueryingEntitiesEngine
     {
         private Sequencer turnStartSequencer;
 
@@ -20,6 +21,16 @@ namespace ECS.Engine.Turn
         { }
 
         public void Step(ref MovePieceStepState token, int condition)
+        {
+            EndTurn();
+        }
+
+        public void Step(ref DropStepState token, int condition)
+        {
+            EndTurn();
+        }
+
+        private void EndTurn()
         {
             SwitchTurnPlayer();
 

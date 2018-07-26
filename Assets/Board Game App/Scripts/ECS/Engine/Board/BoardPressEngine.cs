@@ -1,11 +1,14 @@
 ﻿using Data.Enum;
 using Data.Step;
 using Data.Step.Board;
+using Data.Step.Drop;
 using Data.Step.Piece.Capture;
 using Data.Step.Piece.Move;
 using ECS.EntityView.Board.Tile;
+using ECS.EntityView.Hand;
 using ECS.EntityView.Piece;
 using ECS.EntityView.Turn;
+using Scripts.Data.Board;
 using Service.Board;
 using Service.Turn;
 using Svelto.ECS;
@@ -15,6 +18,8 @@ namespace ECS.Engine.Board
 {
     class BoardPressEngine : IStep<BoardPressStepState>, IQueryingEntitiesEngine
     {
+        private PieceTileService pieceTileService = new PieceTileService();
+
         private readonly ISequencer boardPressSequence;
 
         public IEntitiesDB entitiesDB { private get; set; }
@@ -31,15 +36,11 @@ namespace ECS.Engine.Board
         {
             ConstraintCheck(ref token);
 
-            PieceEV? pieceEV;
-            TileEV? tileEV;
-            PieceEV? pieceAtDestination;
-            PieceTileService.FindPieceTileEV(entitiesDB, ref token, out pieceEV, out tileEV, out pieceAtDestination);
-
+            BoardPressStateInfo stateInfo = pieceTileService.FindBoardPressStateInfo(entitiesDB, ref token);
             TurnEV currentTurn = TurnService.GetCurrentTurnEV(entitiesDB);
 
-            BoardPress action = BoardPressService.DecideAction(pieceEV, tileEV, pieceAtDestination, currentTurn);
-            ExecuteNextAction(action, pieceEV, tileEV, pieceAtDestination);
+            BoardPress action = BoardPressService.DecideAction(stateInfo, currentTurn);
+            ExecuteNextAction(action, stateInfo);
         }
 
         /// <exception cref="InvalidOperationException">Both token member variables are null/zero.</exception>
@@ -52,18 +53,22 @@ namespace ECS.Engine.Board
             }
         }
 
-        private void ExecuteNextAction(BoardPress action, PieceEV? pieceEV, TileEV? tileEV, PieceEV? pieceAtDestination)
+        private void ExecuteNextAction(BoardPress action, BoardPressStateInfo stateInfo)
         {
             switch(action)
             {
                 case BoardPress.CLICK_HIGHLIGHT:
-                    NextActionHighlight(pieceEV.Value);
+                    NextActionHighlight(stateInfo.piece.Value);
                     break;
                 case BoardPress.MOVE_PIECE:
-                    NextActionMovePiece(pieceEV.Value, tileEV.Value);
+                    NextActionMovePiece(stateInfo.piece.Value, stateInfo.tile.Value);
                     break;
                 case BoardPress.MOBILE_CAPTURE:
-                    NextActionMobileCapturePiece(pieceEV.Value, tileEV.Value, pieceAtDestination.Value);
+                    NextActionMobileCapturePiece(
+                        stateInfo.piece.Value, stateInfo.tile.Value, stateInfo.pieceAtDestination.Value);
+                    break;
+                case BoardPress.DROP:
+                    NextActionDropPiece(stateInfo.handPiece.Value, stateInfo.tile.Value);
                     break;
                 case BoardPress.NOTHING:
                     break;
@@ -107,6 +112,17 @@ namespace ECS.Engine.Board
             };
 
             boardPressSequence.Next(this, ref capturePieceInfo, (int)BoardPress.MOBILE_CAPTURE);
+        }
+
+        private void NextActionDropPiece(HandPieceEV handPiece, TileEV destinationTile)
+        {
+            var dropInfo = new DropStepState
+            {
+                handPiece = handPiece,
+                destinationTile = destinationTile
+            };
+
+            boardPressSequence.Next(this, ref dropInfo, (int)BoardPress.DROP);
         }
     }
 }

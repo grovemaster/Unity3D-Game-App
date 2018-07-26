@@ -2,12 +2,14 @@
 using Data.Enum.Player;
 using Data.Step;
 using Data.Step.Board;
+using Data.Step.Drop;
 using Data.Step.Hand;
 using Data.Step.Piece.Capture;
 using Data.Step.Piece.Move;
 using ECS.Engine.Board;
 using ECS.Engine.Board.Tile;
 using ECS.Engine.Board.Tile.Highlight;
+using ECS.Engine.Drop;
 using ECS.Engine.Hand;
 using ECS.Engine.Hand.Highlight;
 using ECS.Engine.Piece;
@@ -116,11 +118,15 @@ namespace ECS.Context
             var handPiecePressEngine = new HandPiecePressEngine(handPiecePressSequence);
             var handPieceHighlightEngine = new HandPieceHighlightEngine();
 
+            var dropEngine = new DropEngine();
+
             var pressStep = new IStep<BoardPressStepState>[] { unPressEngine, boardPressEngine };
             var movePieceStep = new IStep<MovePieceStepState>[]
                 { unHighlightEngine, movePieceEngine, movePieceCleanupEngine, turnEndEngine };
             var capturePieceStep = new IStep<CapturePieceStepState>[]
-            { mobileCapturePieceEngine, addPieceToHandEngine, gotoMovePieceEngine };
+                { mobileCapturePieceEngine, addPieceToHandEngine, gotoMovePieceEngine };
+            var dropStep = new IStep<DropStepState>[]
+                { dropEngine, unHighlightEngine, turnEndEngine };
 
             boardPressSequence.SetSequence(
                 new Steps
@@ -149,7 +155,9 @@ namespace ECS.Context
                             // Move piece
                             { (int)BoardPress.MOVE_PIECE, movePieceStep },
                             // Capture piece
-                            { (int)BoardPress.MOBILE_CAPTURE, capturePieceStep }
+                            { (int)BoardPress.MOBILE_CAPTURE, capturePieceStep },
+                            // Drop piece
+                            { (int)BoardPress.DROP, dropStep }
                         }
                     },
                     {   // Turn Start
@@ -205,6 +213,8 @@ namespace ECS.Context
 
             enginesRoot.AddEngine(handPiecePressEngine);
             enginesRoot.AddEngine(handPieceHighlightEngine);
+
+            enginesRoot.AddEngine(dropEngine);
         }
 
         private void SetupEntities() {

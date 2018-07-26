@@ -5,8 +5,10 @@ using Data.Piece;
 using Data.Piece.Front.Pawn;
 using ECS.EntityView.Piece;
 using Service.Common;
+using Service.Directions;
 using Svelto.ECS;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -32,7 +34,8 @@ namespace Service.Piece
 
         public static PieceEV[] FindAllBoardPieces(IEntitiesDB entitiesDB)
         {
-            return CommonService.FindAllEntities<PieceEV>(entitiesDB);
+            return CommonService.FindAllEntities<PieceEV>(entitiesDB)
+                .Where(piece => piece.location.Location != BoardConst.HAND_LOCATION).ToArray();
         }
 
         public static PieceEV? FindPieceEVById(int? entityId, IEntitiesDB entitiesDB)
@@ -69,13 +72,47 @@ namespace Service.Piece
                 .Where(piece => piece.playerOwner.PlayerColor == team).ToArray();
         }
 
+        public static PieceEV FindFirstPieceByLocationAndType(
+            Vector3 location, PieceType pieceType, IEntitiesDB entitiesDB)
+        {
+            List<PieceEV> piecesInHands = CommonService.FindAllEntities<PieceEV>(entitiesDB)
+                .Where(piece =>
+                    piece.location.Location == location
+                    && piece.piece.PieceType == pieceType
+                ).ToList();
+
+            if (piecesInHands.Count == 0)
+            {
+                throw new InvalidOperationException("There must exist a piece in hand of specified type");
+            }
+
+            return piecesInHands[0];
+        }
+
         public static void SetPieceLocationToHandLocation(PieceEV pieceEV, IEntitiesDB entitiesDB)
+        {
+            SetPieceLocation(pieceEV, BoardConst.HAND_LOCATION, entitiesDB);
+        }
+
+        public static void SetPieceLocation(PieceEV pieceEV, Vector3 location, IEntitiesDB entitiesDB)
         {
             entitiesDB.ExecuteOnEntity(
                 pieceEV.ID,
                 (ref PieceEV pieceToHand) =>
                 {
-                    pieceToHand.location.Location = BoardConst.HAND_LOCATION;
+                    pieceToHand.location.Location = location;
+                });
+        }
+
+        public static void SetPiecePlayerOwner(PieceEV pieceEV, PlayerColor playerOwner,  IEntitiesDB entitiesDB)
+        {
+            Direction newDirection = DirectionService.CalcDirection(playerOwner);
+            entitiesDB.ExecuteOnEntity(
+                pieceEV.ID,
+                (ref PieceEV pieceToHand) =>
+                {
+                    pieceToHand.playerOwner.PlayerColor = playerOwner;
+                    pieceToHand.piece.Direction = newDirection;
                 });
         }
     }

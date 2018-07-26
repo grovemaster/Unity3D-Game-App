@@ -65,6 +65,15 @@ namespace Service.Hand
             return CommonService.FindAllEntities<HandPieceEV>(entitiesDB);
         }
 
+        public HandPieceEV? FindHighlightedHandPiece(IEntitiesDB entitiesDB)
+        {
+            List<HandPieceEV> handPieces = FindAllHandPieces(entitiesDB)
+                .Where(hp => hp.highlight.IsHighlighted)
+                .ToList();
+
+            return handPieces.Count > 0 ? (HandPieceEV?)handPieces[0] : null;
+        }
+
         private void DeHighlightHandPiece(HandPieceEV handPiece, IEntitiesDB entitiesDB)
         {
             entitiesDB.ExecuteOnEntity(

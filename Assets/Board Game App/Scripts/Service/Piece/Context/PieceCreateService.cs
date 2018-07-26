@@ -5,6 +5,7 @@ using ECS.Implementor;
 using ECS.Implementor.Piece;
 using PrefabUtil;
 using Service.Common;
+using Service.Directions;
 using Svelto.ECS;
 using UnityEngine;
 
@@ -29,7 +30,7 @@ namespace Service.Piece.Context
             var pieceOwnerImpl = piece.GetComponent<PieceOwnerImpl>();
             entityFactory.BuildEntity<PieceED>(piece.GetInstanceID(), piece.GetComponents<IImplementor>());
 
-            pieceImpl.Direction = playerOwner == PlayerColor.BLACK ? Direction.UP : Direction.DOWN;
+            pieceImpl.Direction = DirectionService.CalcDirection(playerOwner);
             pieceOwnerImpl.PlayerColor = playerOwner;
 
             piece.transform.position = CommonService.CalcTransformPosition(fileNum, rankNum, 1);

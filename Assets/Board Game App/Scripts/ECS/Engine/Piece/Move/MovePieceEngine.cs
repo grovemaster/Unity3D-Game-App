@@ -1,5 +1,5 @@
 ﻿using Data.Step.Piece.Move;
-using ECS.EntityView.Piece;
+using Service.Piece;
 using Svelto.ECS;
 using UnityEngine;
 
@@ -19,9 +19,7 @@ namespace ECS.Engine.Piece.Move
                 token.destinationTile.location.Location.y,
                 token.pieceToMove.location.Location.z);
 
-            entitiesDB.ExecuteOnEntity(token.pieceToMove.ID,
-                (ref PieceEV pieceEV) => { pieceEV.location.Location = newLocation; } );
-
+            PieceService.SetPieceLocation(token.pieceToMove, newLocation, entitiesDB);
             token.pieceToMove.movePiece.NewLocation = newLocation;
         }
     }
