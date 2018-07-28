@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace ECS.Implementor.Visibility
 {
-    class VisibilityImpl : MonoBehaviour, IImplementor, IVisibility
+    class VisibilityImpl : MonoBehaviour, IImplementor, IVisibilityComponent
     {
         public DispatchOnSet<bool> IsVisible { get; set; }
 

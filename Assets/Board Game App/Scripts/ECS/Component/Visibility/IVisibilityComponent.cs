@@ -2,7 +2,7 @@
 
 namespace ECS.Component.Visibility
 {
-    public interface IVisibility : IComponent
+    public interface IVisibilityComponent : IComponent
     {
         DispatchOnSet<bool> IsVisible { get; set; }
     }
