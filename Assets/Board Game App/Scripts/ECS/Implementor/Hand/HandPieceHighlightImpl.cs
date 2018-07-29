@@ -4,12 +4,15 @@ using ECS.Component.SharedComponent;
 using Svelto.ECS;
 using System.Collections.Generic;
 using System.Linq;
+using UI.Modal;
 using UnityEngine;
 
 namespace ECS.Implementor.Hand
 {
     class HandPieceHighlightImpl : MonoBehaviour, IImplementor, IHighlightComponent, IChangeColorComponent
     {
+        private TrackIsModalOpen isModalOpen;
+
         public DispatchOnSet<bool> IsPressed { get; set; }
 
         public bool IsHighlighted { get; set; }
@@ -28,6 +31,8 @@ namespace ECS.Implementor.Hand
 
         void Awake()
         {
+            isModalOpen = FindObjectOfType<TrackIsModalOpen>();
+
             IsPressed = new DispatchOnSet<bool>(gameObject.GetInstanceID());
             IsHighlighted = false;
             CurrentColorStates = new HashSet<HighlightState>();
@@ -36,7 +41,10 @@ namespace ECS.Implementor.Hand
         void OnMouseDown()
         {
             Debug.Log("Hand Piece OnMouseDown");
-            IsPressed.value = true;
+            if (!isModalOpen.IsModalOpen)
+            {
+                IsPressed.value = true;
+            }
         }
 
         private void ChangeColor()

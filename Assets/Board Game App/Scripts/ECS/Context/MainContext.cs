@@ -1,4 +1,5 @@
-﻿using Data.Enum;
+﻿using System;
+using Data.Enum;
 using Data.Enum.Player;
 using Data.Step;
 using Data.Step.Board;
@@ -16,8 +17,10 @@ using ECS.Engine.Piece;
 using ECS.Engine.Piece.Capture;
 using ECS.Engine.Piece.Move;
 using ECS.Engine.Turn;
+using ECS.EntityDescriptor.Modal;
 using ECS.EntityDescriptor.Turn;
 using ECS.Implementor;
+using ECS.Implementor.Modal;
 using ECS.Implementor.Turn;
 using PrefabUtil;
 using Service.Board.Context;
@@ -222,6 +225,7 @@ namespace ECS.Context
             BuildTileEntities();
             BuildTurnEntity();
             BuildHandPieceEntities();
+            BuildModalEntity();
         }
 
         private void BuildPieceEntities()
@@ -273,6 +277,14 @@ namespace ECS.Context
             var handPieceCreateService = new HandPieceCreateService(entityFactory);
             handPieceCreateService.CreateHandPiece(PlayerColor.BLACK, PieceType.PAWN);
             handPieceCreateService.CreateHandPiece(PlayerColor.WHITE, PieceType.PAWN);
+        }
+
+        private void BuildModalEntity()
+        {
+            GameObject modalPanel = GameObject.Find("ModalPanel");
+
+            entityFactory.BuildEntity<ModalED>(modalPanel.GetInstanceID(), modalPanel.GetComponents<IImplementor>());
+            modalPanel.SetActive(false); // Temporary measure until we implement code to find non-active GameObjects
         }
     }
 }

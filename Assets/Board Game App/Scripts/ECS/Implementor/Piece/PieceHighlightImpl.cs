@@ -2,12 +2,15 @@
 using Data.Enum;
 using ECS.Component.SharedComponent;
 using Svelto.ECS;
+using UI.Modal;
 using UnityEngine;
 
 namespace ECS.Implementor.Piece
 {
     class PieceHighlightImpl : MonoBehaviour, IImplementor, IHighlightComponent, IChangeColorComponent
     {
+        private TrackIsModalOpen isModalOpen;
+
         public DispatchOnSet<bool> IsPressed { get; set; }
 
         public bool IsHighlighted { get; set; }
@@ -27,6 +30,8 @@ namespace ECS.Implementor.Piece
 
         void Awake()
         {
+            isModalOpen = FindObjectOfType<TrackIsModalOpen>();
+
             IsPressed = new DispatchOnSet<bool>(gameObject.GetInstanceID());
             IsHighlighted = false;
             CurrentColorStates = new HashSet<HighlightState>();
@@ -35,7 +40,10 @@ namespace ECS.Implementor.Piece
         void OnMouseDown()
         {
             Debug.Log("Pawn OnMouseDown");
-            IsPressed.value = true;
+            if (!isModalOpen.IsModalOpen)
+            {
+                IsPressed.value = true;
+            }
         }
 
         private void ChangeColor()
