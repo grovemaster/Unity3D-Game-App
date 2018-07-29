@@ -17,6 +17,6 @@ namespace ECS.EntityView.Piece
         public IHighlightComponent highlight;
         public IChangeColorComponent changeColor;
         public IPlayerComponent playerOwner;
-        public IVisibility visibility;
+        public IVisibilityComponent visibility;
     }
 }

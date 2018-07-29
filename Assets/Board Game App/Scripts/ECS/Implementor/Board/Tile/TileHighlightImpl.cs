@@ -3,16 +3,18 @@ using Data.Constants.ColorConst;
 using Data.Enum;
 using ECS.Component.SharedComponent;
 using Svelto.ECS;
+using UI.Modal;
 using UnityEngine;
 
 namespace ECS.Implementor.Board.Tile
 {
     class TileHighlightImpl : MonoBehaviour, IImplementor, IHighlightComponent, IChangeColorComponent
     {
+        private TrackIsModalOpen isModalOpen;
+
         public DispatchOnSet<bool> IsPressed { get; set; }
 
         public bool IsHighlighted { get; set; }
-
         public HashSet<HighlightState> CurrentColorStates { get; set; }
 
         public bool PlayChangeColor
@@ -28,6 +30,8 @@ namespace ECS.Implementor.Board.Tile
 
         void Awake()
         {
+            isModalOpen = FindObjectOfType<TrackIsModalOpen>();
+
             IsPressed = new DispatchOnSet<bool>(gameObject.GetInstanceID());
             IsHighlighted = false;
             CurrentColorStates = new HashSet<HighlightState>();
@@ -35,7 +39,10 @@ namespace ECS.Implementor.Board.Tile
 
         void OnMouseDown()
         {
-            IsPressed.value = true;
+            if (!isModalOpen.IsModalOpen)
+            {
+                IsPressed.value = true;
+            }
         }
 
         private void ChangeColor()
