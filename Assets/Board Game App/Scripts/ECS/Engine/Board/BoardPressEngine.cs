@@ -63,10 +63,6 @@ namespace ECS.Engine.Board
                 case BoardPress.MOVE_PIECE:
                     NextActionMovePiece(stateInfo.piece.Value, stateInfo.tile.Value);
                     break;
-                case BoardPress.MOBILE_CAPTURE:
-                    NextActionMobileCapturePiece(
-                        stateInfo.piece.Value, stateInfo.tile.Value, stateInfo.pieceAtDestination.Value);
-                    break;
                 case BoardPress.DROP:
                     NextActionDropPiece(stateInfo.handPiece.Value, stateInfo.tile.Value);
                     break;
@@ -99,19 +95,6 @@ namespace ECS.Engine.Board
             };
 
             boardPressSequence.Next(this, ref movePieceInfo, (int)BoardPress.MOVE_PIECE);
-        }
-
-        private void NextActionMobileCapturePiece(PieceEV pieceToMove, TileEV destinationTile, PieceEV pieceToCapture)
-        {
-            // TODO If the user clicks the piece, then the pieceToMove and pieceToCapture are both the pieceToCapture
-            var capturePieceInfo = new CapturePieceStepState
-            {
-                pieceToMove = pieceToMove,
-                destinationTile = destinationTile,
-                pieceToCapture = pieceToCapture
-            };
-
-            boardPressSequence.Next(this, ref capturePieceInfo, (int)BoardPress.MOBILE_CAPTURE);
         }
 
         private void NextActionDropPiece(HandPieceEV handPiece, TileEV destinationTile)

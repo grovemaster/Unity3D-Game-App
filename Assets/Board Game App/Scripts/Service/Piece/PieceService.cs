@@ -46,17 +46,19 @@ namespace Service.Piece
         }
 
         // TODO This will become a list once towers are enabled
-        public static PieceEV? FindPieceByLocation(Vector3 location, IEntitiesDB entitiesDB)
+        public static PieceEV? FindTopPieceByLocation(Vector3 location, IEntitiesDB entitiesDB)
         {
             PieceEV? returnValue = null;
 
             PieceEV[] pieces = FindAllBoardPieces(entitiesDB);
+            List<PieceEV> piecesAtLocation = new List<PieceEV>();
 
             for (int i = 0; i < pieces.Length; ++i)
             {
                 // Tile always on z=0, pieces always on z>=1
                 if (pieces[i].location.Location.x == location.x
-                    && pieces[i].location.Location.y == location.y)
+                    && pieces[i].location.Location.y == location.y
+                    && pieces[i].tier.TopOfTower)
                 {
                     returnValue = pieces[i];
                     break;
@@ -83,7 +85,7 @@ namespace Service.Piece
 
             if (piecesInHands.Count == 0)
             {
-                throw new InvalidOperationException("There must exist a piece in hand of specified type");
+                throw new InvalidOperationException("There must exist a piece at specified location of specified type");
             }
 
             return piecesInHands[0];
@@ -91,16 +93,18 @@ namespace Service.Piece
 
         public static void SetPieceLocationToHandLocation(PieceEV pieceEV, IEntitiesDB entitiesDB)
         {
-            SetPieceLocation(pieceEV, BoardConst.HAND_LOCATION, entitiesDB);
+            SetPieceLocationAndTier(pieceEV, BoardConst.HAND_LOCATION, 0, entitiesDB);
         }
 
-        public static void SetPieceLocation(PieceEV pieceEV, Vector3 location, IEntitiesDB entitiesDB)
+        public static void SetPieceLocationAndTier(PieceEV pieceEV, Vector3 location, int tier, IEntitiesDB entitiesDB)
         {
             entitiesDB.ExecuteOnEntity(
                 pieceEV.ID,
-                (ref PieceEV pieceToHand) =>
+                (ref PieceEV pieceToChange) =>
                 {
-                    pieceToHand.location.Location = location;
+                    pieceToChange.tier.TopOfTower = true;
+                    pieceToChange.tier.Tier = tier;
+                    pieceToChange.location.Location = location;
                 });
         }
 
@@ -109,10 +113,25 @@ namespace Service.Piece
             Direction newDirection = DirectionService.CalcDirection(playerOwner);
             entitiesDB.ExecuteOnEntity(
                 pieceEV.ID,
-                (ref PieceEV pieceToHand) =>
+                (ref PieceEV pieceToChange) =>
                 {
-                    pieceToHand.playerOwner.PlayerColor = playerOwner;
-                    pieceToHand.piece.Direction = newDirection;
+                    pieceToChange.playerOwner.PlayerColor = playerOwner;
+                    pieceToChange.piece.Direction = newDirection;
+                });
+        }
+
+        public static void SetTopOfTowerToFalse(PieceEV? pieceEV, IEntitiesDB entitiesDB)
+        {
+            if (!pieceEV.HasValue)
+            {
+                return;
+            }
+
+            entitiesDB.ExecuteOnEntity(
+                pieceEV.Value.ID,
+                (ref PieceEV pieceToChange) =>
+                {
+                    pieceToChange.tier.TopOfTower = false;
                 });
         }
     }

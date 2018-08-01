@@ -22,21 +22,13 @@ namespace Service.Board
             {
                 returnValue = BoardPress.DROP;
             }
-            // Tile is clicked, tile highlighted, piece reference exists
+            // Tile is clicked, tile highlighted, piece reference exists; move vs mobile capture determined in later engine
             else if (tileEV.highlight.IsHighlighted
                 && stateInfo.piece.HasValue
                 && tilePieceId != 0
                 && stateInfo.piece.Value.playerOwner.PlayerColor == currentTurn.TurnPlayer.PlayerColor)
             {
                 returnValue = BoardPress.MOVE_PIECE;
-
-                // If opponent piece in destination tile
-                // TODO Later on, differentiate by pieceToMove and destinationTileLocation to determine mobile vs immobile capture
-                if (stateInfo.pieceAtDestination.HasValue
-                    && stateInfo.pieceAtDestination.Value.playerOwner.PlayerColor != currentTurn.TurnPlayer.PlayerColor)
-                {
-                    returnValue = BoardPress.MOBILE_CAPTURE;
-                }
             }
             // NOT move scenario, Piece/Tile clicked, both piece and tile exist, piece reference does not exist
             else if (stateInfo.piece.HasValue && tilePieceId == 0)

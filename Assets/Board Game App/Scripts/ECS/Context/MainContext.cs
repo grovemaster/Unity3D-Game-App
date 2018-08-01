@@ -1,5 +1,6 @@
 ﻿using System;
 using Data.Enum;
+using Data.Enum.Move;
 using Data.Enum.Player;
 using Data.Step;
 using Data.Step.Board;
@@ -13,6 +14,7 @@ using ECS.Engine.Board.Tile.Highlight;
 using ECS.Engine.Drop;
 using ECS.Engine.Hand;
 using ECS.Engine.Hand.Highlight;
+using ECS.Engine.Move;
 using ECS.Engine.Piece;
 using ECS.Engine.Piece.Capture;
 using ECS.Engine.Piece.Move;
@@ -107,6 +109,8 @@ namespace ECS.Context
             var pieceHighlightEngine = new PieceHighlightEngine();
             var tileHighlightEngine = new TileHighlightEngine();
 
+            var determineMoveTypeEngine = new DetermineMoveTypeEngine(boardPressSequence);
+
             var unHighlightEngine = new UnHighlightEngine();
             var movePieceEngine = new MovePieceEngine();
             var movePieceCleanupEngine = new MovePieceCleanupEngine();
@@ -155,10 +159,9 @@ namespace ECS.Context
                             { (int)BoardPress.CLICK_HIGHLIGHT,
                                 new IStep<PressStepState>[]
                                 { deHighlightTeamPiecesEngine, pieceHighlightEngine, tileHighlightEngine } },
-                            // Move piece
-                            { (int)BoardPress.MOVE_PIECE, movePieceStep },
-                            // Capture piece
-                            { (int)BoardPress.MOBILE_CAPTURE, capturePieceStep },
+                            // Move piece or capture piece
+                            { (int)BoardPress.MOVE_PIECE,
+                                new IStep<MovePieceStepState>[] { determineMoveTypeEngine } },
                             // Drop piece
                             { (int)BoardPress.DROP, dropStep }
                         }
@@ -168,6 +171,14 @@ namespace ECS.Context
                         new To
                         {
                             highlightAllDestinationTilesEngine
+                        }
+                    },
+                    {
+                        determineMoveTypeEngine,
+                        new To
+                        {
+                            { (int)MoveState.MOVE_PIECE, movePieceStep },
+                            { (int)MoveState.MOBILE_CAPTURE, capturePieceStep }
                         }
                     },
                     {
@@ -202,6 +213,8 @@ namespace ECS.Context
             enginesRoot.AddEngine(deHighlightTeamPiecesEngine);
             enginesRoot.AddEngine(pieceHighlightEngine);
             enginesRoot.AddEngine(tileHighlightEngine);
+
+            enginesRoot.AddEngine(determineMoveTypeEngine);
 
             enginesRoot.AddEngine(unHighlightEngine);
             enginesRoot.AddEngine(movePieceEngine);

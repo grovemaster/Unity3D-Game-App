@@ -35,7 +35,7 @@ namespace ECS.Engine.Drop
                 destinationTile.location.Location.y,
                 1);
 
-            PieceService.SetPieceLocation(pieceToDrop, location, entitiesDB);
+            PieceService.SetPieceLocationAndTier(pieceToDrop, location, 1, entitiesDB);
             PieceService.SetPiecePlayerOwner(pieceToDrop, playerOwner, entitiesDB);
             pieceToDrop.movePiece.NewLocation = location;
             pieceToDrop.visibility.IsVisible.value = true;
