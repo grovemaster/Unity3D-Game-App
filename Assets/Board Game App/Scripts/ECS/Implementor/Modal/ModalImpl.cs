@@ -1,5 +1,6 @@
 ﻿using Data.Enum.Modal;
 using ECS.Component.Modal;
+using Svelto.ECS;
 using System;
 using UI.Modal;
 using UnityEngine;
@@ -8,7 +9,7 @@ using View.Modal;
 
 namespace ECS.Implementor.Modal
 {
-    class ModalImpl : MonoBehaviour, IImplementor, IModalTypeComponent
+    class ModalImpl : MonoBehaviour, IImplementor, IModalTypeComponent, IAnswerComponent
     {
         public GameObject Overlay;                // Need overlay to hide/show modal, since it contains modal
         private TrackIsModalOpen isModalOpen;
@@ -34,10 +35,12 @@ namespace ECS.Implementor.Modal
         private ModalViewService modalViewService;
 
         public ModalType Type { get; set; }
+        public DispatchOnSet<int> Answer { get; set; }
 
         void Awake()
         {
             modalViewService = new ModalViewService(ClosePanel);
+            Answer = new DispatchOnSet<int>();
         }
 
         void Start()
@@ -54,6 +57,8 @@ namespace ECS.Implementor.Modal
             visibility.Cancel.NotifyOnValueSet(CancelModal);
 
             CancelButton.onClick.AddListener(CancelModal);
+
+            ClosePanel();
         }
 
         private void OnVisibilityChanged(int id, bool isVisible)
@@ -89,13 +94,13 @@ namespace ECS.Implementor.Modal
                     SetTitle();
                     SetQuestion();
                     modalViewService.DeactivateButton(Button1);
-                    modalViewService.SetupButton(Button2, tier1Option);
-                    modalViewService.SetupButton(Button3, tier2Option);
+                    modalViewService.SetupButton(Button2, tier1Option, Answer);
+                    modalViewService.SetupButton(Button3, tier2Option, Answer);
                     break;
                 case ModalType.TOWER_3RD_TIER:
-                    modalViewService.SetupButton(Button1, tier1Option);
-                    modalViewService.SetupButton(Button2, tier2Option);
-                    modalViewService.SetupButton(Button3, tier3Option);
+                    modalViewService.SetupButton(Button1, tier1Option, Answer);
+                    modalViewService.SetupButton(Button2, tier2Option, Answer);
+                    modalViewService.SetupButton(Button3, tier3Option, Answer);
                     break;
                 case ModalType.CAPTURE_STACK:
                     SetTitle("Capture Or Stack");
@@ -124,12 +129,20 @@ namespace ECS.Implementor.Modal
 
         private void ActivateModal()
         {
-            Overlay.SetActive(true);  //Activate the Panel; its default is "off" in the Inspector
+            //Overlay.SetActive(true);  //Activate the Panel; its default is "off" in the Inspector
+            // Place Overlay, with Modal Panel, in view of camera
+            RectTransform overlayRect = Overlay.GetComponent<RectTransform>();
+            overlayRect.offsetMin = new Vector2(0, overlayRect.offsetMin.y);
+            overlayRect.offsetMax = new Vector2(0, overlayRect.offsetMax.y);
         }
 
         private void ClosePanel()
         {
-            Overlay.SetActive(false); //Close the Modal Dialog
+            //Overlay.SetActive(false); //Close the Modal Dialog
+            // Place Overlay, with Modal Panel, away from view of camera
+            RectTransform overlayRect = Overlay.GetComponent<RectTransform>();
+            overlayRect.offsetMin = new Vector2(-400f, overlayRect.offsetMin.y);
+            overlayRect.offsetMax = new Vector2(-400f, overlayRect.offsetMax.y);
             isModalOpen.IsModalOpen = false;
         }
     }

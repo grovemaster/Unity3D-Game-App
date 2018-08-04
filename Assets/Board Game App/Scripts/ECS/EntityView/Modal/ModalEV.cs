@@ -13,6 +13,7 @@ namespace ECS.EntityView.Modal
         public ITier2OptionComponent tier2;
         public ITier3OptionComponent tier3;
         public ICaptureOrStackComponent captureOrStack;
+        public IAnswerComponent answer;
         public ICancelComponent cancel;
         public IVisibilityComponent visibility;
     }

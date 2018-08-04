@@ -1,18 +1,22 @@
 ﻿using Data.Enum;
+using Data.Enum.Player;
 using Data.Step;
 using Data.Step.Hand;
+using Data.Step.Modal;
 using ECS.EntityView.Hand;
 using ECS.EntityView.Piece;
 using Service.Board.Tile.Highlight;
 using Service.Hand;
 using Service.Piece;
 using Service.Piece.Highlight;
+using Service.Turn;
 using Svelto.ECS;
 using System.Collections.Generic;
 
 namespace ECS.Engine.Piece
 {
-    class DeHighlightTeamPiecesEngine : IStep<HandPiecePressStepState>, IStep<PressStepState>, IQueryingEntitiesEngine
+    class DeHighlightTeamPiecesEngine :
+        IStep<HandPiecePressStepState>, IStep<PressStepState>, IStep<CancelModalStepState>, IQueryingEntitiesEngine
     {
         private HandService handService = new HandService();
         private PieceHighlightService pieceHighlightService = new PieceHighlightService();
@@ -53,6 +57,15 @@ namespace ECS.Engine.Piece
             List<HandPieceEV> otherHandPieces = handService.FindAllTeamHandPiecesExcept(
                 token.handPieceEntityId, handPieceToChange.playerOwner.PlayerColor, entitiesDB);
             handService.DeHighlightHandPieces(otherHandPieces, entitiesDB);
+        }
+
+        public void Step(ref CancelModalStepState token, int condition)
+        {
+            PlayerColor turnPlayer = TurnService.GetCurrentTurnEV(entitiesDB).TurnPlayer.PlayerColor;
+
+            List<PieceEV> alteredPieces = pieceHighlightService.DeHighlightPlayerPieces(turnPlayer, entitiesDB);
+            tileHighlightService.DeHighlightOtherTeamTilePieces(alteredPieces, turnPlayer, entitiesDB);
+            UnHighlightHandPieces();
         }
 
         private void DeHighlightPlayerPiecesAndTiles(PieceEV pieceToNotChange)

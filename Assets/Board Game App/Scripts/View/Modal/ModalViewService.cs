@@ -1,5 +1,6 @@
 ﻿using Data.Enum.Modal;
 using ECS.Component.Modal;
+using Svelto.ECS;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
@@ -14,14 +15,14 @@ namespace View.Modal
             this.closePanel = closePanel;
         }
 
-        public void SetupButton(Button button, ITowerOptionBase config)
+        public void SetupButton(Button button, ITowerOptionBase config, DispatchOnSet<int> answer)
         {
             DeactivateButton(button); // Reset button first
 
             button.onClick.AddListener(delegate()
             {
                 // Trigger confirmation that clicked item was referenced piece id (engine will pick it up)
-                config.Answer.value = config.ReferencedPieceId;
+                answer.value = config.ReferencedPieceId;
             });
             button.onClick.AddListener(closePanel);
             button.GetComponentInChildren<Text>().text = config.Name;

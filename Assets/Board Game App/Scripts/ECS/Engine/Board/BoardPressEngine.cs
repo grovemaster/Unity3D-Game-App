@@ -1,8 +1,7 @@
 ﻿using Data.Enum;
-using Data.Step;
 using Data.Step.Board;
 using Data.Step.Drop;
-using Data.Step.Piece.Capture;
+using Data.Step.Piece.Click;
 using Data.Step.Piece.Move;
 using ECS.EntityView.Board.Tile;
 using ECS.EntityView.Hand;
@@ -76,14 +75,12 @@ namespace ECS.Engine.Board
         private void NextActionHighlight(PieceEV pieceEV)
         {
             // Give desired state, up to later engines to make changes accordingly
-            var pressState = new PressStepState
+            var clickPieceStepState = new ClickPieceStepState
             {
-                pieceEntityId = pieceEV.ID.entityID,
-                piecePressState = pieceEV.highlight.IsHighlighted ? PiecePressState.UNCLICKED : PiecePressState.CLICKED,
-                affectedTiles = DestinationTileService.CalcDestinationTileLocations(pieceEV.ID.entityID, entitiesDB)
+                clickedPiece = pieceEV
             };
 
-            boardPressSequence.Next(this, ref pressState, (int)BoardPress.CLICK_HIGHLIGHT);
+            boardPressSequence.Next(this, ref clickPieceStepState, (int)BoardPress.CLICK_HIGHLIGHT);
         }
 
         private void NextActionMovePiece(PieceEV pieceEV, TileEV tileEV)

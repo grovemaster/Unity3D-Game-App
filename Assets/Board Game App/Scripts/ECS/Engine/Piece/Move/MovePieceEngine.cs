@@ -2,6 +2,7 @@
 using ECS.EntityView.Piece;
 using Service.Piece;
 using Svelto.ECS;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace ECS.Engine.Piece.Move
@@ -15,6 +16,9 @@ namespace ECS.Engine.Piece.Move
 
         public void Step(ref MovePieceStepState token, int condition)
         {
+            // TODO Find top piece at PREVIOUS location and set topOfTower = true
+            Vector3 previousLocation = token.pieceToMove.location.Location;
+
             PieceEV? topPieceCurrentlyAtDestination = PieceService.FindTopPieceByLocation(
                 token.destinationTile.location.Location, entitiesDB);
             PieceService.SetTopOfTowerToFalse(topPieceCurrentlyAtDestination, entitiesDB);
@@ -31,6 +35,15 @@ namespace ECS.Engine.Piece.Move
 
             PieceService.SetPieceLocationAndTier(token.pieceToMove, newLocation, newTier, entitiesDB);
             token.pieceToMove.movePiece.NewLocation = newLocation;
+
+            List<PieceEV> piecesPreviousLocation = PieceService.FindPiecesByLocation(
+                previousLocation, entitiesDB);
+
+            if (piecesPreviousLocation.Count > 0)
+            {
+                PieceService.SetTopOfTower(
+                    piecesPreviousLocation[piecesPreviousLocation.Count - 1], entitiesDB);
+            }
         }
     }
 }

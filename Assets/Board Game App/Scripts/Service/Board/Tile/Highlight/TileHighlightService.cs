@@ -28,6 +28,7 @@ namespace Service.Board.Tile.Highlight
                     (ref TileEV tileToChange) =>
                     {
                         tileToChange.highlight.CurrentColorStates.Remove(highlightStateToRemove);
+                        tileToChange.tile.PieceRefEntityId = null;
 
                         if (!tileToChange.highlight.CurrentColorStates.Any())
                         {

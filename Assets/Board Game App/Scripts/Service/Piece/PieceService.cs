@@ -68,6 +68,30 @@ namespace Service.Piece
             return returnValue;
         }
 
+        public static List<PieceEV> FindPiecesByLocation(Vector3 location, IEntitiesDB entitiesDB)
+        {
+            List<PieceEV> returnValue = new List<PieceEV>();
+
+
+            PieceEV[] pieces = FindAllBoardPieces(entitiesDB);
+            List<PieceEV> piecesAtLocation = new List<PieceEV>();
+
+            for (int i = 0; i < pieces.Length; ++i)
+            {
+                // Tile always on z=0, pieces always on z>=1
+                if (pieces[i].location.Location.x == location.x
+                    && pieces[i].location.Location.y == location.y)
+                {
+                    returnValue.Add(pieces[i]);
+                }
+            }
+
+            returnValue.Sort(delegate (PieceEV p1, PieceEV p2)
+            { return p1.tier.Tier.CompareTo(p2.tier.Tier); });
+
+            return returnValue;
+        }
+
         public static PieceEV[] FindPiecesByTeam(PlayerColor team, IEntitiesDB entitiesDB)
         {
             return FindAllBoardPieces(entitiesDB)
@@ -105,6 +129,16 @@ namespace Service.Piece
                     pieceToChange.tier.TopOfTower = true;
                     pieceToChange.tier.Tier = tier;
                     pieceToChange.location.Location = location;
+                });
+        }
+
+        public static void SetTopOfTower(PieceEV pieceEV, IEntitiesDB entitiesDB, bool topOfTower = true)
+        {
+            entitiesDB.ExecuteOnEntity(
+                pieceEV.ID,
+                (ref PieceEV pieceToChange) =>
+                {
+                    pieceToChange.tier.TopOfTower = topOfTower;
                 });
         }
 

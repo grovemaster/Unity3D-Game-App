@@ -1,5 +1,6 @@
 ﻿using System;
 using Data.Enum;
+using Data.Enum.Click;
 using Data.Enum.Move;
 using Data.Enum.Player;
 using Data.Step;
@@ -7,6 +8,7 @@ using Data.Step.Board;
 using Data.Step.Drop;
 using Data.Step.Hand;
 using Data.Step.Piece.Capture;
+using Data.Step.Piece.Click;
 using Data.Step.Piece.Move;
 using ECS.Engine.Board;
 using ECS.Engine.Board.Tile;
@@ -14,15 +16,16 @@ using ECS.Engine.Board.Tile.Highlight;
 using ECS.Engine.Drop;
 using ECS.Engine.Hand;
 using ECS.Engine.Hand.Highlight;
+using ECS.Engine.Modal;
 using ECS.Engine.Move;
 using ECS.Engine.Piece;
 using ECS.Engine.Piece.Capture;
+using ECS.Engine.Piece.Click;
 using ECS.Engine.Piece.Move;
 using ECS.Engine.Turn;
 using ECS.EntityDescriptor.Modal;
 using ECS.EntityDescriptor.Turn;
 using ECS.Implementor;
-using ECS.Implementor.Modal;
 using ECS.Implementor.Turn;
 using PrefabUtil;
 using Service.Board.Context;
@@ -100,6 +103,8 @@ namespace ECS.Context
             //...Then what is the common way to communicate between engines?  Querying entities?
             Sequencer boardPressSequence = new Sequencer();
             Sequencer handPiecePressSequence = new Sequencer();
+            Sequencer cancelModalSequence = new Sequencer();
+            Sequencer towerModalAnswerSequence = new Sequencer();
 
             var piecePressEngine = new PiecePressEngine(boardPressSequence);
             var tilePressEngine = new TilePressEngine(boardPressSequence);
@@ -127,7 +132,14 @@ namespace ECS.Context
 
             var dropEngine = new DropEngine();
 
+            var determineClickTypeEngine = new DetermineClickTypeEngine(boardPressSequence);
+            var towerModalEngine = new TowerModalEngine();
+            var cancelModalEngine = new CancelModalEngine(cancelModalSequence);
+            var towerModalAnswerEngine = new TowerModalAnswerEngine(towerModalAnswerSequence);
+
             var pressStep = new IStep<BoardPressStepState>[] { unPressEngine, boardPressEngine };
+            var clickStep = new IStep<PressStepState>[]
+                                { deHighlightTeamPiecesEngine, pieceHighlightEngine, tileHighlightEngine };
             var movePieceStep = new IStep<MovePieceStepState>[]
                 { unHighlightEngine, movePieceEngine, movePieceCleanupEngine, turnEndEngine };
             var capturePieceStep = new IStep<CapturePieceStepState>[]
@@ -156,14 +168,20 @@ namespace ECS.Context
                         boardPressEngine,
                         new To
                         {   // Highlight piece and tile(s)
-                            { (int)BoardPress.CLICK_HIGHLIGHT,
-                                new IStep<PressStepState>[]
-                                { deHighlightTeamPiecesEngine, pieceHighlightEngine, tileHighlightEngine } },
+                            { (int)BoardPress.CLICK_HIGHLIGHT, new IStep<ClickPieceStepState>[] { determineClickTypeEngine } },
                             // Move piece or capture piece
                             { (int)BoardPress.MOVE_PIECE,
                                 new IStep<MovePieceStepState>[] { determineMoveTypeEngine } },
                             // Drop piece
                             { (int)BoardPress.DROP, dropStep }
+                        }
+                    },
+                    {
+                        determineClickTypeEngine,
+                        new To
+                        {
+                            { (int)ClickState.CLICK_HIGHLIGHT, clickStep },
+                            { (int)ClickState.TOWER_MODAL, new IStep<ClickPieceStepState>[] { towerModalEngine } }
                         }
                     },
                     {   // Turn Start
@@ -206,6 +224,32 @@ namespace ECS.Context
                 }
                 );
 
+            cancelModalSequence.SetSequence(
+                new Steps
+                {
+                    {
+                        cancelModalEngine,
+                        new To
+                        {
+                            deHighlightTeamPiecesEngine
+                        }
+                    }
+                }
+                );
+
+            towerModalAnswerSequence.SetSequence(
+                new Steps
+                {
+                    {
+                        towerModalAnswerEngine,
+                        new To
+                        {
+                            clickStep
+                        }
+                    }
+                }
+                );
+
             enginesRoot.AddEngine(piecePressEngine);
             enginesRoot.AddEngine(tilePressEngine);
             enginesRoot.AddEngine(unPressEngine);
@@ -231,6 +275,11 @@ namespace ECS.Context
             enginesRoot.AddEngine(handPieceHighlightEngine);
 
             enginesRoot.AddEngine(dropEngine);
+
+            enginesRoot.AddEngine(determineClickTypeEngine);
+            enginesRoot.AddEngine(towerModalEngine);
+            enginesRoot.AddEngine(cancelModalEngine);
+            enginesRoot.AddEngine(towerModalAnswerEngine);
         }
 
         private void SetupEntities() {
@@ -262,6 +311,7 @@ namespace ECS.Context
             //var initializer = entityFactory.BuildEntity<PieceED>(pawn.GetInstanceID(), pawn.GetComponents<IImplementor>());
             var pieceCreateService = new PieceCreateService(entityFactory);
             pieceCreateService.CreatePiece(PlayerColor.BLACK, 0, 0);
+            pieceCreateService.CreatePiece(PlayerColor.BLACK, 0, 1);
             pieceCreateService.CreatePiece(PlayerColor.BLACK, 2, 1);
             pieceCreateService.CreatePiece(PlayerColor.BLACK, 4, 2);
             pieceCreateService.CreatePiece(PlayerColor.WHITE, 1, 8);
@@ -297,7 +347,6 @@ namespace ECS.Context
             GameObject modalPanel = GameObject.Find("ModalPanel");
 
             entityFactory.BuildEntity<ModalED>(modalPanel.GetInstanceID(), modalPanel.GetComponents<IImplementor>());
-            modalPanel.SetActive(false); // Temporary measure until we implement code to find non-active GameObjects
         }
     }
 }
