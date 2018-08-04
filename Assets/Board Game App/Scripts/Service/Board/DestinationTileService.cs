@@ -1,4 +1,5 @@
-﻿using ECS.EntityView.Piece;
+﻿using Data.Enum.Player;
+using ECS.EntityView.Piece;
 using Service.Piece;
 using Svelto.ECS;
 using System;
@@ -47,8 +48,9 @@ namespace Service.Board
         {
             List<Vector3> returnValue = GetRawSingleDestinationLocations(pieceEV);
             AdjustRawDataWithPieceLocationAndDirection(pieceEV, returnValue);
+            ExcludeDestinationsWithFriendlyTier3Tower(pieceEV, returnValue, allPieces);
             // Do NOT allow destinations other pieces in the way
-            ExcludePiecesInWayOfHop(pieceEV, returnValue, allPieces);
+            ExcludeDestinationsWithObstructingPieces(pieceEV, returnValue, allPieces);
 
             return returnValue;
         }
@@ -73,11 +75,48 @@ namespace Service.Board
         }
 
         /**
+         * If destination contains a tier 3 tower with a friendly piece on top,
+         * then that tile is not a valid destination tile.
+         */
+        private static void ExcludeDestinationsWithFriendlyTier3Tower(
+            PieceEV pieceToCalc, List<Vector3> destinations, List<PieceEV> allPieces)
+        {
+            List<Vector3> destinationsToRemove = new List<Vector3>();
+
+            foreach (Vector3 destination in destinations)
+            {
+                if (HasFriendlyTier3Tower(pieceToCalc, destination, allPieces))
+                {
+                    destinationsToRemove.Add(destination);
+                }
+            }
+
+            foreach (Vector3 removeDestination in destinationsToRemove)
+            {
+                destinations.Remove(removeDestination);
+            }
+        }
+
+        private static bool HasFriendlyTier3Tower(
+            PieceEV pieceToCalc, Vector2 destination, List<PieceEV> allPieces)
+        {
+            PlayerColor friendlyColor = pieceToCalc.playerOwner.PlayerColor;
+
+            int numPiecesBarringPath = allPieces.Where(piece =>
+                piece.tier.Tier == 3
+                && piece.playerOwner.PlayerColor == friendlyColor
+                && destination.x == piece.location.Location.x
+                && destination.y == piece.location.Location.y).Count();
+
+            return numPiecesBarringPath > 0;
+        }
+
+        /**
          * Potentially modify param destinations, by removing locations with piece(s) in the way
          * 
          * Some destinations are in different rank AND file as pieceToCalc's current location
          */
-        private static void ExcludePiecesInWayOfHop(
+        private static void ExcludeDestinationsWithObstructingPieces(
             PieceEV pieceToCalc, List<Vector3> destinations, List<PieceEV> allPieces)
         {
             List<Vector3> destinationsToRemove = new List<Vector3>();

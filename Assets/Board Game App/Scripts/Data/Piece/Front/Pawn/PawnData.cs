@@ -10,7 +10,7 @@ namespace Data.Piece.Front.Pawn
         static PawnData()
         {
             tiers = new List<IMoveSet>(new IMoveSet[]
-            { new PawnMoveSetTier1st(), new PawnMoveSetTier2nd() });
+            { new PawnMoveSetTier1st(), new PawnMoveSetTier2nd(), new PawnMoveSetTier3rd() });
         }
 
         public PieceType TypeOfPiece()

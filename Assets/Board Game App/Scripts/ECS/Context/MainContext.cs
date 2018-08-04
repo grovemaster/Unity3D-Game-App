@@ -312,11 +312,14 @@ namespace ECS.Context
             var pieceCreateService = new PieceCreateService(entityFactory);
             pieceCreateService.CreatePiece(PlayerColor.BLACK, 0, 0);
             pieceCreateService.CreatePiece(PlayerColor.BLACK, 0, 1);
+            pieceCreateService.CreatePiece(PlayerColor.BLACK, 0, 2);
+            pieceCreateService.CreatePiece(PlayerColor.BLACK, 0, 3);
             pieceCreateService.CreatePiece(PlayerColor.BLACK, 2, 1);
             pieceCreateService.CreatePiece(PlayerColor.BLACK, 4, 2);
             pieceCreateService.CreatePiece(PlayerColor.WHITE, 1, 8);
             pieceCreateService.CreatePiece(PlayerColor.WHITE, 3, 7);
             pieceCreateService.CreatePiece(PlayerColor.WHITE, 4, 6);
+            pieceCreateService.CreatePiece(PlayerColor.WHITE, 4, 7);
         }
 
         private void BuildTileEntities()

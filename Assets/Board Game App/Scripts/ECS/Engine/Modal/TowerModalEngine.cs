@@ -47,7 +47,7 @@ namespace ECS.Engine.Modal
             ModalType modalType = CalcModalType(piecesAtLocation);
 
             SetModalType(modal, modalType);
-            SetTierOptions(modal, piecesAtLocation);
+            SetTierOptions(modal, modalType, piecesAtLocation);
         }
 
         private ModalType CalcModalType(List<PieceEV> piecesAtLocation)
@@ -65,7 +65,7 @@ namespace ECS.Engine.Modal
 
         private void SetModalType(ModalEV modal, ModalType modalType)
         {
-            entitiesDB.ExecuteOnEntity<ModalEV>(
+            entitiesDB.ExecuteOnEntity(
                 modal.ID,
                 (ref ModalEV modalToChange) =>
                 {
@@ -73,12 +73,13 @@ namespace ECS.Engine.Modal
                 });
         }
 
-        private void SetTierOptions(ModalEV modal, List<PieceEV> piecesAtLocation)
+        private void SetTierOptions(ModalEV modal, ModalType modalType, List<PieceEV> piecesAtLocation)
         {
             PieceEV pieceTier1 = piecesAtLocation[0];
             PieceEV pieceTier2 = piecesAtLocation[1];
+            PieceEV? pieceTier3 = modalType == ModalType.TOWER_3RD_TIER ? (PieceEV?)piecesAtLocation[2] : null;
 
-            entitiesDB.ExecuteOnEntity<ModalEV>(
+            entitiesDB.ExecuteOnEntity(
                 modal.ID,
                 (ref ModalEV modalToChange) =>
                 {
@@ -89,6 +90,13 @@ namespace ECS.Engine.Modal
                     modalToChange.tier2.Enabled = pieceTier2.tier.TopOfTower;
                     modalToChange.tier2.Name = CalcButtonText(pieceTier2);
                     modalToChange.tier2.ReferencedPieceId = pieceTier2.ID.entityID;
+
+                    if (pieceTier3.HasValue)
+                    {
+                        modalToChange.tier3.Enabled = pieceTier3.Value.tier.TopOfTower;
+                        modalToChange.tier3.Name = CalcButtonText(pieceTier3.Value);
+                        modalToChange.tier3.ReferencedPieceId = pieceTier3.Value.ID.entityID;
+                    }
                 });
         }
     }
