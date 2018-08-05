@@ -70,7 +70,7 @@ namespace ECS.Implementor.Piece
             }
             else // HighlightState.DEFAULT or nothing
             {
-                sprite.color = PlayerColor == PlayerColor.BLACK ? ColorConst.VeryLightRed : ColorConst.VeryLightGray;
+                sprite.color = PlayerColor == PlayerColor.BLACK ? ColorConst.LightRed : ColorConst.VeryLightRed;
             }
         }
     }
