@@ -8,9 +8,9 @@ namespace ECS.Implementor.Piece
 {
     class PieceLocationMoveImpl : MonoBehaviour, IImplementor, IMovePieceComponent, ILocationComponent, ITowerTierComponent
     {
-        public Vector3 Location { get; set; }
+        public Vector2 Location { get; set; }
 
-        public Vector3 NewLocation
+        public Vector2 NewLocation
         {
             set
             {
@@ -29,7 +29,7 @@ namespace ECS.Implementor.Piece
             Tier = 1;
         }
 
-        private void SetNewLocation(Vector3 newLocation)
+        private void SetNewLocation(Vector2 newLocation)
         {
             gameObject.transform.position = new Vector3(
                 BoardConst.TOP_LEFT_CORNER.x + BoardConst.TILE_SIZE * newLocation.x + (BoardConst.TOWER_OFFSET.x * (Tier - 1)),

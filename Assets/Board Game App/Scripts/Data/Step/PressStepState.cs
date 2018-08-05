@@ -8,6 +8,6 @@ namespace Data.Step
     {
         public int pieceEntityId;
         public PiecePressState piecePressState;
-        public List<Vector3> affectedTiles;
+        public List<Vector2> affectedTiles;
     }
 }

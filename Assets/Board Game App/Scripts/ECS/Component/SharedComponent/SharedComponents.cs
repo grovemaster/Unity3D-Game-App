@@ -7,7 +7,7 @@ namespace ECS.Component.SharedComponent
 {
     public interface ILocationComponent : IComponent
     {
-        Vector3 Location { get; set; }
+        Vector2 Location { get; set; }
     }
 
     public interface IHighlightComponent : IComponent

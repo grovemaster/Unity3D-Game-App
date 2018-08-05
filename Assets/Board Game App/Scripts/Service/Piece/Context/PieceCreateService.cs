@@ -32,8 +32,9 @@ namespace Service.Piece.Context
             pieceImpl.Direction = DirectionService.CalcDirection(playerOwner);
             pieceHighlightOwnerImpl.PlayerColor = playerOwner;
 
-            piece.transform.position = CommonService.CalcTransformPosition(fileNum, rankNum, 1);
-            pieceLocationMoveImpl.Location = new Vector3(fileNum, rankNum, 1);
+            Vector2 location = CommonService.CalcTransformPosition(fileNum, rankNum);
+            piece.transform.position = new Vector3(location.x, location.y, 1);
+            pieceLocationMoveImpl.Location = new Vector2(fileNum, rankNum);
             pieceHighlightOwnerImpl.PlayChangeColor = true;
         }
     }

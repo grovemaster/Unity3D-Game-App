@@ -5,55 +5,55 @@ namespace Data.Piece.Back.Gold
 {
     class GoldMoveSetTier1st : IMoveSet
     {
-        private static readonly List<Vector3> single = new List<Vector3>(new Vector3[]
+        private static readonly List<Vector2> single = new List<Vector2>(new Vector2[]
         {
-            new Vector3(0, 1, 1),
-            new Vector3(1, 1, 1),
-            new Vector3(1, 0, 1),
-            new Vector3(0, -1, 1),
-            new Vector3(-1, 0, 1),
-            new Vector3(-1, 1, 1)
+            new Vector2(0, 1),
+            new Vector2(1, 1),
+            new Vector2(1, 0),
+            new Vector2(0, -1),
+            new Vector2(-1, 0),
+            new Vector2(-1, 1)
         });
 
-        public List<Vector3> Single()
+        public List<Vector2> Single()
         {
-            return single;
+            return single.ConvertAll(vec => new Vector2(vec.x, vec.y));
         }
     }
 
     class GoldMoveSetTier2nd : IMoveSet
     {
-        private static readonly List<Vector3> single = new List<Vector3>(new Vector3[]
+        private static readonly List<Vector2> single = new List<Vector2>(new Vector2[]
         {
-            new Vector3(0, 1, 1),
-            new Vector3(1, 1, 1),
-            new Vector3(1, 0, 1),
-            new Vector3(0, -1, 1),
-            new Vector3(-1, 0, 1),
-            new Vector3(-1, 1, 1)
+            new Vector2(0, 1),
+            new Vector2(1, 1),
+            new Vector2(1, 0),
+            new Vector2(0, -1),
+            new Vector2(-1, 0),
+            new Vector2(-1, 1)
         });
 
-        public List<Vector3> Single()
+        public List<Vector2> Single()
         {
-            return single;
+            return single.ConvertAll(vec => new Vector2(vec.x, vec.y));
         }
     }
 
     class GoldMoveSetTier3rd : IMoveSet
     {
-        private static readonly List<Vector3> single = new List<Vector3>(new Vector3[]
+        private static readonly List<Vector2> single = new List<Vector2>(new Vector2[]
         {
-            new Vector3(0, 1, 1),
-            new Vector3(1, 1, 1),
-            new Vector3(1, 0, 1),
-            new Vector3(0, -1, 1),
-            new Vector3(-1, 0, 1),
-            new Vector3(-1, 1, 1)
+            new Vector2(0, 1),
+            new Vector2(1, 1),
+            new Vector2(1, 0),
+            new Vector2(0, -1),
+            new Vector2(-1, 0),
+            new Vector2(-1, 1)
         });
 
-        public List<Vector3> Single()
+        public List<Vector2> Single()
         {
-            return single;
+            return single.ConvertAll(vec => new Vector2(vec.x, vec.y));
         }
     }
 }

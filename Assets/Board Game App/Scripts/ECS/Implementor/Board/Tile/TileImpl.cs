@@ -6,7 +6,7 @@ namespace ECS.Implementor.Board.Tile
 {
     class TileImpl : MonoBehaviour, IImplementor, ITileComponent, ILocationComponent
     {
-        public Vector3 Location { get; set; }
+        public Vector2 Location { get; set; }
 
         public int? PieceRefEntityId { get; set; }
 

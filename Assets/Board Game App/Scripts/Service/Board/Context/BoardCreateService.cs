@@ -32,21 +32,21 @@ namespace Service.Board.Context
                 for (int fileNum = 0; fileNum < BoardConst.NUM_FILES_RANKS; ++fileNum)
                 {
                     CreateTile(
-                        CommonService.CalcTransformPosition(fileNum, rankNum, 0),
+                        CommonService.CalcTransformPosition(fileNum, rankNum),
                         fileNum,
                         rankNum);
                 }
             }
         }
 
-        private void CreateTile(Vector3 position, int fileNum, int rankNum)
+        private void CreateTile(Vector2 position, int fileNum, int rankNum)
         {
             var tile = prefabsDictionary.Instantiate("Board Tile");
             var tileImpl = tile.GetComponent<TileImpl>();
             entityFactory.BuildEntity<TileED>(tile.GetInstanceID(), tile.GetComponents<IImplementor>());
 
-            tile.transform.position = position;
-            tileImpl.Location = new Vector3(fileNum, rankNum, 0);
+            tile.transform.position = new Vector3(position.x, position.y, 0);
+            tileImpl.Location = new Vector2(fileNum, rankNum);
         }
     }
 }

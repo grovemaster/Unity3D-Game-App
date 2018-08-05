@@ -17,7 +17,7 @@ namespace ECS.Engine.Piece.Move
         public void Step(ref MovePieceStepState token, int condition)
         {
             // TODO Find top piece at PREVIOUS location and set topOfTower = true
-            Vector3 previousLocation = token.pieceToMove.Location.Location;
+            Vector2 previousLocation = token.pieceToMove.Location.Location;
 
             PieceEV? topPieceCurrentlyAtDestination = PieceService.FindTopPieceByLocation(
                 token.destinationTile.Location.Location, entitiesDB);
@@ -28,10 +28,7 @@ namespace ECS.Engine.Piece.Move
 
             // Set location.z, topOfTower = false of all pieces at destination tile,
             // set tier of moving piece, set topOfTower = true for moving piece
-            var newLocation = new Vector3(
-                token.destinationTile.Location.Location.x,
-                token.destinationTile.Location.Location.y,
-                newTier);
+            var newLocation = token.destinationTile.Location.Location;
 
             PieceService.SetPieceLocationAndTier(token.pieceToMove, newLocation, newTier, entitiesDB);
             token.pieceToMove.MovePiece.NewLocation = newLocation;

@@ -12,6 +12,6 @@ namespace Data.Piece
      */
     public interface IMoveSet
     {
-        List<Vector3> Single();
+        List<Vector2> Single();
     }
 }

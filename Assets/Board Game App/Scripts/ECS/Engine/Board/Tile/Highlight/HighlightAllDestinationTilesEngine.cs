@@ -34,14 +34,14 @@ namespace ECS.Engine.Board.Tile.Highlight
         {
             PieceEV[] teamPieces = PieceService.FindPiecesByTeam(teamColor, entitiesDB);
 
-            HashSet<Vector3> destinationLocations =
+            HashSet<Vector2> destinationLocations =
                 DestinationTileService.CalcDestinationTileLocations(teamPieces, entitiesDB);
 
             HighlightTiles(tiles, destinationLocations, HighlightService.CalcRangeHighlightState(teamColor));
         }
 
         private void HighlightTiles(
-            TileEV[] tiles, HashSet<Vector3> locations, HighlightState highlightStateToAdd)
+            TileEV[] tiles, HashSet<Vector2> locations, HighlightState highlightStateToAdd)
         {
             foreach (TileEV tile in tiles)
             {

@@ -34,10 +34,8 @@ namespace Service.Board
 
             if (!returnValue.tile.HasValue) // Find by piece information
             {
-                var location = returnValue.piece.Value.Location;
                 returnValue.tile = TileService.FindTileEV(
-                    new Vector3(location.Location.x, location.Location.y, 0),
-                    entitiesDB);
+                    returnValue.piece.Value.Location.Location, entitiesDB);
             }
 
             if (returnValue.tile.HasValue && !returnValue.piece.HasValue)
@@ -57,8 +55,7 @@ namespace Service.Board
                 && returnValue.tile.Value.Tile.PieceRefEntityId.HasValue
                 && returnValue.tile.Value.Tile.PieceRefEntityId.Value != 0
                 && returnValue.piece.HasValue
-                && returnValue.piece.Value.Location.Location.x == returnValue.tile.Value.Location.Location.x
-                && returnValue.piece.Value.Location.Location.y == returnValue.tile.Value.Location.Location.y)
+                && returnValue.piece.Value.Location.Location == returnValue.tile.Value.Location.Location)
             {
                 returnValue.piece = PieceService.FindPieceEVById(
                     returnValue.tile.Value.Tile.PieceRefEntityId.Value, entitiesDB);

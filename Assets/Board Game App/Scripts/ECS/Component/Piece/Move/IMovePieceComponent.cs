@@ -5,6 +5,6 @@ namespace ECS.Component.Piece.Move
     public interface IMovePieceComponent : IComponent
     {
         // TODO Later this will be related to an animation component
-        Vector3 NewLocation { set; }
+        Vector2 NewLocation { set; }
     }
 }

@@ -49,7 +49,7 @@ namespace Service.Piece
         }
 
         // TODO This will become a list once towers are enabled
-        public static PieceEV? FindTopPieceByLocation(Vector3 location, IEntitiesDB entitiesDB)
+        public static PieceEV? FindTopPieceByLocation(Vector2 location, IEntitiesDB entitiesDB)
         {
             PieceEV? returnValue = null;
 
@@ -59,9 +59,7 @@ namespace Service.Piece
             for (int i = 0; i < pieces.Length; ++i)
             {
                 // Tile always on z=0, pieces always on z>=1
-                if (pieces[i].Location.Location.x == location.x
-                    && pieces[i].Location.Location.y == location.y
-                    && pieces[i].Tier.TopOfTower)
+                if (pieces[i].Location.Location == location && pieces[i].Tier.TopOfTower)
                 {
                     returnValue = pieces[i];
                     break;
@@ -71,7 +69,7 @@ namespace Service.Piece
             return returnValue;
         }
 
-        public static List<PieceEV> FindPiecesByLocation(Vector3 location, IEntitiesDB entitiesDB)
+        public static List<PieceEV> FindPiecesByLocation(Vector2 location, IEntitiesDB entitiesDB)
         {
             List<PieceEV> returnValue = new List<PieceEV>();
 
@@ -81,8 +79,7 @@ namespace Service.Piece
             for (int i = 0; i < pieces.Length; ++i)
             {
                 // Tile always on z=0, pieces always on z>=1
-                if (pieces[i].Location.Location.x == location.x
-                    && pieces[i].Location.Location.y == location.y)
+                if (pieces[i].Location.Location == location)
                 {
                     returnValue.Add(pieces[i]);
                 }
@@ -104,7 +101,7 @@ namespace Service.Piece
         }
 
         public static PieceEV FindFirstPieceByLocationAndType(
-            Vector3 location, PieceType pieceType, IEntitiesDB entitiesDB)
+            Vector2 location, PieceType pieceType, IEntitiesDB entitiesDB)
         {
             List<PieceEV> piecesInHands = CommonService.FindAllEntities<PieceEV>(entitiesDB)
                 .Where(piece =>
@@ -125,7 +122,7 @@ namespace Service.Piece
             SetPieceLocationAndTier(pieceEV, BoardConst.HAND_LOCATION, 0, entitiesDB);
         }
 
-        public static void SetPieceLocationAndTier(PieceEV pieceEV, Vector3 location, int tier, IEntitiesDB entitiesDB)
+        public static void SetPieceLocationAndTier(PieceEV pieceEV, Vector2 location, int tier, IEntitiesDB entitiesDB)
         {
             entitiesDB.ExecuteOnEntity(
                 pieceEV.ID,

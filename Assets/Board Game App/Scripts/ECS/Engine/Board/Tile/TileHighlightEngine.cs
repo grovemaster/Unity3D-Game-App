@@ -26,7 +26,7 @@ namespace ECS.Engine.Board.Tile
             ChangeTileColor(tilesToChange, ref token);
         }
 
-        private List<TileEV> FindTilesToChange(List<Vector3> affectedTiles)
+        private List<TileEV> FindTilesToChange(List<Vector2> affectedTiles)
         {
             List<TileEV> returnValue = new List<TileEV>();
 

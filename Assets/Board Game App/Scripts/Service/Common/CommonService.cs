@@ -34,12 +34,11 @@ namespace Service.Common
             return returnValue;
         }
 
-        public static Vector3 CalcTransformPosition(int fileNum, int rankNum, int z)
+        public static Vector2 CalcTransformPosition(int fileNum, int rankNum)
         {
-            return new Vector3(
+            return new Vector2(
                 BoardConst.TOP_LEFT_CORNER.x + BoardConst.TILE_SIZE * fileNum,
-                BoardConst.TOP_LEFT_CORNER.y + BoardConst.TILE_SIZE * rankNum,
-                z);
+                BoardConst.TOP_LEFT_CORNER.y + BoardConst.TILE_SIZE * rankNum);
         }
     }
 }

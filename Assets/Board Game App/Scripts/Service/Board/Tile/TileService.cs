@@ -13,7 +13,7 @@ namespace Service.Board.Tile
             return CommonService.FindEntity<TileEV>(entityId, entitiesDB);
         }
 
-        public static TileEV FindTileEV(Vector3 location, IEntitiesDB entitiesDB)
+        public static TileEV FindTileEV(Vector2 location, IEntitiesDB entitiesDB)
         {
             var tiles = FindAllTileEVs(entitiesDB);
 
