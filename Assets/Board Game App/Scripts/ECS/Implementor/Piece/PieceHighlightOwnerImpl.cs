@@ -1,5 +1,8 @@
 ﻿using System.Collections.Generic;
+using Data.Constants.ColorConst;
 using Data.Enum;
+using Data.Enum.Player;
+using ECS.Component.Player;
 using ECS.Component.SharedComponent;
 using Svelto.ECS;
 using UI.Modal;
@@ -7,15 +10,14 @@ using UnityEngine;
 
 namespace ECS.Implementor.Piece
 {
-    class PieceHighlightImpl : MonoBehaviour, IImplementor, IHighlightComponent, IChangeColorComponent
+    class PieceHighlightOwnerImpl : MonoBehaviour, IImplementor, IHighlightComponent, IPlayerComponent, IChangeColorComponent
     {
         private TrackIsModalOpen isModalOpen;
 
         public DispatchOnSet<bool> IsPressed { get; set; }
-
         public bool IsHighlighted { get; set; }
-
         public HashSet<HighlightState> CurrentColorStates { get; set; }
+        public PlayerColor PlayerColor { get; set; }
 
         public bool PlayChangeColor
         {
@@ -68,7 +70,7 @@ namespace ECS.Implementor.Piece
             }
             else // HighlightState.DEFAULT or nothing
             {
-                sprite.color = Color.red;
+                sprite.color = PlayerColor == PlayerColor.BLACK ? ColorConst.VeryLightRed : ColorConst.VeryLightGray;
             }
         }
     }
