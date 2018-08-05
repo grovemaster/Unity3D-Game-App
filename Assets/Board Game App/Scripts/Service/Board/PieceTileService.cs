@@ -25,16 +25,16 @@ namespace Service.Board
 
             if (!returnValue.piece.HasValue
                 && returnValue.tile.HasValue
-                && returnValue.tile.Value.tile.PieceRefEntityId.HasValue
-                && returnValue.tile.Value.tile.PieceRefEntityId != 0) // Find by tile information
+                && returnValue.tile.Value.Tile.PieceRefEntityId.HasValue
+                && returnValue.tile.Value.Tile.PieceRefEntityId != 0) // Find by tile information
             {
                 returnValue.piece = PieceService.FindPieceEVById(
-                    returnValue.tile.Value.tile.PieceRefEntityId.Value, entitiesDB);
+                    returnValue.tile.Value.Tile.PieceRefEntityId.Value, entitiesDB);
             }
 
             if (!returnValue.tile.HasValue) // Find by piece information
             {
-                var location = returnValue.piece.Value.location;
+                var location = returnValue.piece.Value.Location;
                 returnValue.tile = TileService.FindTileEV(
                     new Vector3(location.Location.x, location.Location.y, 0),
                     entitiesDB);
@@ -43,25 +43,25 @@ namespace Service.Board
             if (returnValue.tile.HasValue && !returnValue.piece.HasValue)
             {
                 returnValue.piece = PieceService.FindTopPieceByLocation(
-                    returnValue.tile.Value.location.Location, entitiesDB);
+                    returnValue.tile.Value.Location.Location, entitiesDB);
             }
 
             if (returnValue.tile.HasValue)
             {
                 returnValue.pieceAtDestination = PieceService.FindTopPieceByLocation(
-                    returnValue.tile.Value.location.Location, entitiesDB);
+                    returnValue.tile.Value.Location.Location, entitiesDB);
             }
 
             // Movement: Piece is clicked with intention to move a DIFFERENT piece to that tile location
             if (returnValue.tile.HasValue
-                && returnValue.tile.Value.tile.PieceRefEntityId.HasValue
-                && returnValue.tile.Value.tile.PieceRefEntityId.Value != 0
+                && returnValue.tile.Value.Tile.PieceRefEntityId.HasValue
+                && returnValue.tile.Value.Tile.PieceRefEntityId.Value != 0
                 && returnValue.piece.HasValue
-                && returnValue.piece.Value.location.Location.x == returnValue.tile.Value.location.Location.x
-                && returnValue.piece.Value.location.Location.y == returnValue.tile.Value.location.Location.y)
+                && returnValue.piece.Value.Location.Location.x == returnValue.tile.Value.Location.Location.x
+                && returnValue.piece.Value.Location.Location.y == returnValue.tile.Value.Location.Location.y)
             {
                 returnValue.piece = PieceService.FindPieceEVById(
-                    returnValue.tile.Value.tile.PieceRefEntityId.Value, entitiesDB);
+                    returnValue.tile.Value.Tile.PieceRefEntityId.Value, entitiesDB);
             }
 
             return returnValue;

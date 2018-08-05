@@ -30,14 +30,14 @@ namespace ECS.Engine.Modal.CaptureStack
                 modal.ID,
                 (ref ModalEV modalToChange) =>
                 {
-                    modal.type.Type = ModalType.CAPTURE_STACK;
-                    modal.captureOrStack.TileReferenceId = tileReferenceId;
+                    modal.Type.Type = ModalType.CAPTURE_STACK;
+                    modal.CaptureOrStack.TileReferenceId = tileReferenceId;
                 });
         }
 
         private void DisplayModal(ModalEV modal)
         {
-            modal.visibility.IsVisible.value = true;
+            modal.Visibility.IsVisible.value = true;
         }
     }
 }

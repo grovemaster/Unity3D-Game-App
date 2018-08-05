@@ -16,8 +16,8 @@ namespace Service.Hand
         {
             List<HandPieceEV> handPieces = FindAllHandPieces(entitiesDB)
                 .Where(hp =>
-                    hp.handPiece.PieceType == pieceType
-                    && hp.playerOwner.PlayerColor == turnPlayer)
+                    hp.HandPiece.PieceType == pieceType
+                    && hp.PlayerOwner.PlayerColor == turnPlayer)
                 .ToList();
 
             if (handPieces.Count > 1  || handPieces.Count == 0)
@@ -38,7 +38,7 @@ namespace Service.Hand
             return FindAllHandPieces(entitiesDB)
                 .Where(hp =>
                     hp.ID.entityID != handPieceToExcludeId
-                    && hp.playerOwner.PlayerColor == playerOwner)
+                    && hp.PlayerOwner.PlayerColor == playerOwner)
                 .ToList();
         }
 
@@ -46,7 +46,7 @@ namespace Service.Hand
         {
             foreach (HandPieceEV handPiece in handPieces)
             {
-                if (handPiece.highlight.IsHighlighted)
+                if (handPiece.Highlight.IsHighlighted)
                 {
                     DeHighlightHandPiece(handPiece, entitiesDB);
                 }
@@ -68,7 +68,7 @@ namespace Service.Hand
         public HandPieceEV? FindHighlightedHandPiece(IEntitiesDB entitiesDB)
         {
             List<HandPieceEV> handPieces = FindAllHandPieces(entitiesDB)
-                .Where(hp => hp.highlight.IsHighlighted)
+                .Where(hp => hp.Highlight.IsHighlighted)
                 .ToList();
 
             return handPieces.Count > 0 ? (HandPieceEV?)handPieces[0] : null;
@@ -80,11 +80,11 @@ namespace Service.Hand
                     handPiece.ID,
                     (ref HandPieceEV handPieceToChange) =>
                     {
-                        handPieceToChange.highlight.IsHighlighted = false;
-                        handPieceToChange.highlight.CurrentColorStates.Clear();
+                        handPieceToChange.Highlight.IsHighlighted = false;
+                        handPieceToChange.Highlight.CurrentColorStates.Clear();
                     });
 
-            handPiece.changeColor.PlayChangeColor = true;
+            handPiece.ChangeColorTrigger.PlayChangeColor = true;
         }
     }
 }

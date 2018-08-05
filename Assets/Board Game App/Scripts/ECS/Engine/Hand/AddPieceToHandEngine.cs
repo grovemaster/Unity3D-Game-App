@@ -20,8 +20,8 @@ namespace ECS.Engine.Hand
         {
             TurnEV turnPlayer = TurnService.GetCurrentTurnEV(entitiesDB);
             HandPieceEV handHoldingCapturedPiece = handService.FindHandPiece(
-                token.pieceToCapture.piece.PieceType, turnPlayer.TurnPlayer.PlayerColor, entitiesDB);
-            handHoldingCapturedPiece.handPiece.NumPieces.value++;
+                token.pieceToCapture.Piece.PieceType, turnPlayer.TurnPlayer.PlayerColor, entitiesDB);
+            handHoldingCapturedPiece.HandPiece.NumPieces.value++;
             
         }
     }

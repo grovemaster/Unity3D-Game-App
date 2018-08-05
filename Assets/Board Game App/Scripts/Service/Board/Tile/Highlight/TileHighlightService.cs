@@ -17,8 +17,8 @@ namespace Service.Board.Tile.Highlight
 
             // TODO Remove team highlights based on Team Color, not piece ref id
             List<TileEV> tiles = TileService.FindAllTileEVs(entitiesDB)
-                .Where(tile => tile.highlight.IsHighlighted
-                && tile.highlight.CurrentColorStates.Contains(highlightStateToRemove)
+                .Where(tile => tile.Highlight.IsHighlighted
+                && tile.Highlight.CurrentColorStates.Contains(highlightStateToRemove)
                 ).ToList();
 
             foreach (TileEV tile in tiles)
@@ -27,16 +27,16 @@ namespace Service.Board.Tile.Highlight
                     tile.ID,
                     (ref TileEV tileToChange) =>
                     {
-                        tileToChange.highlight.CurrentColorStates.Remove(highlightStateToRemove);
-                        tileToChange.tile.PieceRefEntityId = null;
+                        tileToChange.Highlight.CurrentColorStates.Remove(highlightStateToRemove);
+                        tileToChange.Tile.PieceRefEntityId = null;
 
-                        if (!tileToChange.highlight.CurrentColorStates.Any())
+                        if (!tileToChange.Highlight.CurrentColorStates.Any())
                         {
-                            tileToChange.highlight.IsHighlighted = false;
+                            tileToChange.Highlight.IsHighlighted = false;
                         }
                     });
 
-                tile.changeColorComponent.PlayChangeColor = true;
+                tile.ChangeColorTrigger.PlayChangeColor = true;
             }
         }
     }

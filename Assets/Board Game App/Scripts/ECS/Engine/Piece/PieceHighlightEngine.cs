@@ -18,25 +18,25 @@ namespace ECS.Engine.Piece
         {
             PieceEV piece = PieceService.FindPieceEV(token.pieceEntityId, entitiesDB);
             bool isClicked = token.piecePressState == PiecePressState.CLICKED;
-            HighlightState colorToChange = HighlightService.CalcClickHighlightState(piece.playerOwner.PlayerColor);
+            HighlightState colorToChange = HighlightService.CalcClickHighlightState(piece.PlayerOwner.PlayerColor);
 
             entitiesDB.ExecuteOnEntity(
                 piece.ID,
                 (ref PieceEV pieceToChange) =>
                 {
-                    pieceToChange.highlight.IsHighlighted = isClicked;
+                    pieceToChange.Highlight.IsHighlighted = isClicked;
 
                     if (isClicked)
                     {
-                        pieceToChange.highlight.CurrentColorStates.Add(colorToChange);
+                        pieceToChange.Highlight.CurrentColorStates.Add(colorToChange);
                     }
                     else
                     {
-                        pieceToChange.highlight.CurrentColorStates.Remove(colorToChange);
+                        pieceToChange.Highlight.CurrentColorStates.Remove(colorToChange);
                     }
                 });
 
-            piece.changeColor.PlayChangeColor = true;
+            piece.ChangeColorTrigger.PlayChangeColor = true;
         }
     }
 }

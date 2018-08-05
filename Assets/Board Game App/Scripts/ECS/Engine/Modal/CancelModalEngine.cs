@@ -20,12 +20,12 @@ namespace ECS.Engine.Modal
 
         protected override void Add(ref ModalEV entityView)
         {
-            entityView.cancel.Cancel.NotifyOnValueSet(OnPressed);
+            entityView.Cancel.Cancel.NotifyOnValueSet(OnPressed);
         }
 
         protected override void Remove(ref ModalEV entityView)
         {
-            entityView.cancel.Cancel.StopNotify(OnPressed);
+            entityView.Cancel.Cancel.StopNotify(OnPressed);
         }
 
         private void OnPressed(int entityId, bool cancel)

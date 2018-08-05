@@ -45,13 +45,13 @@ namespace ECS.Engine.Board.Tile.Highlight
         {
             foreach (TileEV tile in tiles)
             {
-                if (locations.Contains(tile.location.Location))
+                if (locations.Contains(tile.Location.Location))
                 {
                     entitiesDB.ExecuteOnEntity(
                         tile.ID,
                         (ref TileEV tileToChange) =>
                         {
-                            tileToChange.highlight.CurrentColorStates.Add(highlightStateToAdd);
+                            tileToChange.Highlight.CurrentColorStates.Add(highlightStateToAdd);
                         });
                 }
             }
@@ -61,7 +61,7 @@ namespace ECS.Engine.Board.Tile.Highlight
         {
             foreach(TileEV tile in tiles)
             {
-                tile.changeColorComponent.PlayChangeColor = true;
+                tile.ChangeColorTrigger.PlayChangeColor = true;
             }
         }
     }

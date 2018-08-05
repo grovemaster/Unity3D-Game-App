@@ -20,12 +20,12 @@ namespace ECS.Engine.Board.Tile
 
         protected override void Add(ref TileEV entityView)
         {
-            entityView.highlight.IsPressed.NotifyOnValueSet(OnPressed);
+            entityView.Highlight.IsPressed.NotifyOnValueSet(OnPressed);
         }
 
         protected override void Remove(ref TileEV entityView)
         {
-            entityView.highlight.IsPressed.StopNotify(OnPressed);
+            entityView.Highlight.IsPressed.StopNotify(OnPressed);
         }
 
         private void OnPressed(int entityId, bool isPressed)

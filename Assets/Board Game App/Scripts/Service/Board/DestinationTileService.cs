@@ -59,20 +59,20 @@ namespace Service.Board
 
         private static bool isOpponentPieceDirectlyBelow(PieceEV pieceEV, List<PieceEV> allPieces)
         {
-            return pieceEV.tier.Tier != 1
+            return pieceEV.Tier.Tier != 1
                 && allPieces.Where(piece =>
-                    piece.location.Location.x == pieceEV.location.Location.x
-                    && piece.location.Location.y == pieceEV.location.Location.y
-                    && piece.playerOwner.PlayerColor != pieceEV.playerOwner.PlayerColor
-                    && piece.tier.Tier + 1 == pieceEV.tier.Tier)
+                    piece.Location.Location.x == pieceEV.Location.Location.x
+                    && piece.Location.Location.y == pieceEV.Location.Location.y
+                    && piece.PlayerOwner.PlayerColor != pieceEV.PlayerOwner.PlayerColor
+                    && piece.Tier.Tier + 1 == pieceEV.Tier.Tier)
                 .Count() > 0;
         }
 
         private static List<Vector3> GetRawSingleDestinationLocations(PieceEV pieceEV, bool useGoldMovement)
         {
-            PieceType pieceToCreate = !useGoldMovement ? pieceEV.piece.PieceType : PieceType.GOLD;
+            PieceType pieceToCreate = !useGoldMovement ? pieceEV.Piece.PieceType : PieceType.GOLD;
 
-            return PieceService.CreateIPieceData(pieceToCreate).Tiers()[pieceEV.tier.Tier - 1].Single()
+            return PieceService.CreateIPieceData(pieceToCreate).Tiers()[pieceEV.Tier.Tier - 1].Single()
                 .Select(x => new Vector3(x.x, x.y, 0)).ToList(); // Change z-value from >=1 to 0
         }
 
@@ -83,8 +83,8 @@ namespace Service.Board
             for (int i = 0; i < rawLocationData.Count; ++i)
             {
                 rawLocationData[i] = new Vector3(
-                    pieceEV.location.Location.x + (rawLocationData[i].x * (int)pieceEV.piece.Direction),
-                    pieceEV.location.Location.y + (rawLocationData[i].y * (int)pieceEV.piece.Direction),
+                    pieceEV.Location.Location.x + (rawLocationData[i].x * (int)pieceEV.Piece.Direction),
+                    pieceEV.Location.Location.y + (rawLocationData[i].y * (int)pieceEV.Piece.Direction),
                     rawLocationData[i].z);
             }
         }
@@ -115,13 +115,13 @@ namespace Service.Board
         private static bool HasFriendlyTier3Tower(
             PieceEV pieceToCalc, Vector2 destination, List<PieceEV> allPieces)
         {
-            PlayerColor friendlyColor = pieceToCalc.playerOwner.PlayerColor;
+            PlayerColor friendlyColor = pieceToCalc.PlayerOwner.PlayerColor;
 
             int numPiecesBarringPath = allPieces.Where(piece =>
-                piece.tier.Tier == 3
-                && piece.playerOwner.PlayerColor == friendlyColor
-                && destination.x == piece.location.Location.x
-                && destination.y == piece.location.Location.y).Count();
+                piece.Tier.Tier == 3
+                && piece.PlayerOwner.PlayerColor == friendlyColor
+                && destination.x == piece.Location.Location.x
+                && destination.y == piece.Location.Location.y).Count();
 
             return numPiecesBarringPath > 0;
         }
@@ -163,7 +163,7 @@ namespace Service.Board
             PieceEV pieceToCalc, Vector2 destination, List<PieceEV> allPieces)
         {
             bool returnValue = false;
-            Vector2 pieceLocation = pieceToCalc.location.Location;
+            Vector2 pieceLocation = pieceToCalc.Location.Location;
 
             Vector2 increment = new Vector2(
                 pieceLocation.x == destination.x ?
@@ -177,8 +177,8 @@ namespace Service.Board
             while (evalLocation != destination)
             {
                 int numPiecesBarringPath = allPieces.Where(piece =>
-                    evalLocation.x == piece.location.Location.x
-                    && evalLocation.y == piece.location.Location.y).Count();
+                    evalLocation.x == piece.Location.Location.x
+                    && evalLocation.y == piece.Location.Location.y).Count();
 
                 if (numPiecesBarringPath > 0)
                 {

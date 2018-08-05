@@ -19,7 +19,7 @@ namespace Service.Board.Tile
 
             for (int i = 0; i < tiles.Length; ++i)
             {
-                if (tiles[i].location.Location == location)
+                if (tiles[i].Location.Location == location)
                 {
                     return tiles[i];
                 }

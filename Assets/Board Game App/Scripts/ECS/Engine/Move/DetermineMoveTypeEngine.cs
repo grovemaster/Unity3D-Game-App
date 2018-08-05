@@ -25,7 +25,7 @@ namespace ECS.Engine.Move
         public void Step(ref MovePieceStepState token, int condition)
         {
             PieceEV? topPieceAtDestinationTile = PieceService.FindTopPieceByLocation(
-                   token.destinationTile.location.Location, entitiesDB);
+                   token.destinationTile.Location.Location, entitiesDB);
             MoveState nextAction = DetermineMoveAction(ref token, topPieceAtDestinationTile);
             PerformNextAction(nextAction, ref token, topPieceAtDestinationTile);
         }
@@ -35,9 +35,9 @@ namespace ECS.Engine.Move
             MoveState returnValue = MoveState.MOVE_PIECE;
 
             if (topPieceAtDestinationTile.HasValue
-                && topPieceAtDestinationTile.Value.playerOwner.PlayerColor != token.pieceToMove.playerOwner.PlayerColor)
+                && topPieceAtDestinationTile.Value.PlayerOwner.PlayerColor != token.pieceToMove.PlayerOwner.PlayerColor)
             {
-                returnValue = topPieceAtDestinationTile.Value.tier.Tier != 3 ?
+                returnValue = topPieceAtDestinationTile.Value.Tier.Tier != 3 ?
                     MoveState.CAPTURE_STACK_MODAL : MoveState.MOBILE_CAPTURE;
             }
 

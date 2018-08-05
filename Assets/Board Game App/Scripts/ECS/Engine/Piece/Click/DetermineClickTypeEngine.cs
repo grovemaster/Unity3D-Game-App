@@ -30,7 +30,7 @@ namespace ECS.Engine.Piece.Click
 
         private ClickState DetermineMoveAction(ref ClickPieceStepState token)
         {
-            return token.clickedPiece.tier.Tier > 1 ? ClickState.TOWER_MODAL : ClickState.CLICK_HIGHLIGHT;
+            return token.clickedPiece.Tier.Tier > 1 ? ClickState.TOWER_MODAL : ClickState.CLICK_HIGHLIGHT;
         }
 
         private void PerformNextAction(ClickState nextAction, ref ClickPieceStepState token)
@@ -54,7 +54,7 @@ namespace ECS.Engine.Piece.Click
             var pressState = new PressStepState
             {
                 pieceEntityId = token.clickedPiece.ID.entityID,
-                piecePressState = token.clickedPiece.highlight.IsHighlighted ? PiecePressState.UNCLICKED : PiecePressState.CLICKED,
+                piecePressState = token.clickedPiece.Highlight.IsHighlighted ? PiecePressState.UNCLICKED : PiecePressState.CLICKED,
                 affectedTiles = DestinationTileService.CalcDestinationTileLocations(token.clickedPiece, entitiesDB)
             };
 

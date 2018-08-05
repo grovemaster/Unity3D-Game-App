@@ -9,9 +9,9 @@ namespace ECS.EntityView.Hand
     {
         public EGID ID { get; set; }
 
-        public IHandPieceComponent handPiece;
-        public IPlayerComponent playerOwner;
-        public IHighlightComponent highlight;
-        public IChangeColorComponent changeColor;
+        public IHandPieceComponent HandPiece;
+        public IPlayerComponent PlayerOwner;
+        public IHighlightComponent Highlight;
+        public IChangeColorComponent ChangeColorTrigger;
     }
 }

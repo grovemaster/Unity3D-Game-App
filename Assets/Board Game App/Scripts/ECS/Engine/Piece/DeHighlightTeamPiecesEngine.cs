@@ -46,16 +46,16 @@ namespace ECS.Engine.Piece
             HandPieceEV handPieceToChange = handService.FindHandPiece(token.handPieceEntityId, entitiesDB);
 
             List<PieceEV> alteredPieces = pieceHighlightService.DeHighlightPlayerPieces(
-                handPieceToChange.playerOwner.PlayerColor, entitiesDB);
+                handPieceToChange.PlayerOwner.PlayerColor, entitiesDB);
 
             if (alteredPieces.Count > 0)
             {
                 tileHighlightService.DeHighlightOtherTeamTilePieces(
-                    alteredPieces, handPieceToChange.playerOwner.PlayerColor, entitiesDB);
+                    alteredPieces, handPieceToChange.PlayerOwner.PlayerColor, entitiesDB);
             }
 
             List<HandPieceEV> otherHandPieces = handService.FindAllTeamHandPiecesExcept(
-                token.handPieceEntityId, handPieceToChange.playerOwner.PlayerColor, entitiesDB);
+                token.handPieceEntityId, handPieceToChange.PlayerOwner.PlayerColor, entitiesDB);
             handService.DeHighlightHandPieces(otherHandPieces, entitiesDB);
         }
 
@@ -71,12 +71,12 @@ namespace ECS.Engine.Piece
         private void DeHighlightPlayerPiecesAndTiles(PieceEV pieceToNotChange)
         {
             List<PieceEV> alteredPieces = pieceHighlightService.DeHighlightOtherPlayerPieces(
-                pieceToNotChange.ID.entityID, pieceToNotChange.playerOwner.PlayerColor, entitiesDB);
+                pieceToNotChange.ID.entityID, pieceToNotChange.PlayerOwner.PlayerColor, entitiesDB);
 
             if (alteredPieces.Count > 0)
             {
                 tileHighlightService.DeHighlightOtherTeamTilePieces(
-                    alteredPieces, pieceToNotChange.playerOwner.PlayerColor, entitiesDB);
+                    alteredPieces, pieceToNotChange.PlayerOwner.PlayerColor, entitiesDB);
             }
         }
 

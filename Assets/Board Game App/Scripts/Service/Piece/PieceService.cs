@@ -38,7 +38,7 @@ namespace Service.Piece
         public static PieceEV[] FindAllBoardPieces(IEntitiesDB entitiesDB)
         {
             return CommonService.FindAllEntities<PieceEV>(entitiesDB)
-                .Where(piece => piece.location.Location != BoardConst.HAND_LOCATION).ToArray();
+                .Where(piece => piece.Location.Location != BoardConst.HAND_LOCATION).ToArray();
         }
 
         public static PieceEV? FindPieceEVById(int? entityId, IEntitiesDB entitiesDB)
@@ -59,9 +59,9 @@ namespace Service.Piece
             for (int i = 0; i < pieces.Length; ++i)
             {
                 // Tile always on z=0, pieces always on z>=1
-                if (pieces[i].location.Location.x == location.x
-                    && pieces[i].location.Location.y == location.y
-                    && pieces[i].tier.TopOfTower)
+                if (pieces[i].Location.Location.x == location.x
+                    && pieces[i].Location.Location.y == location.y
+                    && pieces[i].Tier.TopOfTower)
                 {
                     returnValue = pieces[i];
                     break;
@@ -81,15 +81,15 @@ namespace Service.Piece
             for (int i = 0; i < pieces.Length; ++i)
             {
                 // Tile always on z=0, pieces always on z>=1
-                if (pieces[i].location.Location.x == location.x
-                    && pieces[i].location.Location.y == location.y)
+                if (pieces[i].Location.Location.x == location.x
+                    && pieces[i].Location.Location.y == location.y)
                 {
                     returnValue.Add(pieces[i]);
                 }
             }
 
             returnValue.Sort(delegate (PieceEV p1, PieceEV p2)
-            { return p1.tier.Tier.CompareTo(p2.tier.Tier); });
+            { return p1.Tier.Tier.CompareTo(p2.Tier.Tier); });
 
             return returnValue;
         }
@@ -100,7 +100,7 @@ namespace Service.Piece
         public static PieceEV[] FindPiecesByTeam(PlayerColor team, IEntitiesDB entitiesDB)
         {
             return FindAllBoardPieces(entitiesDB)
-                .Where(piece => piece.playerOwner.PlayerColor == team && piece.tier.TopOfTower).ToArray();
+                .Where(piece => piece.PlayerOwner.PlayerColor == team && piece.Tier.TopOfTower).ToArray();
         }
 
         public static PieceEV FindFirstPieceByLocationAndType(
@@ -108,8 +108,8 @@ namespace Service.Piece
         {
             List<PieceEV> piecesInHands = CommonService.FindAllEntities<PieceEV>(entitiesDB)
                 .Where(piece =>
-                    piece.location.Location == location
-                    && piece.piece.PieceType == pieceType
+                    piece.Location.Location == location
+                    && piece.Piece.PieceType == pieceType
                 ).ToList();
 
             if (piecesInHands.Count == 0)
@@ -131,9 +131,9 @@ namespace Service.Piece
                 pieceEV.ID,
                 (ref PieceEV pieceToChange) =>
                 {
-                    pieceToChange.tier.TopOfTower = true;
-                    pieceToChange.tier.Tier = tier;
-                    pieceToChange.location.Location = location;
+                    pieceToChange.Tier.TopOfTower = true;
+                    pieceToChange.Tier.Tier = tier;
+                    pieceToChange.Location.Location = location;
                 });
         }
 
@@ -143,7 +143,7 @@ namespace Service.Piece
                 pieceEV.ID,
                 (ref PieceEV pieceToChange) =>
                 {
-                    pieceToChange.tier.TopOfTower = topOfTower;
+                    pieceToChange.Tier.TopOfTower = topOfTower;
                 });
         }
 
@@ -154,8 +154,8 @@ namespace Service.Piece
                 pieceEV.ID,
                 (ref PieceEV pieceToChange) =>
                 {
-                    pieceToChange.playerOwner.PlayerColor = playerOwner;
-                    pieceToChange.piece.Direction = newDirection;
+                    pieceToChange.PlayerOwner.PlayerColor = playerOwner;
+                    pieceToChange.Piece.Direction = newDirection;
                 });
         }
 
@@ -170,7 +170,7 @@ namespace Service.Piece
                 pieceEV.Value.ID,
                 (ref PieceEV pieceToChange) =>
                 {
-                    pieceToChange.tier.TopOfTower = false;
+                    pieceToChange.Tier.TopOfTower = false;
                 });
         }
     }

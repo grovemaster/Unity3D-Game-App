@@ -33,12 +33,12 @@ namespace ECS.Engine.Modal.CaptureStack
 
         protected override void Add(ref ModalEV entityView)
         {
-            entityView.captureOrStack.Answer.NotifyOnValueSet(OnPressed);
+            entityView.CaptureOrStack.Answer.NotifyOnValueSet(OnPressed);
         }
 
         protected override void Remove(ref ModalEV entityView)
         {
-            entityView.captureOrStack.Answer.StopNotify(OnPressed);
+            entityView.CaptureOrStack.Answer.StopNotify(OnPressed);
         }
 
         private void OnPressed(int entityId, ModalQuestionAnswer answer)
@@ -61,7 +61,7 @@ namespace ECS.Engine.Modal.CaptureStack
             ModalEV modal = modalService.FindModalEV(entitiesDB);
             TileEV destinationTile = FindDestinationTile(modal);
             PieceEV topPieceAtDestinationTile = PieceService.FindTopPieceByLocation(
-                destinationTile.location.Location, entitiesDB).Value;
+                destinationTile.Location.Location, entitiesDB).Value;
             PieceEV pieceToMove = FindPieceToMove(destinationTile);
 
             var captureToken = new CapturePieceStepState
@@ -91,13 +91,13 @@ namespace ECS.Engine.Modal.CaptureStack
 
         private TileEV FindDestinationTile(ModalEV modal)
         {
-            return TileService.FindTileEV(modal.captureOrStack.TileReferenceId, entitiesDB);
+            return TileService.FindTileEV(modal.CaptureOrStack.TileReferenceId, entitiesDB);
         }
 
         private PieceEV FindPieceToMove(TileEV destinationTile)
         {
             return PieceService.FindPieceEVById(
-                destinationTile.tile.PieceRefEntityId.Value, entitiesDB).Value;
+                destinationTile.Tile.PieceRefEntityId.Value, entitiesDB).Value;
         }
     }
 }

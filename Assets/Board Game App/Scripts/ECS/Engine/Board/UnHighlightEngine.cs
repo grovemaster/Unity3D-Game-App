@@ -41,17 +41,17 @@ namespace ECS.Engine.Board
 
             for (int i = 0; i < pieceEVs.Length; ++i)
             {
-                if (pieceEVs[i].highlight.IsHighlighted)
+                if (pieceEVs[i].Highlight.IsHighlighted)
                 {
                     entitiesDB.ExecuteOnEntity(
                         pieceEVs[i].ID,
                         (ref PieceEV pieceToChange) =>
                         {
-                            pieceToChange.highlight.IsHighlighted = false;
-                            pieceToChange.highlight.CurrentColorStates.Clear();
+                            pieceToChange.Highlight.IsHighlighted = false;
+                            pieceToChange.Highlight.CurrentColorStates.Clear();
                         });
 
-                    pieceEVs[i].changeColor.PlayChangeColor = true;
+                    pieceEVs[i].ChangeColorTrigger.PlayChangeColor = true;
                 }
             }
         }
@@ -67,11 +67,11 @@ namespace ECS.Engine.Board
                     tileEVs[i].ID,
                     (ref TileEV tileToChange) =>
                     {
-                        tileToChange.highlight.IsHighlighted = false;
-                        tileToChange.highlight.CurrentColorStates.Clear();
+                        tileToChange.Highlight.IsHighlighted = false;
+                        tileToChange.Highlight.CurrentColorStates.Clear();
                     });
 
-                tileEVs[i].changeColorComponent.PlayChangeColor = true;
+                tileEVs[i].ChangeColorTrigger.PlayChangeColor = true;
             }
         }
 

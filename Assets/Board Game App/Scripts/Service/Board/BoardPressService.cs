@@ -12,7 +12,7 @@ namespace Service.Board
         {
             BoardPress returnValue = BoardPress.NOTHING;
             TileEV tileEV = stateInfo.tile.Value;
-            int tilePieceId = tileEV.tile.PieceRefEntityId.GetValueOrDefault();
+            int tilePieceId = tileEV.Tile.PieceRefEntityId.GetValueOrDefault();
             // TODO Scenario: Clicked highlighted tile containing opponent piece to initiate mobile capture
 
             // If hand piece highlighted and user clicks on empty tile
@@ -23,10 +23,10 @@ namespace Service.Board
                 returnValue = BoardPress.DROP;
             }
             // Tile is clicked, tile highlighted, piece reference exists; move vs mobile capture determined in later engine
-            else if (tileEV.highlight.IsHighlighted
+            else if (tileEV.Highlight.IsHighlighted
                 && stateInfo.piece.HasValue
                 && tilePieceId != 0
-                && stateInfo.piece.Value.playerOwner.PlayerColor == currentTurn.TurnPlayer.PlayerColor)
+                && stateInfo.piece.Value.PlayerOwner.PlayerColor == currentTurn.TurnPlayer.PlayerColor)
             {
                 returnValue = BoardPress.MOVE_PIECE;
             }

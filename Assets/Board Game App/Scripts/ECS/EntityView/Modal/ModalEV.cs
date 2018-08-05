@@ -8,13 +8,13 @@ namespace ECS.EntityView.Modal
     {
         public EGID ID { get; set; }
 
-        public IModalTypeComponent type;
-        public ITier1OptionComponent tier1;
-        public ITier2OptionComponent tier2;
-        public ITier3OptionComponent tier3;
-        public ICaptureOrStackComponent captureOrStack;
-        public IAnswerComponent answer;
-        public ICancelComponent cancel;
-        public IVisibilityComponent visibility;
+        public IModalTypeComponent Type;
+        public ITier1OptionComponent Tier1;
+        public ITier2OptionComponent Tier2;
+        public ITier3OptionComponent Tier3;
+        public ICaptureOrStackComponent CaptureOrStack;
+        public IAnswerComponent Answer;
+        public ICancelComponent Cancel;
+        public IVisibilityComponent Visibility;
     }
 }

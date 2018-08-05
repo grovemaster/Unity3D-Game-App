@@ -11,7 +11,7 @@ namespace Service.Piece.Highlight
         public List<PieceEV> DeHighlightPlayerPieces(PlayerColor pieceTeam, IEntitiesDB entitiesDB)
         {
             List<PieceEV> pieces = PieceService.FindPiecesByTeam(pieceTeam, entitiesDB)
-                .Where(piece => piece.highlight.IsHighlighted).ToList();
+                .Where(piece => piece.Highlight.IsHighlighted).ToList();
 
             DeHighlightPlayerPieces(pieces, entitiesDB);
 
@@ -22,7 +22,7 @@ namespace Service.Piece.Highlight
             int pieceToNotChangeEntityId, PlayerColor pieceTeam, IEntitiesDB entitiesDB)
         {
             List<PieceEV> pieces = PieceService.FindPiecesByTeam(pieceTeam, entitiesDB)
-                .Where(piece => piece.ID.entityID != pieceToNotChangeEntityId && piece.highlight.IsHighlighted).ToList();
+                .Where(piece => piece.ID.entityID != pieceToNotChangeEntityId && piece.Highlight.IsHighlighted).ToList();
 
             DeHighlightPlayerPieces(pieces, entitiesDB);
 
@@ -37,11 +37,11 @@ namespace Service.Piece.Highlight
                     piece.ID,
                     (ref PieceEV pieceToChange) =>
                     {
-                        pieceToChange.highlight.IsHighlighted = false;
-                        pieceToChange.highlight.CurrentColorStates.Clear();
+                        pieceToChange.Highlight.IsHighlighted = false;
+                        pieceToChange.Highlight.CurrentColorStates.Clear();
                     });
 
-                piece.changeColor.PlayChangeColor = true;
+                piece.ChangeColorTrigger.PlayChangeColor = true;
             }
         }
     }

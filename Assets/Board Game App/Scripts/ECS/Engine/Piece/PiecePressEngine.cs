@@ -20,12 +20,12 @@ namespace ECS.Engine.Piece
 
         protected override void Add(ref PieceEV entityView)
         {
-            entityView.highlight.IsPressed.NotifyOnValueSet(OnPressed);
+            entityView.Highlight.IsPressed.NotifyOnValueSet(OnPressed);
         }
 
         protected override void Remove(ref PieceEV entityView)
         {
-            entityView.highlight.IsPressed.StopNotify(OnPressed);
+            entityView.Highlight.IsPressed.StopNotify(OnPressed);
         }
 
         private void OnPressed(int entityId, bool isPressed)

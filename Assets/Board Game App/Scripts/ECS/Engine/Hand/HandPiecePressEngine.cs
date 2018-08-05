@@ -25,12 +25,12 @@ namespace ECS.Engine.Hand
 
         protected override void Add(ref HandPieceEV entityView)
         {
-            entityView.highlight.IsPressed.NotifyOnValueSet(OnPressed);
+            entityView.Highlight.IsPressed.NotifyOnValueSet(OnPressed);
         }
 
         protected override void Remove(ref HandPieceEV entityView)
         {
-            entityView.highlight.IsPressed.StopNotify(OnPressed);
+            entityView.Highlight.IsPressed.StopNotify(OnPressed);
         }
 
         private void OnPressed(int entityId, bool isPressed)
@@ -44,10 +44,10 @@ namespace ECS.Engine.Hand
             HandPieceEV handPiece = handService.FindHandPiece(entityId, entitiesDB);
             TurnEV currentTurn = TurnService.GetCurrentTurnEV(entitiesDB);
 
-            if (handPiece.playerOwner.PlayerColor != currentTurn.TurnPlayer.PlayerColor
-                || handPiece.handPiece.NumPieces.value <= 0)
+            if (handPiece.PlayerOwner.PlayerColor != currentTurn.TurnPlayer.PlayerColor
+                || handPiece.HandPiece.NumPieces.value <= 0)
             {
-                handPiece.highlight.IsPressed.value = false; // Will trigger a HandPiecePressEngine, but IsPressed check will stop it
+                handPiece.Highlight.IsPressed.value = false; // Will trigger a HandPiecePressEngine, but IsPressed check will stop it
                 return;
             }
 

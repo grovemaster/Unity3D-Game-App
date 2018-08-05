@@ -36,7 +36,7 @@ namespace ECS.Engine.Board.Tile
             // TODO Use Linq Where() filtering
             for (int i = 0; i < entityViews.Length; ++i)
             {
-                if (affectedTiles.Contains(entityViews[i].location.Location))
+                if (affectedTiles.Contains(entityViews[i].Location.Location))
                 {
                     returnValue.Add(entityViews[i]);
                 }
@@ -50,9 +50,9 @@ namespace ECS.Engine.Board.Tile
             bool isClicked = token.piecePressState == PiecePressState.CLICKED;
             PieceEV piece = PieceService.FindPieceEV(token.pieceEntityId, entitiesDB);
             int pieceIdtoken = token.pieceEntityId;
-            HighlightState newHighlightState = HighlightService.CalcClickHighlightState(piece.playerOwner.PlayerColor);
+            HighlightState newHighlightState = HighlightService.CalcClickHighlightState(piece.PlayerOwner.PlayerColor);
             TurnEV currentTurn = TurnService.GetCurrentTurnEV(entitiesDB);
-            bool doesPieceBelongToTurnPlayer = currentTurn.TurnPlayer.PlayerColor == piece.playerOwner.PlayerColor;
+            bool doesPieceBelongToTurnPlayer = currentTurn.TurnPlayer.PlayerColor == piece.PlayerOwner.PlayerColor;
 
             foreach (TileEV tileEV in tilesToChange)
             {
@@ -60,24 +60,24 @@ namespace ECS.Engine.Board.Tile
                     tileEV.ID,
                     (ref TileEV tileToChange) =>
                     {
-                        tileToChange.highlight.IsHighlighted = isClicked;
+                        tileToChange.Highlight.IsHighlighted = isClicked;
 
                         if (doesPieceBelongToTurnPlayer)
                         {
-                            tileToChange.tile.PieceRefEntityId = isClicked ? (int?)pieceIdtoken : null;
+                            tileToChange.Tile.PieceRefEntityId = isClicked ? (int?)pieceIdtoken : null;
                         }
 
                         if (isClicked)
                         {
-                            tileToChange.highlight.CurrentColorStates.Add(newHighlightState);
+                            tileToChange.Highlight.CurrentColorStates.Add(newHighlightState);
                         }
                         else
                         {
-                            tileToChange.highlight.CurrentColorStates.Remove(newHighlightState);
+                            tileToChange.Highlight.CurrentColorStates.Remove(newHighlightState);
                         }
                     });
 
-                tileEV.changeColorComponent.PlayChangeColor = true;
+                tileEV.ChangeColorTrigger.PlayChangeColor = true;
             }
         }
     }

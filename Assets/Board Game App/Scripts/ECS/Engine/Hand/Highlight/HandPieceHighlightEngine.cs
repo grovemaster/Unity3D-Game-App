@@ -22,26 +22,26 @@ namespace ECS.Engine.Hand.Highlight
         public void Step(ref HandPiecePressStepState token, int condition)
         {
             HandPieceEV handPiece = handService.FindHandPiece(token.handPieceEntityId, entitiesDB);
-            bool isClicked = !handPiece.highlight.IsHighlighted;
-            HighlightState colorToChange = HighlightService.CalcClickHighlightState(handPiece.playerOwner.PlayerColor);
+            bool isClicked = !handPiece.Highlight.IsHighlighted;
+            HighlightState colorToChange = HighlightService.CalcClickHighlightState(handPiece.PlayerOwner.PlayerColor);
 
             entitiesDB.ExecuteOnEntity(
                 handPiece.ID,
                 (ref HandPieceEV handPieceToChange) =>
                 {
-                    handPieceToChange.highlight.IsHighlighted = isClicked;
+                    handPieceToChange.Highlight.IsHighlighted = isClicked;
 
                     if (isClicked)
                     {
-                        handPieceToChange.highlight.CurrentColorStates.Add(colorToChange);
+                        handPieceToChange.Highlight.CurrentColorStates.Add(colorToChange);
                     }
                     else
                     {
-                        handPieceToChange.highlight.CurrentColorStates.Clear();
+                        handPieceToChange.Highlight.CurrentColorStates.Clear();
                     }
                 });
 
-            handPiece.changeColor.PlayChangeColor = true;
+            handPiece.ChangeColorTrigger.PlayChangeColor = true;
         }
     }
 }

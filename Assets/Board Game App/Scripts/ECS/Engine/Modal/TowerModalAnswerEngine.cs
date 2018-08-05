@@ -24,12 +24,12 @@ namespace ECS.Engine.Modal
 
         protected override void Add(ref ModalEV entityView)
         {
-            entityView.answer.Answer.NotifyOnValueSet(OnPressed);
+            entityView.Answer.Answer.NotifyOnValueSet(OnPressed);
         }
 
         protected override void Remove(ref ModalEV entityView)
         {
-            entityView.answer.Answer.StopNotify(OnPressed);
+            entityView.Answer.Answer.StopNotify(OnPressed);
         }
 
         private void OnPressed(int entityId, int pieceReferenceId)
@@ -39,7 +39,7 @@ namespace ECS.Engine.Modal
             var pressState = new PressStepState
             {
                 pieceEntityId = pieceReferenceId,
-                piecePressState = piece.highlight.IsHighlighted ? PiecePressState.UNCLICKED : PiecePressState.CLICKED,
+                piecePressState = piece.Highlight.IsHighlighted ? PiecePressState.UNCLICKED : PiecePressState.CLICKED,
                 affectedTiles = DestinationTileService.CalcDestinationTileLocations(piece, entitiesDB)
             };
 

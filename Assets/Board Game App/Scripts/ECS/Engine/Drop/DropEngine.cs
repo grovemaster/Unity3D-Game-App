@@ -22,28 +22,28 @@ namespace ECS.Engine.Drop
         public void Step(ref DropStepState token, int condition)
         {
             PieceEV pieceToDrop = PieceService.FindFirstPieceByLocationAndType(
-                BoardConst.HAND_LOCATION, token.handPiece.handPiece.PieceType, entitiesDB);
+                BoardConst.HAND_LOCATION, token.handPiece.HandPiece.PieceType, entitiesDB);
 
-            DropPiece(ref pieceToDrop, ref token.destinationTile, token.handPiece.playerOwner.PlayerColor);
+            DropPiece(ref pieceToDrop, ref token.destinationTile, token.handPiece.PlayerOwner.PlayerColor);
             UpdateHandPiece(ref token.handPiece);
         }
 
         private void DropPiece(ref PieceEV pieceToDrop, ref TileEV destinationTile, PlayerColor playerOwner)
         {
             Vector3 location = new Vector3(
-                destinationTile.location.Location.x,
-                destinationTile.location.Location.y,
+                destinationTile.Location.Location.x,
+                destinationTile.Location.Location.y,
                 1);
 
             PieceService.SetPieceLocationAndTier(pieceToDrop, location, 1, entitiesDB);
             PieceService.SetPiecePlayerOwner(pieceToDrop, playerOwner, entitiesDB);
-            pieceToDrop.movePiece.NewLocation = location;
-            pieceToDrop.visibility.IsVisible.value = true;
+            pieceToDrop.MovePiece.NewLocation = location;
+            pieceToDrop.Visibility.IsVisible.value = true;
         }
 
         private void UpdateHandPiece(ref HandPieceEV handPiece)
         {
-            handPiece.handPiece.NumPieces.value--;
+            handPiece.HandPiece.NumPieces.value--;
         }
     }
 }

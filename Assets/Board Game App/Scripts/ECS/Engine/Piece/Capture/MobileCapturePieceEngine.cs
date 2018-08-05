@@ -16,7 +16,7 @@ namespace ECS.Engine.Piece.Capture
         {
             PieceEV pieceToCapture = token.pieceToCapture;
             PieceService.SetPieceLocationToHandLocation(pieceToCapture, entitiesDB);
-            pieceToCapture.visibility.IsVisible.value = false;
+            pieceToCapture.Visibility.IsVisible.value = false;
         }
     }
 }

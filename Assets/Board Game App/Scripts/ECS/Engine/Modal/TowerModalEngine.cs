@@ -22,7 +22,7 @@ namespace ECS.Engine.Modal
         {
             ModalEV modal = modalService.FindModalEV(entitiesDB);
             List<PieceEV> piecesAtLocation = PieceService.FindPiecesByLocation(
-                token.clickedPiece.location.Location, entitiesDB);
+                token.clickedPiece.Location.Location, entitiesDB);
 
             SetModalOptions(modal, piecesAtLocation);
             DisplayModal(modal);
@@ -30,7 +30,7 @@ namespace ECS.Engine.Modal
 
         private void DisplayModal(ModalEV modal)
         {
-            modal.visibility.IsVisible.value = true;
+            modal.Visibility.IsVisible.value = true;
         }
 
         private void SetModalOptions(ModalEV modal, List<PieceEV> piecesAtLocation)
@@ -49,7 +49,7 @@ namespace ECS.Engine.Modal
         private string CalcButtonText(PieceEV piece)
         {
             // For now, every back piece is Bronze (B)
-            string returnValue = "(" + piece.playerOwner.PlayerColor.ToString() + ") " + piece.piece.PieceType.ToString() + "(B)";
+            string returnValue = "(" + piece.PlayerOwner.PlayerColor.ToString() + ") " + piece.Piece.PieceType.ToString() + "(B)";
 
             return returnValue;
         }
@@ -60,7 +60,7 @@ namespace ECS.Engine.Modal
                 modal.ID,
                 (ref ModalEV modalToChange) =>
                 {
-                    modalToChange.type.Type = modalType;
+                    modalToChange.Type.Type = modalType;
                 });
         }
 
@@ -74,19 +74,19 @@ namespace ECS.Engine.Modal
                 modal.ID,
                 (ref ModalEV modalToChange) =>
                 {
-                    modalToChange.tier1.Enabled = pieceTier1.tier.TopOfTower;
-                    modalToChange.tier1.Name = CalcButtonText(pieceTier1);
-                    modalToChange.tier1.ReferencedPieceId = pieceTier1.ID.entityID;
+                    modalToChange.Tier1.Enabled = pieceTier1.Tier.TopOfTower;
+                    modalToChange.Tier1.Name = CalcButtonText(pieceTier1);
+                    modalToChange.Tier1.ReferencedPieceId = pieceTier1.ID.entityID;
 
-                    modalToChange.tier2.Enabled = pieceTier2.tier.TopOfTower;
-                    modalToChange.tier2.Name = CalcButtonText(pieceTier2);
-                    modalToChange.tier2.ReferencedPieceId = pieceTier2.ID.entityID;
+                    modalToChange.Tier2.Enabled = pieceTier2.Tier.TopOfTower;
+                    modalToChange.Tier2.Name = CalcButtonText(pieceTier2);
+                    modalToChange.Tier2.ReferencedPieceId = pieceTier2.ID.entityID;
 
                     if (pieceTier3.HasValue)
                     {
-                        modalToChange.tier3.Enabled = pieceTier3.Value.tier.TopOfTower;
-                        modalToChange.tier3.Name = CalcButtonText(pieceTier3.Value);
-                        modalToChange.tier3.ReferencedPieceId = pieceTier3.Value.ID.entityID;
+                        modalToChange.Tier3.Enabled = pieceTier3.Value.Tier.TopOfTower;
+                        modalToChange.Tier3.Name = CalcButtonText(pieceTier3.Value);
+                        modalToChange.Tier3.ReferencedPieceId = pieceTier3.Value.ID.entityID;
                     }
                 });
         }

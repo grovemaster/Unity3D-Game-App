@@ -31,9 +31,9 @@ namespace ECS.Engine.Board
 
             for (int i = 0; i < pieceEVs.Length; ++i)
             {
-                if (pieceEVs[i].highlight.IsPressed.value)
+                if (pieceEVs[i].Highlight.IsPressed.value)
                 {
-                    pieceEVs[i].highlight.IsPressed.value = false; // Will trigger a PiecePressEngine, but IsPressed check will stop it
+                    pieceEVs[i].Highlight.IsPressed.value = false; // Will trigger a PiecePressEngine, but IsPressed check will stop it
                 }
             }
         }
@@ -44,9 +44,9 @@ namespace ECS.Engine.Board
 
             for (int i = 0; i < tileEVs.Length; ++i)
             {
-                if (tileEVs[i].highlight.IsPressed.value)
+                if (tileEVs[i].Highlight.IsPressed.value)
                 {
-                    tileEVs[i].highlight.IsPressed.value = false; // Will trigger a TilePressEngine, but IsPressed check will stop it
+                    tileEVs[i].Highlight.IsPressed.value = false; // Will trigger a TilePressEngine, but IsPressed check will stop it
                 }
             }
         }
@@ -57,9 +57,9 @@ namespace ECS.Engine.Board
 
             for (int i = 0; i < handPieceEVs.Length; ++i)
             {
-                if (handPieceEVs[i].highlight.IsPressed.value)
+                if (handPieceEVs[i].Highlight.IsPressed.value)
                 {
-                    handPieceEVs[i].highlight.IsPressed.value = false; // Will trigger a HandPiecePressEngine, but IsPressed check will stop it
+                    handPieceEVs[i].Highlight.IsPressed.value = false; // Will trigger a HandPiecePressEngine, but IsPressed check will stop it
                 }
             }
         }

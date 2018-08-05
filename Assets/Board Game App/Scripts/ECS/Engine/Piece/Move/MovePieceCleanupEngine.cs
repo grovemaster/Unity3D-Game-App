@@ -23,7 +23,7 @@ namespace ECS.Engine.Piece.Move
 
             for (int i = 0; i < tileEVs.Length; ++i)
             {
-                tileEVs[i].tile.PieceRefEntityId = null;
+                tileEVs[i].Tile.PieceRefEntityId = null;
             }
         }
     }
