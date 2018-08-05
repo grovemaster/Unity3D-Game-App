@@ -42,13 +42,13 @@ namespace Service.Board
 
             if (returnValue.tile.HasValue && !returnValue.piece.HasValue)
             {
-                returnValue.piece = PieceService.FindPieceByLocation(
+                returnValue.piece = PieceService.FindTopPieceByLocation(
                     returnValue.tile.Value.location.Location, entitiesDB);
             }
 
             if (returnValue.tile.HasValue)
             {
-                returnValue.pieceAtDestination = PieceService.FindPieceByLocation(
+                returnValue.pieceAtDestination = PieceService.FindTopPieceByLocation(
                     returnValue.tile.Value.location.Location, entitiesDB);
             }
 

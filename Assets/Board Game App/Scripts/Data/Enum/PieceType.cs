@@ -1,4 +1,4 @@
 ﻿namespace Data.Enum
 {
-    public enum PieceType { PAWN };
+    public enum PieceType { PAWN, GOLD };
 }

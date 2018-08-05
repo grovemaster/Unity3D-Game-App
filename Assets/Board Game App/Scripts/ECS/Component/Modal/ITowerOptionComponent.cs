@@ -16,7 +16,6 @@ namespace ECS.Component.Modal
         string Name { get; set; }
         bool Enabled { get; set; }
         int ReferencedPieceId { get; set; } // Piece of tower tier, clicked value is set as Answer
-        DispatchOnSet<int> Answer { get; set; } // Engine listens for answer
     }
 
     public interface ITier1OptionComponent: IComponent, ITowerOptionBase
