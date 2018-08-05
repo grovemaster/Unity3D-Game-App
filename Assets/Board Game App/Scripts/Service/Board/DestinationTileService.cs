@@ -1,4 +1,5 @@
-﻿using Data.Enum.Player;
+﻿using Data.Enum;
+using Data.Enum.Player;
 using ECS.EntityView.Piece;
 using Service.Piece;
 using Svelto.ECS;
@@ -46,7 +47,8 @@ namespace Service.Board
 
         private static List<Vector3> CalcSingleDestinations(PieceEV pieceEV, List<PieceEV> allPieces)
         {
-            List<Vector3> returnValue = GetRawSingleDestinationLocations(pieceEV);
+            bool useGoldMovement = isOpponentPieceDirectlyBelow(pieceEV, allPieces);
+            List<Vector3> returnValue = GetRawSingleDestinationLocations(pieceEV, useGoldMovement);
             AdjustRawDataWithPieceLocationAndDirection(pieceEV, returnValue);
             ExcludeDestinationsWithFriendlyTier3Tower(pieceEV, returnValue, allPieces);
             // Do NOT allow destinations other pieces in the way
@@ -55,9 +57,22 @@ namespace Service.Board
             return returnValue;
         }
 
-        private static List<Vector3> GetRawSingleDestinationLocations(PieceEV pieceEV)
+        private static bool isOpponentPieceDirectlyBelow(PieceEV pieceEV, List<PieceEV> allPieces)
         {
-            return PieceService.CreateIPieceData(pieceEV.piece.PieceType).Tiers()[pieceEV.tier.Tier - 1].Single()
+            return pieceEV.tier.Tier != 1
+                && allPieces.Where(piece =>
+                    piece.location.Location.x == pieceEV.location.Location.x
+                    && piece.location.Location.y == pieceEV.location.Location.y
+                    && piece.playerOwner.PlayerColor != pieceEV.playerOwner.PlayerColor
+                    && piece.tier.Tier + 1 == pieceEV.tier.Tier)
+                .Count() > 0;
+        }
+
+        private static List<Vector3> GetRawSingleDestinationLocations(PieceEV pieceEV, bool useGoldMovement)
+        {
+            PieceType pieceToCreate = !useGoldMovement ? pieceEV.piece.PieceType : PieceType.GOLD;
+
+            return PieceService.CreateIPieceData(pieceToCreate).Tiers()[pieceEV.tier.Tier - 1].Single()
                 .Select(x => new Vector3(x.x, x.y, 0)).ToList(); // Change z-value from >=1 to 0
         }
 

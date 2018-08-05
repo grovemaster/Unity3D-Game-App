@@ -20,19 +20,10 @@ namespace ECS.Engine.Modal
 
         public void Step(ref ClickPieceStepState token, int condition)
         {
-            // ModalEV modal, find it
-            // List<PieceEV> piecesAtLocation, order by tier in ascending order (in service)
-            // Set modal info for 2-tier tower
-            // Show Modal
             ModalEV modal = modalService.FindModalEV(entitiesDB);
             List<PieceEV> piecesAtLocation = PieceService.FindPiecesByLocation(
                 token.clickedPiece.location.Location, entitiesDB);
 
-            // For each piece
-            //  calc ITowerOptionBase for each tier in list
-            // if no tier 3, set tier to disabled
-            // calc ModalType based on list size
-            // do big set
             SetModalOptions(modal, piecesAtLocation);
             DisplayModal(modal);
         }

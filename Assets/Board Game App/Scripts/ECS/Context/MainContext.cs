@@ -17,6 +17,7 @@ using ECS.Engine.Drop;
 using ECS.Engine.Hand;
 using ECS.Engine.Hand.Highlight;
 using ECS.Engine.Modal;
+using ECS.Engine.Modal.CaptureStack;
 using ECS.Engine.Move;
 using ECS.Engine.Piece;
 using ECS.Engine.Piece.Capture;
@@ -105,6 +106,7 @@ namespace ECS.Context
             Sequencer handPiecePressSequence = new Sequencer();
             Sequencer cancelModalSequence = new Sequencer();
             Sequencer towerModalAnswerSequence = new Sequencer();
+            Sequencer captureStackModalAnswerSequence = new Sequencer();
 
             var piecePressEngine = new PiecePressEngine(boardPressSequence);
             var tilePressEngine = new TilePressEngine(boardPressSequence);
@@ -136,6 +138,9 @@ namespace ECS.Context
             var towerModalEngine = new TowerModalEngine();
             var cancelModalEngine = new CancelModalEngine(cancelModalSequence);
             var towerModalAnswerEngine = new TowerModalAnswerEngine(towerModalAnswerSequence);
+
+            var captureStackModalEngine = new CaptureStackModalEngine();
+            var captureStackModalAnswerEngine = new CaptureStackModalAnswerEngine(captureStackModalAnswerSequence);
 
             var pressStep = new IStep<BoardPressStepState>[] { unPressEngine, boardPressEngine };
             var clickStep = new IStep<PressStepState>[]
@@ -196,7 +201,8 @@ namespace ECS.Context
                         new To
                         {
                             { (int)MoveState.MOVE_PIECE, movePieceStep },
-                            { (int)MoveState.MOBILE_CAPTURE, capturePieceStep }
+                            { (int)MoveState.MOBILE_CAPTURE, capturePieceStep },
+                            { (int)MoveState.CAPTURE_STACK_MODAL, new IStep<CapturePieceStepState>[] { captureStackModalEngine } }
                         }
                     },
                     {
@@ -250,6 +256,20 @@ namespace ECS.Context
                 }
                 );
 
+            captureStackModalAnswerSequence.SetSequence(
+                new Steps
+                {
+                    {
+                        captureStackModalAnswerEngine,
+                        new To
+                        {
+                            { (int)MoveState.MOVE_PIECE, movePieceStep },
+                            { (int)MoveState.MOBILE_CAPTURE, capturePieceStep },
+                        }
+                    }
+                }
+                );
+
             enginesRoot.AddEngine(piecePressEngine);
             enginesRoot.AddEngine(tilePressEngine);
             enginesRoot.AddEngine(unPressEngine);
@@ -280,6 +300,9 @@ namespace ECS.Context
             enginesRoot.AddEngine(towerModalEngine);
             enginesRoot.AddEngine(cancelModalEngine);
             enginesRoot.AddEngine(towerModalAnswerEngine);
+
+            enginesRoot.AddEngine(captureStackModalEngine);
+            enginesRoot.AddEngine(captureStackModalAnswerEngine);
         }
 
         private void SetupEntities() {
@@ -316,6 +339,10 @@ namespace ECS.Context
             pieceCreateService.CreatePiece(PlayerColor.BLACK, 0, 3);
             pieceCreateService.CreatePiece(PlayerColor.BLACK, 2, 1);
             pieceCreateService.CreatePiece(PlayerColor.BLACK, 4, 2);
+            pieceCreateService.CreatePiece(PlayerColor.WHITE, 0, 5);
+            pieceCreateService.CreatePiece(PlayerColor.WHITE, 0, 6);
+            pieceCreateService.CreatePiece(PlayerColor.WHITE, 0, 7);
+            pieceCreateService.CreatePiece(PlayerColor.WHITE, 0, 8);
             pieceCreateService.CreatePiece(PlayerColor.WHITE, 1, 8);
             pieceCreateService.CreatePiece(PlayerColor.WHITE, 3, 7);
             pieceCreateService.CreatePiece(PlayerColor.WHITE, 4, 6);

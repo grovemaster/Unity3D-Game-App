@@ -1,13 +1,10 @@
 ﻿using Data.Enum;
 using Data.Step;
-using ECS.EntityView.Board.Tile;
 using ECS.EntityView.Modal;
 using ECS.EntityView.Piece;
 using Service.Board;
 using Service.Piece;
 using Svelto.ECS;
-using System.Collections.Generic;
-using UnityEngine;
 
 namespace ECS.Engine.Modal
 {

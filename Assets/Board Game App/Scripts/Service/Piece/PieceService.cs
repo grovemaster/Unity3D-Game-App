@@ -2,6 +2,7 @@
 using Data.Enum;
 using Data.Enum.Player;
 using Data.Piece;
+using Data.Piece.Back.Gold;
 using Data.Piece.Front.Pawn;
 using ECS.EntityView.Piece;
 using Service.Common;
@@ -27,6 +28,8 @@ namespace Service.Piece
             {
                 case PieceType.PAWN:
                     return new PawnData();
+                case PieceType.GOLD:
+                    return new GoldData();
                 default:
                     throw new InvalidOperationException("Invalid PieceType when creating IPieceData");
             }
@@ -72,7 +75,6 @@ namespace Service.Piece
         {
             List<PieceEV> returnValue = new List<PieceEV>();
 
-
             PieceEV[] pieces = FindAllBoardPieces(entitiesDB);
             List<PieceEV> piecesAtLocation = new List<PieceEV>();
 
@@ -92,10 +94,13 @@ namespace Service.Piece
             return returnValue;
         }
 
+        /**
+         * Only finds pieces at top of tower
+         */
         public static PieceEV[] FindPiecesByTeam(PlayerColor team, IEntitiesDB entitiesDB)
         {
             return FindAllBoardPieces(entitiesDB)
-                .Where(piece => piece.playerOwner.PlayerColor == team).ToArray();
+                .Where(piece => piece.playerOwner.PlayerColor == team && piece.tier.TopOfTower).ToArray();
         }
 
         public static PieceEV FindFirstPieceByLocationAndType(

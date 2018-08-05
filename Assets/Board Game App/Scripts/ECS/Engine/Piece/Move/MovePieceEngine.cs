@@ -21,10 +21,10 @@ namespace ECS.Engine.Piece.Move
 
             PieceEV? topPieceCurrentlyAtDestination = PieceService.FindTopPieceByLocation(
                 token.destinationTile.location.Location, entitiesDB);
+            int currentTowerTier = PieceService.FindPiecesByLocation(token.destinationTile.location.Location, entitiesDB).Count;
             PieceService.SetTopOfTowerToFalse(topPieceCurrentlyAtDestination, entitiesDB);
 
-            int newTier = topPieceCurrentlyAtDestination.HasValue ?
-                topPieceCurrentlyAtDestination.Value.tier.Tier + 1 : 1;
+            int newTier = currentTowerTier + 1;
 
             // Set location.z, topOfTower = false of all pieces at destination tile,
             // set tier of moving piece, set topOfTower = true for moving piece

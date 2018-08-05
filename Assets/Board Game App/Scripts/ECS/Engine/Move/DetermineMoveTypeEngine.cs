@@ -37,7 +37,8 @@ namespace ECS.Engine.Move
             if (topPieceAtDestinationTile.HasValue
                 && topPieceAtDestinationTile.Value.playerOwner.PlayerColor != token.pieceToMove.playerOwner.PlayerColor)
             {
-                returnValue = MoveState.MOBILE_CAPTURE;
+                returnValue = topPieceAtDestinationTile.Value.tier.Tier != 3 ?
+                    MoveState.CAPTURE_STACK_MODAL : MoveState.MOBILE_CAPTURE;
             }
 
             return returnValue;
@@ -53,6 +54,9 @@ namespace ECS.Engine.Move
                     break;
                 case MoveState.MOBILE_CAPTURE:
                     NextActionMobileCapturePiece(ref token, topPieceAtDestinationTile.Value);
+                    break;
+                case MoveState.CAPTURE_STACK_MODAL:
+                    NextActionMobileCaptureStackModal(ref token, topPieceAtDestinationTile.Value);
                     break;
                 default:
                     throw new InvalidOperationException("Invalid or unsupported MoveState state");
@@ -74,6 +78,18 @@ namespace ECS.Engine.Move
             };
 
             moveSequence.Next(this, ref captureToken, (int)MoveState.MOBILE_CAPTURE);
+        }
+
+        private void NextActionMobileCaptureStackModal(ref MovePieceStepState token, PieceEV topPieceAtDestinationTile)
+        {
+            var captureToken = new CapturePieceStepState
+            {
+                pieceToCapture = topPieceAtDestinationTile,
+                pieceToMove = token.pieceToMove,
+                destinationTile = token.destinationTile
+            };
+
+            moveSequence.Next(this, ref captureToken, (int)MoveState.CAPTURE_STACK_MODAL);
         }
     }
 }
