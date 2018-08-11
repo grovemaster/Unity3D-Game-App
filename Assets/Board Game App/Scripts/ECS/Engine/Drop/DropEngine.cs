@@ -34,6 +34,7 @@ namespace ECS.Engine.Drop
             PieceService.SetPiecePlayerOwner(pieceToDrop, playerOwner, entitiesDB);
             pieceToDrop.MovePiece.NewLocation = location;
             pieceToDrop.Visibility.IsVisible.value = true;
+            pieceToDrop.ChangeColorTrigger.PlayChangeColor = true;
         }
 
         private void UpdateHandPiece(ref HandPieceEV handPiece)

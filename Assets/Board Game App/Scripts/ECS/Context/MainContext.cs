@@ -147,12 +147,15 @@ namespace ECS.Context
 
             var designateImmobileCaptureEngine = new DesignateImmobileCaptureEngine();
             var immobileCaptureEngine = new ImmobileCaptureEngine();
+            var gotoMovePieceCleanupEngine = new GotoMovePieceCleanupEngine(towerModalAnswerSequence);
 
             var pressStep = new IStep<BoardPressStepState>[] { unPressEngine, boardPressEngine };
             var clickStep = new IStep<PressStepState>[]
                                 { deHighlightTeamPiecesEngine, pieceHighlightEngine, tileHighlightEngine };
             var movePieceStep = new IStep<MovePieceStepState>[]
-                { unHighlightEngine, movePieceEngine, movePieceCleanupEngine, turnEndEngine };
+                { movePieceEngine, unHighlightEngine, movePieceCleanupEngine, turnEndEngine };
+            var movePieceCleanupStep = new IStep<MovePieceStepState>[]
+                { unHighlightEngine, movePieceCleanupEngine, turnEndEngine };
             var capturePieceStep = new IStep<CapturePieceStepState>[]
                 { mobileCapturePieceEngine, addPieceToHandEngine, gotoMovePieceEngine };
             var dropStep = new IStep<DropStepState>[]
@@ -260,11 +263,11 @@ namespace ECS.Context
                             { (int)TowerAnswerState.DESIGNATE_IMMOBILE_CAPTURE,
                                 new IStep<ImmobileCaptureStepState>[] { designateImmobileCaptureEngine } },
                             { (int)TowerAnswerState.INITIATE_IMMOBILE_CAPTURE,
-                                new IStep<ImmobileCapturePieceStepState>[] { immobileCaptureEngine } }
+                                new IStep<ImmobileCapturePieceStepState>[] { immobileCaptureEngine, addPieceToHandEngine, gotoMovePieceCleanupEngine } }
                         }
                     },
                     {
-                        immobileCaptureEngine,
+                        gotoMovePieceCleanupEngine,
                         new To
                         {
                             new IStep<MovePieceStepState>[]
@@ -324,6 +327,7 @@ namespace ECS.Context
 
             enginesRoot.AddEngine(designateImmobileCaptureEngine);
             enginesRoot.AddEngine(immobileCaptureEngine);
+            enginesRoot.AddEngine(gotoMovePieceCleanupEngine);
         }
 
         private void SetupEntities() {
