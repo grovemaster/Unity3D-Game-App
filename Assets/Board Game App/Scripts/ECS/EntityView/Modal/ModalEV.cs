@@ -15,6 +15,7 @@ namespace ECS.EntityView.Modal
         public ICaptureOrStackComponent CaptureOrStack;
         public IAnswerComponent Answer;
         public ICancelComponent Cancel;
+        public IImmobileCaptureStateComponent ImmobileCaptureState;
         public IVisibilityComponent Visibility;
     }
 }

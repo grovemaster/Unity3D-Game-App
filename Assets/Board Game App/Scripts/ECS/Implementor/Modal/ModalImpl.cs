@@ -9,7 +9,7 @@ using View.Modal;
 
 namespace ECS.Implementor.Modal
 {
-    class ModalImpl : MonoBehaviour, IImplementor, IModalTypeComponent, IAnswerComponent
+    class ModalImpl : MonoBehaviour, IImplementor, IModalTypeComponent, IAnswerComponent, IImmobileCaptureStateComponent
     {
         public GameObject Overlay;                // Need overlay to hide/show modal, since it contains modal
         private TrackIsModalOpen isModalOpen;
@@ -36,6 +36,7 @@ namespace ECS.Implementor.Modal
 
         public ModalType Type { get; set; }
         public DispatchOnSet<int> Answer { get; set; }
+        public bool ImmobileCaptureDesignated { get; set; }
 
         void Awake()
         {
@@ -94,13 +95,13 @@ namespace ECS.Implementor.Modal
                     SetTitle();
                     SetQuestion();
                     modalViewService.DeactivateButton(Button1);
-                    modalViewService.SetupButton(Button2, tier1Option, Answer);
-                    modalViewService.SetupButton(Button3, tier2Option, Answer);
+                    modalViewService.SetupButton(Button2, tier1Option, Answer, ImmobileCaptureDesignated);
+                    modalViewService.SetupButton(Button3, tier2Option, Answer, true);
                     break;
                 case ModalType.TOWER_3RD_TIER:
-                    modalViewService.SetupButton(Button1, tier1Option, Answer);
-                    modalViewService.SetupButton(Button2, tier2Option, Answer);
-                    modalViewService.SetupButton(Button3, tier3Option, Answer);
+                    modalViewService.SetupButton(Button1, tier1Option, Answer, ImmobileCaptureDesignated);
+                    modalViewService.SetupButton(Button2, tier2Option, Answer, ImmobileCaptureDesignated);
+                    modalViewService.SetupButton(Button3, tier3Option, Answer, true);
                     break;
                 case ModalType.CAPTURE_STACK:
                     SetTitle("Capture Or Stack");

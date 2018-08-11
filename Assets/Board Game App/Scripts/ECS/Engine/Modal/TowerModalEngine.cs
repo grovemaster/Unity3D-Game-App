@@ -1,4 +1,5 @@
 ﻿using Data.Enum.Modal;
+using Data.Enum.Player;
 using Data.Step.Piece.Click;
 using ECS.EntityView.Modal;
 using ECS.EntityView.Piece;
@@ -69,16 +70,29 @@ namespace ECS.Engine.Modal
             PieceEV pieceTier1 = piecesAtLocation[0];
             PieceEV pieceTier2 = piecesAtLocation[1];
             PieceEV? pieceTier3 = modalType == ModalType.TOWER_3RD_TIER ? (PieceEV?)piecesAtLocation[2] : null;
+            PlayerColor topPlayerColor = pieceTier3.HasValue ?
+                pieceTier3.Value.PlayerOwner.PlayerColor : pieceTier2.PlayerOwner.PlayerColor;
+            bool immobileCapturePossible = pieceTier2.PlayerOwner.PlayerColor != pieceTier1.PlayerOwner.PlayerColor
+                || (pieceTier3.HasValue && pieceTier2.PlayerOwner.PlayerColor != pieceTier3.Value.PlayerOwner.PlayerColor);
 
             entitiesDB.ExecuteOnEntity(
                 modal.ID,
                 (ref ModalEV modalToChange) =>
                 {
-                    modalToChange.Tier1.Enabled = pieceTier1.Tier.TopOfTower;
+                    modalToChange.ImmobileCaptureState.ImmobileCaptureDesignated = false;
+
+                    modalToChange.Tier1.Enabled = pieceTier1.Tier.TopOfTower
+                        || (immobileCapturePossible
+                            && pieceTier1.PlayerOwner.PlayerColor != pieceTier2.PlayerOwner.PlayerColor
+                            && pieceTier1.PlayerOwner.PlayerColor != topPlayerColor);
                     modalToChange.Tier1.Name = CalcButtonText(pieceTier1);
                     modalToChange.Tier1.ReferencedPieceId = pieceTier1.ID.entityID;
 
-                    modalToChange.Tier2.Enabled = pieceTier2.Tier.TopOfTower;
+                    modalToChange.Tier2.Enabled = pieceTier2.Tier.TopOfTower
+                        || (immobileCapturePossible
+                            && (pieceTier2.PlayerOwner.PlayerColor != pieceTier1.PlayerOwner.PlayerColor
+                            || (!pieceTier3.HasValue || pieceTier2.PlayerOwner.PlayerColor != pieceTier3.Value.PlayerOwner.PlayerColor))
+                            && pieceTier2.PlayerOwner.PlayerColor != topPlayerColor);
                     modalToChange.Tier2.Name = CalcButtonText(pieceTier2);
                     modalToChange.Tier2.ReferencedPieceId = pieceTier2.ID.entityID;
 
@@ -87,6 +101,10 @@ namespace ECS.Engine.Modal
                         modalToChange.Tier3.Enabled = pieceTier3.Value.Tier.TopOfTower;
                         modalToChange.Tier3.Name = CalcButtonText(pieceTier3.Value);
                         modalToChange.Tier3.ReferencedPieceId = pieceTier3.Value.ID.entityID;
+                    }
+                    else
+                    {
+                        modalToChange.Tier3.Enabled = false;
                     }
                 });
         }

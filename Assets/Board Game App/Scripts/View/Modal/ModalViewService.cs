@@ -15,7 +15,7 @@ namespace View.Modal
             this.closePanel = closePanel;
         }
 
-        public void SetupButton(Button button, ITowerOptionBase config, DispatchOnSet<int> answer)
+        public void SetupButton(Button button, ITowerOptionBase config, DispatchOnSet<int> answer, bool addClosePanel)
         {
             DeactivateButton(button); // Reset button first
 
@@ -24,7 +24,12 @@ namespace View.Modal
                 // Trigger confirmation that clicked item was referenced piece id (engine will pick it up)
                 answer.value = config.ReferencedPieceId;
             });
-            button.onClick.AddListener(closePanel);
+
+            if (addClosePanel)
+            {
+                button.onClick.AddListener(closePanel);
+            }
+
             button.GetComponentInChildren<Text>().text = config.Name;
 
             button.gameObject.SetActive(true);

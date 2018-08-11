@@ -1,12 +1,14 @@
 ﻿using System;
 using Data.Enum;
 using Data.Enum.Click;
+using Data.Enum.Modal;
 using Data.Enum.Move;
 using Data.Enum.Player;
 using Data.Step;
 using Data.Step.Board;
 using Data.Step.Drop;
 using Data.Step.Hand;
+using Data.Step.Modal;
 using Data.Step.Piece.Capture;
 using Data.Step.Piece.Click;
 using Data.Step.Piece.Move;
@@ -18,6 +20,7 @@ using ECS.Engine.Hand;
 using ECS.Engine.Hand.Highlight;
 using ECS.Engine.Modal;
 using ECS.Engine.Modal.CaptureStack;
+using ECS.Engine.Modal.ImmobileCapture;
 using ECS.Engine.Move;
 using ECS.Engine.Piece;
 using ECS.Engine.Piece.Capture;
@@ -142,6 +145,9 @@ namespace ECS.Context
             var captureStackModalEngine = new CaptureStackModalEngine();
             var captureStackModalAnswerEngine = new CaptureStackModalAnswerEngine(captureStackModalAnswerSequence);
 
+            var designateImmobileCaptureEngine = new DesignateImmobileCaptureEngine();
+            var immobileCaptureEngine = new ImmobileCaptureEngine();
+
             var pressStep = new IStep<BoardPressStepState>[] { unPressEngine, boardPressEngine };
             var clickStep = new IStep<PressStepState>[]
                                 { deHighlightTeamPiecesEngine, pieceHighlightEngine, tileHighlightEngine };
@@ -250,7 +256,19 @@ namespace ECS.Context
                         towerModalAnswerEngine,
                         new To
                         {
-                            clickStep
+                            { (int)TowerAnswerState.CLICK_HIGHLIGHT, clickStep },
+                            { (int)TowerAnswerState.DESIGNATE_IMMOBILE_CAPTURE,
+                                new IStep<ImmobileCaptureStepState>[] { designateImmobileCaptureEngine } },
+                            { (int)TowerAnswerState.INITIATE_IMMOBILE_CAPTURE,
+                                new IStep<ImmobileCapturePieceStepState>[] { immobileCaptureEngine } }
+                        }
+                    },
+                    {
+                        immobileCaptureEngine,
+                        new To
+                        {
+                            new IStep<MovePieceStepState>[]
+                            { unHighlightEngine, movePieceCleanupEngine, turnEndEngine }
                         }
                     }
                 }
@@ -303,6 +321,9 @@ namespace ECS.Context
 
             enginesRoot.AddEngine(captureStackModalEngine);
             enginesRoot.AddEngine(captureStackModalAnswerEngine);
+
+            enginesRoot.AddEngine(designateImmobileCaptureEngine);
+            enginesRoot.AddEngine(immobileCaptureEngine);
         }
 
         private void SetupEntities() {
