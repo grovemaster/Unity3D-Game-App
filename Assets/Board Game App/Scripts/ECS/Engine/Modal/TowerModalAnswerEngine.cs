@@ -84,6 +84,7 @@ namespace ECS.Engine.Modal
                 case TowerAnswerState.INITIATE_IMMOBILE_CAPTURE:
                     NextActionInitiateImmobileCapture(piece);
                     break;
+                default:
                     throw new InvalidOperationException("Invalid or unsupported TowerAnswer state");
             }
         }

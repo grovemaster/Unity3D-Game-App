@@ -29,6 +29,7 @@ namespace ECS.Implementor.Modal
         private Tier2OptionImpl tier2Option;
         private Tier3OptionImpl tier3Option;
         private ModalQuestionImpl questionAnswer;
+        private ModalConfirmImpl confirm;
         private ModalVisibilityImpl visibility;
 
         // Services
@@ -52,6 +53,7 @@ namespace ECS.Implementor.Modal
             tier2Option = gameObject.GetComponentInChildren<Tier2OptionImpl>();
             tier3Option = gameObject.GetComponentInChildren<Tier3OptionImpl>();
             questionAnswer = gameObject.GetComponentInChildren<ModalQuestionImpl>();
+            confirm = gameObject.GetComponentInChildren<ModalConfirmImpl>();
             visibility = gameObject.GetComponentInChildren<ModalVisibilityImpl>();
 
             visibility.IsVisible.NotifyOnValueSet(OnVisibilityChanged);
@@ -109,6 +111,13 @@ namespace ECS.Implementor.Modal
                     modalViewService.DeactivateButton(Button1);
                     modalViewService.SetupButton(Button2, questionAnswer, ModalQuestionAnswer.CAPTURE);
                     modalViewService.SetupButton(Button3, questionAnswer, ModalQuestionAnswer.STACK);
+                    break;
+                case ModalType.CONFIRM:
+                    SetTitle("Forced Recovery");
+                    SetQuestion("Perform Forced Recovery?");
+                    modalViewService.DeactivateButton(Button1);
+                    modalViewService.SetupButton(Button2, confirm, "Yes", true);
+                    modalViewService.SetupButton(Button3, confirm, "No", false);
                     break;
                 default:
                     throw new InvalidOperationException("Unsupported ModalType");

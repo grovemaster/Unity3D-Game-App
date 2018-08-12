@@ -1,4 +1,9 @@
 ﻿namespace Data.Enum.Modal
 {
-    public enum ModalType { TOWER_2ND_TIER, TOWER_3RD_TIER, CAPTURE_STACK }
+    public enum ModalType {
+        TOWER_2ND_TIER,
+        TOWER_3RD_TIER,
+        CAPTURE_STACK,
+        CONFIRM
+    }
 }

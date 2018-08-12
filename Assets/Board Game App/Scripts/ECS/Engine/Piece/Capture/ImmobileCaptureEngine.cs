@@ -1,6 +1,5 @@
 ﻿using Data.Step.Piece.Capture;
 using ECS.EntityView.Piece;
-using Service.Modal;
 using Service.Piece;
 using Svelto.ECS;
 using System.Collections.Generic;
@@ -10,8 +9,6 @@ namespace ECS.Engine.Piece.Capture
 {
     class ImmobileCaptureEngine : IStep<ImmobileCapturePieceStepState>, IQueryingEntitiesEngine
     {
-        private ModalService modalService = new ModalService();
-
         public IEntitiesDB entitiesDB { private get; set; }
 
         public void Ready()

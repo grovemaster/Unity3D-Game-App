@@ -2,7 +2,7 @@
 
 namespace ECS.Component.Modal
 {
-    public interface IModalTypeComponent
+    public interface IModalTypeComponent : IComponent
     {
         ModalType Type { get; set; }
     }

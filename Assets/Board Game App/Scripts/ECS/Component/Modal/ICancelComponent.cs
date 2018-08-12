@@ -2,7 +2,7 @@
 
 namespace ECS.Component.Modal
 {
-    public interface ICancelComponent
+    public interface ICancelComponent : IComponent
     {
         DispatchOnSet<bool> Cancel { get; set; } // Engine listens for cancel
     }

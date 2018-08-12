@@ -53,6 +53,22 @@ namespace View.Modal
             button.interactable = true;
         }
 
+        public void SetupButton(Button button, IConfirmComponent confimContainer, string buttonText, bool answer)
+        {
+            DeactivateButton(button);
+
+            button.onClick.AddListener(delegate ()
+            {
+                // Trigger clicked answer for listening engine to pick up
+                confimContainer.Answer.value = answer;
+            });
+            button.onClick.AddListener(closePanel);
+            button.GetComponentInChildren<Text>().text = buttonText;
+
+            button.gameObject.SetActive(true);
+            button.interactable = true;
+        }
+
         public void DeactivateButton(Button button)
         {
             button.onClick.RemoveAllListeners();

@@ -52,9 +52,7 @@ namespace Service.Piece
         public static PieceEV? FindTopPieceByLocation(Vector2 location, IEntitiesDB entitiesDB)
         {
             PieceEV? returnValue = null;
-
             PieceEV[] pieces = FindAllBoardPieces(entitiesDB);
-            List<PieceEV> piecesAtLocation = new List<PieceEV>();
 
             for (int i = 0; i < pieces.Length; ++i)
             {
@@ -72,9 +70,7 @@ namespace Service.Piece
         public static List<PieceEV> FindPiecesByLocation(Vector2 location, IEntitiesDB entitiesDB)
         {
             List<PieceEV> returnValue = new List<PieceEV>();
-
             PieceEV[] pieces = FindAllBoardPieces(entitiesDB);
-            List<PieceEV> piecesAtLocation = new List<PieceEV>();
 
             for (int i = 0; i < pieces.Length; ++i)
             {

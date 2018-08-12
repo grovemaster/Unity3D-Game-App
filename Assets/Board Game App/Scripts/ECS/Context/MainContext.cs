@@ -270,8 +270,7 @@ namespace ECS.Context
                         gotoMovePieceCleanupEngine,
                         new To
                         {
-                            new IStep<MovePieceStepState>[]
-                            { unHighlightEngine, movePieceCleanupEngine, turnEndEngine }
+                            movePieceCleanupStep
                         }
                     }
                 }
