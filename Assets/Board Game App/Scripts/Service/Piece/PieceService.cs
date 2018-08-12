@@ -48,7 +48,6 @@ namespace Service.Piece
             return returnValue.ID.entityID != 0 ? (PieceEV?)returnValue : null;
         }
 
-        // TODO This will become a list once towers are enabled
         public static PieceEV? FindTopPieceByLocation(Vector2 location, IEntitiesDB entitiesDB)
         {
             PieceEV? returnValue = null;
@@ -56,7 +55,6 @@ namespace Service.Piece
 
             for (int i = 0; i < pieces.Length; ++i)
             {
-                // Tile always on z=0, pieces always on z>=1
                 if (pieces[i].Location.Location == location && pieces[i].Tier.TopOfTower)
                 {
                     returnValue = pieces[i];
@@ -74,7 +72,6 @@ namespace Service.Piece
 
             for (int i = 0; i < pieces.Length; ++i)
             {
-                // Tile always on z=0, pieces always on z>=1
                 if (pieces[i].Location.Location == location)
                 {
                     returnValue.Add(pieces[i]);
@@ -111,6 +108,13 @@ namespace Service.Piece
             }
 
             return piecesInHands[0];
+        }
+
+        public static List<PieceEV> FindPiecesByTypeAndFile(PieceType pieceType, float file, IEntitiesDB entitiesDB)
+        {
+            return FindAllBoardPieces(entitiesDB).Where(piece =>
+                piece.Piece.PieceType == pieceType && piece.Location.Location.x == file)
+                .ToList();
         }
 
         public static void SetPieceLocationToHandLocation(PieceEV pieceEV, IEntitiesDB entitiesDB)

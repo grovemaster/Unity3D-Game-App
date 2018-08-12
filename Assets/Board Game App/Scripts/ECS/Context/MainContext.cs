@@ -23,6 +23,7 @@ using ECS.Engine.Modal.CaptureStack;
 using ECS.Engine.Modal.ImmobileCapture;
 using ECS.Engine.Move;
 using ECS.Engine.Piece;
+using ECS.Engine.Piece.Ability.Drop;
 using ECS.Engine.Piece.Capture;
 using ECS.Engine.Piece.Click;
 using ECS.Engine.Piece.Move;
@@ -135,6 +136,7 @@ namespace ECS.Context
             var handPiecePressEngine = new HandPiecePressEngine(handPiecePressSequence);
             var handPieceHighlightEngine = new HandPieceHighlightEngine();
 
+            var preDropAbilitiesEngine = new PreDropAbilitiesEngine(boardPressSequence);
             var dropEngine = new DropEngine();
 
             var determineClickTypeEngine = new DetermineClickTypeEngine(boardPressSequence);
@@ -187,7 +189,7 @@ namespace ECS.Context
                             { (int)BoardPress.MOVE_PIECE,
                                 new IStep<MovePieceStepState>[] { determineMoveTypeEngine } },
                             // Drop piece
-                            { (int)BoardPress.DROP, dropStep }
+                            { (int)BoardPress.DROP, new IStep<DropStepState>[] { preDropAbilitiesEngine } }
                         }
                     },
                     {
@@ -220,6 +222,13 @@ namespace ECS.Context
                         new To
                         {
                             movePieceStep
+                        }
+                    },
+                    {
+                        preDropAbilitiesEngine,
+                        new To
+                        {
+                            dropStep
                         }
                     }
                 }
@@ -314,6 +323,7 @@ namespace ECS.Context
             enginesRoot.AddEngine(handPiecePressEngine);
             enginesRoot.AddEngine(handPieceHighlightEngine);
 
+            enginesRoot.AddEngine(preDropAbilitiesEngine);
             enginesRoot.AddEngine(dropEngine);
 
             enginesRoot.AddEngine(determineClickTypeEngine);
