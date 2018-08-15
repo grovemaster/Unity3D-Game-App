@@ -95,28 +95,23 @@ namespace ECS.Context.EngineStep.Create
             #region Drop
             steps.Add("drop", new IStep<DropStepState>[]
             {
-                (IStep<DropStepState>)engines["drop"],
-                (IStep<DropStepState>)engines["unHighlight"],
-                (IStep<DropStepState>)engines["turnEnd"]
+                (IStep<DropStepState>)engines["drop"]
             });
             #endregion
 
             #region Move
             steps.Add("movePiece", new IStep<MovePieceStepState>[]
             {
-                (IStep<MovePieceStepState>)engines["movePiece"],
-                (IStep<MovePieceStepState>)engines["unHighlight"],
-                (IStep<MovePieceStepState>)engines["movePieceCleanup"],
-                (IStep<MovePieceStepState>)engines["turnEnd"]
+                (IStep<MovePieceStepState>)engines["movePiece"]
             });
             #endregion
 
             #region Turn End
-            steps.Add("movePieceCleanup", new IStep<MovePieceStepState>[]
+            steps.Add("turnEnd", new IStep<TurnEndStepState>[]
             {
-                (IStep<MovePieceStepState>)engines["unHighlight"],
-                (IStep<MovePieceStepState>)engines["movePieceCleanup"],
-                (IStep<MovePieceStepState>)engines["turnEnd"]
+                (IStep<TurnEndStepState>)engines["unHighlight"],
+                (IStep<TurnEndStepState>)engines["movePieceCleanup"],
+                (IStep<TurnEndStepState>)engines["turnEnd"]
             });
             #endregion
 
@@ -137,7 +132,7 @@ namespace ECS.Context.EngineStep.Create
             {
                 (IStep<ImmobileCapturePieceStepState>)engines["immobileCapture"],
                 (IStep<ImmobileCapturePieceStepState>)engines["addPieceToHand"],
-                (IStep<ImmobileCapturePieceStepState>)engines["gotoMovePieceCleanup"]
+                (IStep<ImmobileCapturePieceStepState>)engines["gotoTurnEnd"]
             });
             #endregion
         }

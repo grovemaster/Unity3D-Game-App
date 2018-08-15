@@ -111,6 +111,20 @@ namespace ECS.Context.EngineStep.Create
                         {
                             steps["drop"]
                         }
+                    },
+                    {
+                        engines["movePiece"],
+                        new To
+                        {
+                            steps["turnEnd"]
+                        }
+                    },
+                    {
+                        engines["drop"],
+                        new To
+                        {
+                            steps["turnEnd"]
+                        }
                     }
                 }
                 );
@@ -163,10 +177,10 @@ namespace ECS.Context.EngineStep.Create
                         }
                     },
                     {
-                        engines["gotoMovePieceCleanup"],
+                        engines["gotoTurnEnd"],
                         new To
                         {
-                            steps["movePieceCleanup"]
+                            steps["turnEnd"]
                         }
                     }
                 }

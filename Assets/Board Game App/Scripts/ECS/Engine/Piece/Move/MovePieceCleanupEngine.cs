@@ -1,18 +1,18 @@
-﻿using Data.Step.Piece.Move;
+﻿using Data.Step.Turn;
 using ECS.EntityView.Board.Tile;
 using Service.Board.Tile;
 using Svelto.ECS;
 
 namespace ECS.Engine.Piece.Move
 {
-    class MovePieceCleanupEngine : IStep<MovePieceStepState>, IQueryingEntitiesEngine
+    class MovePieceCleanupEngine : IStep<TurnEndStepState>, IQueryingEntitiesEngine
     {
         public IEntitiesDB entitiesDB { private get; set; }
 
         public void Ready()
         { }
 
-        public void Step(ref MovePieceStepState token, int condition)
+        public void Step(ref TurnEndStepState token, int condition)
         {
             ClearPieceReferenceFromTiles();
         }

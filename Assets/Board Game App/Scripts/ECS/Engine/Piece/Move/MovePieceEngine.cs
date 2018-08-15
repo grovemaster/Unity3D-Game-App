@@ -1,4 +1,5 @@
 ﻿using Data.Step.Piece.Move;
+using Data.Step.Turn;
 using ECS.EntityView.Piece;
 using Service.Piece;
 using Svelto.ECS;
@@ -9,7 +10,14 @@ namespace ECS.Engine.Piece.Move
 {
     class MovePieceEngine : IStep<MovePieceStepState>, IQueryingEntitiesEngine
     {
+        private readonly ISequencer moveSequence;
+
         public IEntitiesDB entitiesDB { private get; set; }
+
+        public MovePieceEngine(ISequencer moveSequence)
+        {
+            this.moveSequence = moveSequence;
+        }
 
         public void Ready()
         { }
@@ -41,6 +49,9 @@ namespace ECS.Engine.Piece.Move
                 PieceService.SetTopOfTower(
                     piecesPreviousLocation[piecesPreviousLocation.Count - 1], entitiesDB);
             }
+
+            var turnEndToken = new TurnEndStepState();
+            moveSequence.Next(this, ref turnEndToken);
         }
     }
 }

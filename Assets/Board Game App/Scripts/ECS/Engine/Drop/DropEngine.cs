@@ -1,6 +1,7 @@
 ﻿using Data.Constants.Board;
 using Data.Enum.Player;
 using Data.Step.Drop;
+using Data.Step.Turn;
 using ECS.EntityView.Board.Tile;
 using ECS.EntityView.Hand;
 using ECS.EntityView.Piece;
@@ -12,7 +13,14 @@ namespace ECS.Engine.Drop
 {
     class DropEngine : IStep<DropStepState>, IQueryingEntitiesEngine
     {
+        private readonly ISequencer dropSequence;
+
         public IEntitiesDB entitiesDB { private get; set; }
+
+        public DropEngine(ISequencer dropSequence)
+        {
+            this.dropSequence = dropSequence;
+        }
 
         public void Ready()
         { }
@@ -24,6 +32,7 @@ namespace ECS.Engine.Drop
 
             DropPiece(ref pieceToDrop, ref token.destinationTile, token.handPiece.PlayerOwner.PlayerColor);
             UpdateHandPiece(ref token.handPiece);
+            GotoTurnEndStep();
         }
 
         private void DropPiece(ref PieceEV pieceToDrop, ref TileEV destinationTile, PlayerColor playerOwner)
@@ -40,6 +49,12 @@ namespace ECS.Engine.Drop
         private void UpdateHandPiece(ref HandPieceEV handPiece)
         {
             handPiece.HandPiece.NumPieces.value--;
+        }
+
+        private void GotoTurnEndStep()
+        {
+            var turnEndToken = new TurnEndStepState();
+            dropSequence.Next(this, ref turnEndToken);
         }
     }
 }

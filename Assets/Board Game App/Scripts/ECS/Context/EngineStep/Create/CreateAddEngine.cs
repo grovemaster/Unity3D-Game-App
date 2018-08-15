@@ -48,7 +48,7 @@ namespace ECS.Context.EngineStep.Create
             engines.Add("determineMoveType", new DetermineMoveTypeEngine(sequences["boardPress"]));
 
             engines.Add("unHighlight", new UnHighlightEngine());
-            engines.Add("movePiece", new MovePieceEngine());
+            engines.Add("movePiece", new MovePieceEngine(sequences["boardPress"]));
             engines.Add("movePieceCleanup", new MovePieceCleanupEngine());
             engines.Add("turnEnd", new TurnEndEngine(sequences["boardPress"]));
 
@@ -62,7 +62,7 @@ namespace ECS.Context.EngineStep.Create
             engines.Add("handPieceHighlight", new HandPieceHighlightEngine());
 
             engines.Add("preDropAbilities", new PreDropAbilitiesEngine(sequences["boardPress"]));
-            engines.Add("drop", new DropEngine());
+            engines.Add("drop", new DropEngine(sequences["boardPress"]));
 
             engines.Add("determineClickType", new DetermineClickTypeEngine(sequences["boardPress"]));
             engines.Add("towerModal", new TowerModalEngine());
@@ -74,7 +74,7 @@ namespace ECS.Context.EngineStep.Create
 
             engines.Add("designateImmobileCapture", new DesignateImmobileCaptureEngine());
             engines.Add("immobileCapture", new ImmobileCaptureEngine());
-            engines.Add("gotoMovePieceCleanup", new GotoMovePieceCleanupEngine(sequences["towerModalAnswer"]));
+            engines.Add("gotoTurnEnd", new GotoTurnEndEngine(sequences["towerModalAnswer"]));
         }
 
         public void AddEngines()
@@ -116,7 +116,7 @@ namespace ECS.Context.EngineStep.Create
 
             enginesRoot.AddEngine(engines["designateImmobileCapture"]);
             enginesRoot.AddEngine(engines["immobileCapture"]);
-            enginesRoot.AddEngine(engines["gotoMovePieceCleanup"]);
+            enginesRoot.AddEngine(engines["gotoTurnEnd"]);
         }
     }
 }
