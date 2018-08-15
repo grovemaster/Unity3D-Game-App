@@ -1,0 +1,122 @@
+﻿using ECS.Engine.Board;
+using ECS.Engine.Board.Tile;
+using ECS.Engine.Board.Tile.Highlight;
+using ECS.Engine.Drop;
+using ECS.Engine.Hand;
+using ECS.Engine.Hand.Highlight;
+using ECS.Engine.Modal;
+using ECS.Engine.Modal.CaptureStack;
+using ECS.Engine.Modal.ImmobileCapture;
+using ECS.Engine.Move;
+using ECS.Engine.Piece;
+using ECS.Engine.Piece.Ability.Drop;
+using ECS.Engine.Piece.Capture;
+using ECS.Engine.Piece.Click;
+using ECS.Engine.Piece.Move;
+using ECS.Engine.Turn;
+using Svelto.ECS;
+using System.Collections.Generic;
+
+namespace ECS.Context.EngineStep.Create
+{
+    public class CreateAddEngine
+    {
+        private EnginesRoot enginesRoot;
+        private Dictionary<string, IEngine> engines;
+        private Dictionary<string, Sequencer> sequences;
+
+        public CreateAddEngine(
+            EnginesRoot enginesRoot,
+            Dictionary<string, IEngine> engines,
+            Dictionary<string, Sequencer> sequences)
+        {
+            this.enginesRoot = enginesRoot;
+            this.engines = engines;
+            this.sequences = sequences;
+        }
+
+        public void CreateEngines()
+        {
+            engines.Add("piecePress", new PiecePressEngine(sequences["boardPress"]));
+            engines.Add("tilePress", new TilePressEngine(sequences["boardPress"]));
+            engines.Add("unPress", new UnPressEngine());
+            engines.Add("boardPress", new BoardPressEngine(sequences["boardPress"]));
+            engines.Add("deHighlightTeamPieces", new DeHighlightTeamPiecesEngine());
+            engines.Add("pieceHighlight", new PieceHighlightEngine());
+            engines.Add("tileHighlight", new TileHighlightEngine());
+
+            engines.Add("determineMoveType", new DetermineMoveTypeEngine(sequences["boardPress"]));
+
+            engines.Add("unHighlight", new UnHighlightEngine());
+            engines.Add("movePiece", new MovePieceEngine());
+            engines.Add("movePieceCleanup", new MovePieceCleanupEngine());
+            engines.Add("turnEnd", new TurnEndEngine(sequences["boardPress"]));
+
+            engines.Add("highlightAllDestinationTiles", new HighlightAllDestinationTilesEngine());
+
+            engines.Add("mobileCapturePiece", new MobileCapturePieceEngine());
+            engines.Add("addPieceToHand", new AddPieceToHandEngine());
+            engines.Add("gotoMovePiece", new GotoMovePieceEngine(sequences["boardPress"]));
+
+            engines.Add("handPiecePress", new HandPiecePressEngine(sequences["handPiecePress"]));
+            engines.Add("handPieceHighlight", new HandPieceHighlightEngine());
+
+            engines.Add("preDropAbilities", new PreDropAbilitiesEngine(sequences["boardPress"]));
+            engines.Add("drop", new DropEngine());
+
+            engines.Add("determineClickType", new DetermineClickTypeEngine(sequences["boardPress"]));
+            engines.Add("towerModal", new TowerModalEngine());
+            engines.Add("cancelModal", new CancelModalEngine(sequences["cancelModal"]));
+            engines.Add("towerModalAnswer", new TowerModalAnswerEngine(sequences["towerModalAnswer"]));
+
+            engines.Add("captureStackModal", new CaptureStackModalEngine());
+            engines.Add("captureStackModalAnswer", new CaptureStackModalAnswerEngine(sequences["captureStackModalAnswer"]));
+
+            engines.Add("designateImmobileCapture", new DesignateImmobileCaptureEngine());
+            engines.Add("immobileCapture", new ImmobileCaptureEngine());
+            engines.Add("gotoMovePieceCleanup", new GotoMovePieceCleanupEngine(sequences["towerModalAnswer"]));
+        }
+
+        public void AddEngines()
+        {
+            enginesRoot.AddEngine(engines["piecePress"]);
+            enginesRoot.AddEngine(engines["tilePress"]);
+            enginesRoot.AddEngine(engines["unPress"]);
+            enginesRoot.AddEngine(engines["boardPress"]);
+            enginesRoot.AddEngine(engines["deHighlightTeamPieces"]);
+            enginesRoot.AddEngine(engines["pieceHighlight"]);
+            enginesRoot.AddEngine(engines["tileHighlight"]);
+
+            enginesRoot.AddEngine(engines["determineMoveType"]);
+
+            enginesRoot.AddEngine(engines["unHighlight"]);
+            enginesRoot.AddEngine(engines["movePiece"]);
+            enginesRoot.AddEngine(engines["movePieceCleanup"]);
+            enginesRoot.AddEngine(engines["turnEnd"]);
+
+            enginesRoot.AddEngine(engines["highlightAllDestinationTiles"]);
+
+            enginesRoot.AddEngine(engines["mobileCapturePiece"]);
+            enginesRoot.AddEngine(engines["addPieceToHand"]);
+            enginesRoot.AddEngine(engines["gotoMovePiece"]);
+
+            enginesRoot.AddEngine(engines["handPiecePress"]);
+            enginesRoot.AddEngine(engines["handPieceHighlight"]);
+
+            enginesRoot.AddEngine(engines["preDropAbilities"]);
+            enginesRoot.AddEngine(engines["drop"]);
+
+            enginesRoot.AddEngine(engines["determineClickType"]);
+            enginesRoot.AddEngine(engines["towerModal"]);
+            enginesRoot.AddEngine(engines["cancelModal"]);
+            enginesRoot.AddEngine(engines["towerModalAnswer"]);
+
+            enginesRoot.AddEngine(engines["captureStackModal"]);
+            enginesRoot.AddEngine(engines["captureStackModalAnswer"]);
+
+            enginesRoot.AddEngine(engines["designateImmobileCapture"]);
+            enginesRoot.AddEngine(engines["immobileCapture"]);
+            enginesRoot.AddEngine(engines["gotoMovePieceCleanup"]);
+        }
+    }
+}
