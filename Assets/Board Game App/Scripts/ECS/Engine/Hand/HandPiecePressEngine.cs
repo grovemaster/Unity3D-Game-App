@@ -10,6 +10,7 @@ namespace ECS.Engine.Hand
     class HandPiecePressEngine : SingleEntityEngine<HandPieceEV>, IQueryingEntitiesEngine
     {
         private HandService handService = new HandService();
+        private TurnService turnService = new TurnService();
 
         private readonly ISequencer boardPressSequence;
 
@@ -42,7 +43,7 @@ namespace ECS.Engine.Hand
 
             // if not turn team or num piece count == 0, stop
             HandPieceEV handPiece = handService.FindHandPiece(entityId, entitiesDB);
-            TurnEV currentTurn = TurnService.GetCurrentTurnEV(entitiesDB);
+            TurnEV currentTurn = turnService.GetCurrentTurnEV(entitiesDB);
 
             if (handPiece.PlayerOwner.PlayerColor != currentTurn.TurnPlayer.PlayerColor
                 || handPiece.HandPiece.NumPieces.value <= 0)

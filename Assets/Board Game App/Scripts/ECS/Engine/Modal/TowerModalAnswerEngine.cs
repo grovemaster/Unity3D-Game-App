@@ -21,6 +21,8 @@ namespace ECS.Engine.Modal
         private DestinationTileService destinationTileService = new DestinationTileService();
         private ModalService modalService = new ModalService();
         private PieceFindService pieceFindService = new PieceFindService();
+        private TurnService turnService = new TurnService();
+
         private readonly ISequencer towerModalConfirmSequence;
 
         public IEntitiesDB entitiesDB { private get; set; }
@@ -127,7 +129,7 @@ namespace ECS.Engine.Modal
 
             PieceEV pieceToCapture = piece;
             PieceEV topOfTowerPiece = pieceFindService.FindTopPieceByLocation(piece.Location.Location, entitiesDB).Value;
-            TurnEV currentTurn = TurnService.GetCurrentTurnEV(entitiesDB);
+            TurnEV currentTurn = turnService.GetCurrentTurnEV(entitiesDB);
 
             //if (topOfTowerPiece.PlayerOwner.PlayerColor != currentTurn.TurnPlayer.PlayerColor)
             //{

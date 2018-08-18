@@ -1,14 +1,13 @@
 ﻿using Data.Enum;
 using ECS.EntityView.Board.Tile;
-using ECS.EntityView.Piece;
 using ECS.EntityView.Turn;
 using Scripts.Data.Board;
 
 namespace Service.Board
 {
-    public static class BoardPressService
+    public class BoardPressService
     {
-        public static BoardPress DecideAction(BoardPressStateInfo stateInfo, TurnEV currentTurn)
+        public BoardPress DecideAction(BoardPressStateInfo stateInfo, TurnEV currentTurn)
         {
             BoardPress returnValue = BoardPress.NOTHING;
             TileEV tileEV = stateInfo.tile.Value;

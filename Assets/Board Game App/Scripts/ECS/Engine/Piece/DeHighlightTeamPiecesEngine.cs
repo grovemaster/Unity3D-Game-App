@@ -22,6 +22,7 @@ namespace ECS.Engine.Piece
         private PieceFindService pieceFindService = new PieceFindService();
         private PieceHighlightService pieceHighlightService = new PieceHighlightService();
         private TileHighlightService tileHighlightService = new TileHighlightService();
+        private TurnService turnService = new TurnService();
 
         public IEntitiesDB entitiesDB { private get; set; }
 
@@ -62,7 +63,7 @@ namespace ECS.Engine.Piece
 
         public void Step(ref CancelModalStepState token, int condition)
         {
-            PlayerColor turnPlayer = TurnService.GetCurrentTurnEV(entitiesDB).TurnPlayer.PlayerColor;
+            PlayerColor turnPlayer = turnService.GetCurrentTurnEV(entitiesDB).TurnPlayer.PlayerColor;
 
             List<PieceEV> alteredPieces = pieceHighlightService.DeHighlightPlayerPieces(turnPlayer, entitiesDB);
             tileHighlightService.DeHighlightOtherTeamTilePieces(alteredPieces, turnPlayer, entitiesDB);

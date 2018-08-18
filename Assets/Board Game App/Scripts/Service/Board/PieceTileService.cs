@@ -1,11 +1,9 @@
 ﻿using Data.Step.Board;
-using ECS.EntityView.Turn;
 using Scripts.Data.Board;
 using Service.Board.Tile;
 using Service.Hand;
 using Service.Piece.Find;
 using Svelto.ECS;
-using UnityEngine;
 
 namespace Service.Board
 {
@@ -13,13 +11,14 @@ namespace Service.Board
     {
         private HandService handService = new HandService();
         private PieceFindService pieceFindService = new PieceFindService();
+        private TileService tileService = new TileService();
 
         public BoardPressStateInfo FindBoardPressStateInfo(IEntitiesDB entitiesDB, ref BoardPressStepState token)
         {
             BoardPressStateInfo returnValue = new BoardPressStateInfo
             {
                 piece = pieceFindService.FindPieceEVById(token.pieceEntityId, entitiesDB),
-                tile = TileService.FindTileEVById(token.tileEntityId, entitiesDB),
+                tile = tileService.FindTileEVById(token.tileEntityId, entitiesDB),
                 pieceAtDestination = null, // If movement-related information is later required
                 handPiece = handService.FindHighlightedHandPiece(entitiesDB)
             };
@@ -35,7 +34,7 @@ namespace Service.Board
 
             if (!returnValue.tile.HasValue) // Find by piece information
             {
-                returnValue.tile = TileService.FindTileEV(
+                returnValue.tile = tileService.FindTileEV(
                     returnValue.piece.Value.Location.Location, entitiesDB);
             }
 

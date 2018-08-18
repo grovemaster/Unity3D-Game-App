@@ -1,13 +1,10 @@
-﻿using Data.Enum;
-using Data.Enum.Modal;
+﻿using Data.Enum.Modal;
 using Data.Enum.Move;
-using Data.Step;
 using Data.Step.Piece.Capture;
 using Data.Step.Piece.Move;
 using ECS.EntityView.Board.Tile;
 using ECS.EntityView.Modal;
 using ECS.EntityView.Piece;
-using Service.Board;
 using Service.Board.Tile;
 using Service.Modal;
 using Service.Piece.Find;
@@ -18,9 +15,11 @@ namespace ECS.Engine.Modal.CaptureStack
 {
     class CaptureStackModalAnswerEngine : SingleEntityEngine<ModalEV>, IQueryingEntitiesEngine
     {
-        private readonly ISequencer captureStackModalAnswerSequence;
         private ModalService modalService = new ModalService();
         private PieceFindService pieceFindService = new PieceFindService();
+        private TileService tileService = new TileService();
+
+        private readonly ISequencer captureStackModalAnswerSequence;
 
         public IEntitiesDB entitiesDB { private get; set; }
 
@@ -92,7 +91,7 @@ namespace ECS.Engine.Modal.CaptureStack
 
         private TileEV FindDestinationTile(ModalEV modal)
         {
-            return TileService.FindTileEV(modal.CaptureOrStack.TileReferenceId, entitiesDB);
+            return tileService.FindTileEV(modal.CaptureOrStack.TileReferenceId, entitiesDB);
         }
 
         private PieceEV FindPieceToMove(TileEV destinationTile)

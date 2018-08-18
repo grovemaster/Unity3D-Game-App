@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace Service.Piece.Highlight
 {
-    class PieceHighlightService
+    public class PieceHighlightService
     {
         private PieceFindService pieceFindService = new PieceFindService();
 

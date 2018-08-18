@@ -17,7 +17,9 @@ namespace ECS.Engine.Board
 {
     class BoardPressEngine : IStep<BoardPressStepState>, IQueryingEntitiesEngine
     {
+        private BoardPressService boardPressService = new BoardPressService();
         private PieceTileService pieceTileService = new PieceTileService();
+        private TurnService turnService = new TurnService();
 
         private readonly ISequencer boardPressSequence;
 
@@ -36,9 +38,9 @@ namespace ECS.Engine.Board
             ConstraintCheck(ref token);
 
             BoardPressStateInfo stateInfo = pieceTileService.FindBoardPressStateInfo(entitiesDB, ref token);
-            TurnEV currentTurn = TurnService.GetCurrentTurnEV(entitiesDB);
+            TurnEV currentTurn = turnService.GetCurrentTurnEV(entitiesDB);
 
-            BoardPress action = BoardPressService.DecideAction(stateInfo, currentTurn);
+            BoardPress action = boardPressService.DecideAction(stateInfo, currentTurn);
             ExecuteNextAction(action, stateInfo);
         }
 

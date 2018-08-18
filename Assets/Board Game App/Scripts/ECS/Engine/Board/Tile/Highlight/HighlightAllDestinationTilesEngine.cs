@@ -17,6 +17,7 @@ namespace ECS.Engine.Board.Tile.Highlight
     {
         private DestinationTileService destinationTileService = new DestinationTileService();
         private PieceFindService pieceFindService = new PieceFindService();
+        private TileService tileService = new TileService();
 
         public IEntitiesDB entitiesDB { set; private get; }
 
@@ -25,7 +26,7 @@ namespace ECS.Engine.Board.Tile.Highlight
 
         public void Step(ref TurnStartStepState token, int condition)
         {
-            TileEV[] tiles = TileService.FindAllTileEVs(entitiesDB);
+            TileEV[] tiles = tileService.FindAllTileEVs(entitiesDB);
 
             FindAndHighlightTeamTiles(PlayerColor.BLACK, tiles);
             FindAndHighlightTeamTiles(PlayerColor.WHITE, tiles);

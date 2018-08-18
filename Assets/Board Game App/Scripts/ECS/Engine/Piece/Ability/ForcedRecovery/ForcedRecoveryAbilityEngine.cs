@@ -15,6 +15,7 @@ namespace ECS.Engine.Piece.Ability.ForcedRecovery
     {
         private HandService handService = new HandService();
         private PieceSetService pieceSetService = new PieceSetService();
+        private TurnService turnService = new TurnService();
 
         private readonly ISequencer forcedRecoverySequence;
 
@@ -51,7 +52,7 @@ namespace ECS.Engine.Piece.Ability.ForcedRecovery
         private void MoveCapturePieceToOtherPlayersHand(PieceEV pieceCaptured)
         {
             // Remove piece from player hand
-            TurnEV currentTurn = TurnService.GetCurrentTurnEV(entitiesDB);
+            TurnEV currentTurn = turnService.GetCurrentTurnEV(entitiesDB);
             HandPieceEV handPiece = handService.FindHandPiece(pieceCaptured.Piece.PieceType, currentTurn.TurnPlayer.PlayerColor, entitiesDB);
             handService.DecrementHandPiece(ref handPiece);
 

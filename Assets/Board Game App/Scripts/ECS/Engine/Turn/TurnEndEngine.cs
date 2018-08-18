@@ -6,6 +6,8 @@ namespace ECS.Engine.Turn
 {
     class TurnEndEngine : IStep<TurnEndStepState>, IQueryingEntitiesEngine
     {
+        private TurnService turnService = new TurnService();
+
         private Sequencer turnStartSequencer;
 
         public IEntitiesDB entitiesDB { private get; set; }
@@ -33,7 +35,7 @@ namespace ECS.Engine.Turn
 
         private void SwitchTurnPlayer()
         {
-            TurnService.SwitchTurnPlayer(entitiesDB);
+            turnService.SwitchTurnPlayer(entitiesDB);
         }
     }
 }

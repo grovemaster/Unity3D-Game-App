@@ -2,19 +2,19 @@
 using Data.Enum.Player;
 using ECS.EntityView.Hand;
 using ECS.EntityView.Piece;
-using ECS.EntityView.Turn;
 using Service.Common;
 using Service.Turn;
 using Svelto.ECS;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Service.Hand
 {
     public class HandService
     {
+        private TurnService turnService = new TurnService();
+
         public HandPieceEV FindHandPiece(PieceType pieceType, PlayerColor turnPlayer, IEntitiesDB entitiesDB)
         {
             List<HandPieceEV> handPieces = FindAllHandPieces(entitiesDB)
@@ -81,7 +81,7 @@ namespace Service.Hand
         {
             if (!handOwner.HasValue)
             {
-                handOwner = TurnService.GetCurrentTurnEV(entitiesDB).TurnPlayer.PlayerColor;
+                handOwner = turnService.GetCurrentTurnEV(entitiesDB).TurnPlayer.PlayerColor;
             }
 
             HandPieceEV handHoldingCapturedPiece = FindHandPiece(

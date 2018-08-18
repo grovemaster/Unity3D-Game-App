@@ -3,7 +3,7 @@ using Data.Enum.Player;
 
 namespace Service.Highlight
 {
-    public class HighlightService
+    public static class HighlightService
     {
         public static HighlightState CalcClickHighlightState(PlayerColor playerColor)
         {

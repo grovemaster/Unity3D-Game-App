@@ -7,6 +7,8 @@ namespace ECS.Engine.Piece.Move
 {
     class MovePieceCleanupEngine : IStep<TurnEndStepState>, IQueryingEntitiesEngine
     {
+        private TileService tileService = new TileService();
+
         public IEntitiesDB entitiesDB { private get; set; }
 
         public void Ready()
@@ -19,7 +21,7 @@ namespace ECS.Engine.Piece.Move
 
         private void ClearPieceReferenceFromTiles()
         {
-            TileEV[] tileEVs = TileService.FindAllTileEVs(entitiesDB);
+            TileEV[] tileEVs = tileService.FindAllTileEVs(entitiesDB);
 
             for (int i = 0; i < tileEVs.Length; ++i)
             {

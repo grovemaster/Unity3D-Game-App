@@ -13,6 +13,7 @@ namespace ECS.Engine.Board
     {
         private PieceFindService pieceFindService = new PieceFindService();
         private HandService handService = new HandService();
+        private TileService tileService = new TileService();
 
         public IEntitiesDB entitiesDB { private get; set; }
 
@@ -41,7 +42,7 @@ namespace ECS.Engine.Board
 
         private void UnPressTiles()
         {
-            TileEV[] tileEVs = TileService.FindAllTileEVs(entitiesDB);
+            TileEV[] tileEVs = tileService.FindAllTileEVs(entitiesDB);
 
             for (int i = 0; i < tileEVs.Length; ++i)
             {

@@ -16,6 +16,9 @@ namespace ECS.Engine.Board.Tile
     public class TileHighlightEngine : IStep<PressStepState>, IQueryingEntitiesEngine
     {
         private PieceFindService pieceFindService = new PieceFindService();
+        private TileService tileService = new TileService();
+        private TurnService turnService = new TurnService();
+
         public IEntitiesDB entitiesDB { private get; set; }
 
         public void Ready()
@@ -32,7 +35,7 @@ namespace ECS.Engine.Board.Tile
             List<TileEV> returnValue = new List<TileEV>();
 
             // TODO Cache all Tiles, since they will not change
-            var entityViews = TileService.FindAllTileEVs(entitiesDB);
+            var entityViews = tileService.FindAllTileEVs(entitiesDB);
 
             // TODO Use Linq Where() filtering
             for (int i = 0; i < entityViews.Length; ++i)
@@ -52,7 +55,7 @@ namespace ECS.Engine.Board.Tile
             PieceEV piece = pieceFindService.FindPieceEV(token.pieceEntityId, entitiesDB);
             int pieceIdtoken = token.pieceEntityId;
             HighlightState newHighlightState = HighlightService.CalcClickHighlightState(piece.PlayerOwner.PlayerColor);
-            TurnEV currentTurn = TurnService.GetCurrentTurnEV(entitiesDB);
+            TurnEV currentTurn = turnService.GetCurrentTurnEV(entitiesDB);
             bool doesPieceBelongToTurnPlayer = currentTurn.TurnPlayer.PlayerColor == piece.PlayerOwner.PlayerColor;
 
             foreach (TileEV tileEV in tilesToChange)
