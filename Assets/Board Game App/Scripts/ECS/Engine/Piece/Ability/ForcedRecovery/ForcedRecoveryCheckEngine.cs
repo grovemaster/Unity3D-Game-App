@@ -30,7 +30,7 @@ namespace ECS.Engine.Piece.Ability.ForcedRecovery
             IPieceData piece = PieceService.CreateIPieceData(token.pieceMoved.Piece.PieceType);
 
             bool forcedRecoveryPossible = token.pieceMoved.Tier.TopOfTower // Paranoia check
-                && piece.Abilities().PostMove.HasValue && piece.Abilities().PostMove.Value == PostMoveAbility.FORCED_RECOVERY
+                && piece.Abilities.PostMove.HasValue && piece.Abilities.PostMove.Value == PostMoveAbility.FORCED_RECOVERY
                 && !HasDestinationTiles(token.pieceMoved);
 
             NextAction(ref token, forcedRecoveryPossible);

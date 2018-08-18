@@ -5,9 +5,12 @@ namespace Data.Piece.Default
 {
     public class NoAbility : IAbilities
     {
-        public DropAbility? Drop()
+        public DropAbility? Drop
         {
-            return null;
+            get
+            {
+                return null;
+            }
         }
 
         public PostMoveAbility? PostMove

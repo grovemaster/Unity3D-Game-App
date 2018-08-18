@@ -15,9 +15,12 @@ namespace Data.Piece.Back.Gold
             new Vector2(-1, 1)
         });
 
-        public List<Vector2> Single()
+        public List<Vector2> Single
         {
-            return single.ConvertAll(vec => new Vector2(vec.x, vec.y));
+            get
+            {
+                return single.ConvertAll(vec => new Vector2(vec.x, vec.y));
+            }
         }
     }
 
@@ -33,9 +36,12 @@ namespace Data.Piece.Back.Gold
             new Vector2(-1, 1)
         });
 
-        public List<Vector2> Single()
+        public List<Vector2> Single
         {
-            return single.ConvertAll(vec => new Vector2(vec.x, vec.y));
+            get
+            {
+                return single.ConvertAll(vec => new Vector2(vec.x, vec.y));
+            }
         }
     }
 
@@ -51,9 +57,12 @@ namespace Data.Piece.Back.Gold
             new Vector2(-1, 1)
         });
 
-        public List<Vector2> Single()
+        public List<Vector2> Single
         {
-            return single.ConvertAll(vec => new Vector2(vec.x, vec.y));
+            get
+            {
+                return single.ConvertAll(vec => new Vector2(vec.x, vec.y));
+            }
         }
     }
 }

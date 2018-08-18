@@ -73,7 +73,7 @@ namespace Service.Board
         {
             PieceType pieceToCreate = !useGoldMovement ? pieceEV.Piece.PieceType : PieceType.GOLD;
 
-            return PieceService.CreateIPieceData(pieceToCreate).Tiers()[pieceEV.Tier.Tier - 1].Single();
+            return PieceService.CreateIPieceData(pieceToCreate).Tiers[pieceEV.Tier.Tier - 1].Single;
         }
 
         private static void AdjustRawDataWithPieceLocationAndDirection(

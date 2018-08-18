@@ -35,7 +35,7 @@ namespace ECS.Engine.Piece.Ability.Drop
 
         private bool HasDoublePawnDrop(PieceType pieceType)
         {
-            DropAbility? dropAbility = PieceService.CreateIPieceData(pieceType).Abilities().Drop();
+            DropAbility? dropAbility = PieceService.CreateIPieceData(pieceType).Abilities.Drop;
             return dropAbility.HasValue && dropAbility.Value == DropAbility.DOUBLE_PAWN_DROP;
         }
 

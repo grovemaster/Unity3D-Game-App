@@ -7,9 +7,12 @@ namespace Data.Piece.Front.Pawn
     {
         private static readonly List<Vector2> single = new List<Vector2>(new Vector2[] { new Vector2(0, 1) });
 
-        public List<Vector2> Single()
+        public List<Vector2> Single
         {
-            return single.ConvertAll(vec => new Vector2(vec.x, vec.y));
+            get
+            {
+                return single.ConvertAll(vec => new Vector2(vec.x, vec.y));
+            }
         }
     }
 
@@ -22,9 +25,12 @@ namespace Data.Piece.Front.Pawn
             new Vector2(2, 0)
         });
 
-        public List<Vector2> Single()
+        public List<Vector2> Single
         {
-            return single.ConvertAll(vec => new Vector2(vec.x, vec.y));
+            get
+            {
+                return single.ConvertAll(vec => new Vector2(vec.x, vec.y));
+            }
         }
     }
 
@@ -38,9 +44,12 @@ namespace Data.Piece.Front.Pawn
             new Vector2(2, 0)
         });
 
-        public List<Vector2> Single()
+        public List<Vector2> Single
         {
-            return single.ConvertAll(vec => new Vector2(vec.x, vec.y));
+            get
+            {
+                return single.ConvertAll(vec => new Vector2(vec.x, vec.y));
+            }
         }
     }
 }

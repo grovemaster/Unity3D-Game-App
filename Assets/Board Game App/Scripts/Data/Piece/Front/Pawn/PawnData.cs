@@ -15,19 +15,28 @@ namespace Data.Piece.Front.Pawn
             { new PawnMoveSetTier1st(), new PawnMoveSetTier2nd(), new PawnMoveSetTier3rd() });
         }
 
-        public PieceType TypeOfPiece()
+        public PieceType TypeOfPiece
         {
-            return PieceType.PAWN;
+            get
+            {
+                return PieceType.PAWN;
+            }
         }
 
-        public IAbilities Abilities()
+        public IAbilities Abilities
         {
-            return abilities;
+            get
+            {
+                return abilities;
+            }
         }
 
-        public List<IMoveSet> Tiers()
+        public List<IMoveSet> Tiers
         {
-            return tiers;
+            get
+            {
+                return tiers;
+            }
         }
     }
 }
