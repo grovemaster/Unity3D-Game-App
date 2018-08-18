@@ -2,7 +2,7 @@
 using Data.Step.Piece.Capture;
 using Data.Step.Piece.Move;
 using ECS.EntityView.Piece;
-using Service.Piece;
+using Service.Piece.Find;
 using Svelto.ECS;
 using System;
 
@@ -10,6 +10,8 @@ namespace ECS.Engine.Move
 {
     class DetermineMoveTypeEngine : IStep<MovePieceStepState>, IQueryingEntitiesEngine
     {
+        private PieceFindService pieceFindService = new PieceFindService();
+
         private readonly ISequencer moveSequence;
 
         public IEntitiesDB entitiesDB { private get; set; }
@@ -24,7 +26,7 @@ namespace ECS.Engine.Move
 
         public void Step(ref MovePieceStepState token, int condition)
         {
-            PieceEV? topPieceAtDestinationTile = PieceService.FindTopPieceByLocation(
+            PieceEV? topPieceAtDestinationTile = pieceFindService.FindTopPieceByLocation(
                    token.destinationTile.Location.Location, entitiesDB);
             MoveState nextAction = DetermineMoveAction(ref token, topPieceAtDestinationTile);
             PerformNextAction(nextAction, ref token, topPieceAtDestinationTile);

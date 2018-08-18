@@ -3,13 +3,14 @@ using ECS.EntityView.Board.Tile;
 using ECS.EntityView.Piece;
 using Service.Board.Tile;
 using Service.Hand;
-using Service.Piece;
+using Service.Piece.Find;
 using Svelto.ECS;
 
 namespace ECS.Engine.Board
 {
     class UnHighlightEngine : IStep<TurnEndStepState>, IQueryingEntitiesEngine
     {
+        private PieceFindService pieceFindService = new PieceFindService();
         private HandService handService = new HandService();
 
         public IEntitiesDB entitiesDB { private get; set; }
@@ -31,7 +32,7 @@ namespace ECS.Engine.Board
 
         private void UnHighlightPieces()
         {
-            PieceEV[] pieceEVs = PieceService.FindAllBoardPieces(entitiesDB);
+            PieceEV[] pieceEVs = pieceFindService.FindAllBoardPieces(entitiesDB);
 
             for (int i = 0; i < pieceEVs.Length; ++i)
             {

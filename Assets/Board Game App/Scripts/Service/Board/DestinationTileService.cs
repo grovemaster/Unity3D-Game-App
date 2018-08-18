@@ -2,7 +2,8 @@
 using Data.Enum;
 using Data.Enum.Player;
 using ECS.EntityView.Piece;
-using Service.Piece;
+using Service.Piece.Factory;
+using Service.Piece.Find;
 using Svelto.ECS;
 using System;
 using System.Collections.Generic;
@@ -11,13 +12,15 @@ using UnityEngine;
 
 namespace Service.Board
 {
-    public static class DestinationTileService
+    public class DestinationTileService
     {
+        private PieceFactory pieceFactory = new PieceFactory();
+        private PieceFindService pieceFindService = new PieceFindService();
         /**
          * This will return values exceeding board boundaries (such as below the zero-th rank).  It is the
          * responsibility of the client to not abuse this data.
          */
-        public static List<Vector2> CalcDestinationTileLocations(
+        public List<Vector2> CalcDestinationTileLocations(
             PieceEV pieceEV, IEntitiesDB entitiesDB, List<PieceEV> allPieces = null)
         {
             List<Vector2> returnValue = new List<Vector2>();
@@ -25,7 +28,7 @@ namespace Service.Board
             if (allPieces == null)
             {
                 // Current piece included, doesn't matter for current calc
-                allPieces = PieceService.FindAllBoardPieces(entitiesDB).ToList();
+                allPieces = pieceFindService.FindAllBoardPieces(entitiesDB).ToList();
             }
 
             returnValue.AddRange(CalcSingleDestinations(pieceEV, allPieces));
@@ -33,10 +36,10 @@ namespace Service.Board
             return returnValue;
         }
 
-        public static HashSet<Vector2> CalcDestinationTileLocations(PieceEV[] pieces, IEntitiesDB entitiesDB)
+        public HashSet<Vector2> CalcDestinationTileLocations(PieceEV[] pieces, IEntitiesDB entitiesDB)
         {
             HashSet<Vector2> returnValue = new HashSet<Vector2>();
-            List<PieceEV> allPieces = PieceService.FindAllBoardPieces(entitiesDB).ToList();
+            List<PieceEV> allPieces = pieceFindService.FindAllBoardPieces(entitiesDB).ToList();
 
             for (int i = 0; i < pieces.Length; ++i)
             {
@@ -46,7 +49,7 @@ namespace Service.Board
             return returnValue;
         }
 
-        private static List<Vector2> CalcSingleDestinations(PieceEV pieceEV, List<PieceEV> allPieces)
+        private List<Vector2> CalcSingleDestinations(PieceEV pieceEV, List<PieceEV> allPieces)
         {
             bool useGoldMovement = IsOpponentPieceDirectlyBelow(pieceEV, allPieces);
             List<Vector2> returnValue = GetRawSingleDestinationLocations(pieceEV, useGoldMovement);
@@ -59,7 +62,7 @@ namespace Service.Board
             return returnValue;
         }
 
-        private static bool IsOpponentPieceDirectlyBelow(PieceEV pieceEV, List<PieceEV> allPieces)
+        private bool IsOpponentPieceDirectlyBelow(PieceEV pieceEV, List<PieceEV> allPieces)
         {
             return pieceEV.Tier.Tier != 1
                 && allPieces.Where(piece =>
@@ -69,14 +72,14 @@ namespace Service.Board
                 .Count() > 0;
         }
 
-        private static List<Vector2> GetRawSingleDestinationLocations(PieceEV pieceEV, bool useGoldMovement)
+        private List<Vector2> GetRawSingleDestinationLocations(PieceEV pieceEV, bool useGoldMovement)
         {
             PieceType pieceToCreate = !useGoldMovement ? pieceEV.Piece.PieceType : PieceType.GOLD;
 
-            return PieceService.CreateIPieceData(pieceToCreate).Tiers[pieceEV.Tier.Tier - 1].Single;
+            return pieceFactory.CreateIPieceData(pieceToCreate).Tiers[pieceEV.Tier.Tier - 1].Single;
         }
 
-        private static void AdjustRawDataWithPieceLocationAndDirection(
+        private void AdjustRawDataWithPieceLocationAndDirection(
             PieceEV pieceEV, List<Vector2> rawLocationData)
         {
             // Add piece's location to value
@@ -91,7 +94,7 @@ namespace Service.Board
         /**
          * If destinations are outside board, such as (-2, 1), then exclude them.
          */
-        private static void ExcludeOutOfBoard(List<Vector2> returnValue)
+        private void ExcludeOutOfBoard(List<Vector2> returnValue)
         {
             returnValue.RemoveAll(location =>
                 location.x < 0 || location.x >= BoardConst.NUM_FILES_RANKS
@@ -103,7 +106,7 @@ namespace Service.Board
          * If destination contains a tier 3 tower with a friendly piece on top,
          * then that tile is not a valid destination tile.
          */
-        private static void ExcludeDestinationsWithFriendlyTier3Tower(
+        private void ExcludeDestinationsWithFriendlyTier3Tower(
             PieceEV pieceToCalc, List<Vector2> destinations, List<PieceEV> allPieces)
         {
             List<Vector2> destinationsToRemove = new List<Vector2>();
@@ -122,7 +125,7 @@ namespace Service.Board
             }
         }
 
-        private static bool HasFriendlyTier3Tower(
+        private bool HasFriendlyTier3Tower(
             PieceEV pieceToCalc, Vector2 destination, List<PieceEV> allPieces)
         {
             PlayerColor friendlyColor = pieceToCalc.PlayerOwner.PlayerColor;
@@ -140,7 +143,7 @@ namespace Service.Board
          * 
          * Some destinations are in different rank AND file as pieceToCalc's current location
          */
-        private static void ExcludeDestinationsWithObstructingPieces(
+        private void ExcludeDestinationsWithObstructingPieces(
             PieceEV pieceToCalc, List<Vector2> destinations, List<PieceEV> allPieces)
         {
             List<Vector2> destinationsToRemove = new List<Vector2>();
@@ -168,7 +171,7 @@ namespace Service.Board
             }
         }
 
-        private static bool ShouldRemoveDestination(
+        private bool ShouldRemoveDestination(
             PieceEV pieceToCalc, Vector2 destination, List<PieceEV> allPieces)
         {
             bool returnValue = false;

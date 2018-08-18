@@ -8,7 +8,7 @@ using ECS.EntityView.Piece;
 using ECS.EntityView.Turn;
 using Service.Board;
 using Service.Modal;
-using Service.Piece;
+using Service.Piece.Find;
 using Service.Turn;
 using Svelto.ECS;
 using System;
@@ -18,7 +18,9 @@ namespace ECS.Engine.Modal
 {
     class TowerModalAnswerEngine : SingleEntityEngine<ModalEV>, IQueryingEntitiesEngine
     {
+        private DestinationTileService destinationTileService = new DestinationTileService();
         private ModalService modalService = new ModalService();
+        private PieceFindService pieceFindService = new PieceFindService();
         private readonly ISequencer towerModalConfirmSequence;
 
         public IEntitiesDB entitiesDB { private get; set; }
@@ -50,7 +52,7 @@ namespace ECS.Engine.Modal
 
         private PieceEV FindAssociatedPiece(int pieceId)
         {
-            return PieceService.FindPieceEV(pieceId, entitiesDB);
+            return pieceFindService.FindPieceEV(pieceId, entitiesDB);
         }
 
         private TowerAnswerState DecideNextAction(PieceEV piece)
@@ -95,7 +97,7 @@ namespace ECS.Engine.Modal
             {
                 pieceEntityId = piece.ID.entityID,
                 piecePressState = piece.Highlight.IsHighlighted ? PiecePressState.UNCLICKED : PiecePressState.CLICKED,
-                affectedTiles = DestinationTileService.CalcDestinationTileLocations(piece, entitiesDB)
+                affectedTiles = destinationTileService.CalcDestinationTileLocations(piece, entitiesDB)
             };
 
             towerModalConfirmSequence.Next(this, ref pressState, (int)TowerAnswerState.CLICK_HIGHLIGHT);
@@ -124,7 +126,7 @@ namespace ECS.Engine.Modal
              */
 
             PieceEV pieceToCapture = piece;
-            PieceEV topOfTowerPiece = PieceService.FindTopPieceByLocation(piece.Location.Location, entitiesDB).Value;
+            PieceEV topOfTowerPiece = pieceFindService.FindTopPieceByLocation(piece.Location.Location, entitiesDB).Value;
             TurnEV currentTurn = TurnService.GetCurrentTurnEV(entitiesDB);
 
             //if (topOfTowerPiece.PlayerOwner.PlayerColor != currentTurn.TurnPlayer.PlayerColor)
@@ -134,7 +136,7 @@ namespace ECS.Engine.Modal
             //else
             if (topOfTowerPiece.PlayerOwner.PlayerColor == currentTurn.TurnPlayer.PlayerColor)
             {
-                List<PieceEV> pieces = PieceService.FindPiecesByLocation(piece.Location.Location, entitiesDB);
+                List<PieceEV> pieces = pieceFindService.FindPiecesByLocation(piece.Location.Location, entitiesDB);
                 bool pieceFound = false;
 
                 foreach (PieceEV pieceToCheck in pieces)

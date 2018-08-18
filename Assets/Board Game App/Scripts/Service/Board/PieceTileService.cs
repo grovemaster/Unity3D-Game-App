@@ -3,7 +3,7 @@ using ECS.EntityView.Turn;
 using Scripts.Data.Board;
 using Service.Board.Tile;
 using Service.Hand;
-using Service.Piece;
+using Service.Piece.Find;
 using Svelto.ECS;
 using UnityEngine;
 
@@ -12,12 +12,13 @@ namespace Service.Board
     public class PieceTileService
     {
         private HandService handService = new HandService();
+        private PieceFindService pieceFindService = new PieceFindService();
 
         public BoardPressStateInfo FindBoardPressStateInfo(IEntitiesDB entitiesDB, ref BoardPressStepState token)
         {
             BoardPressStateInfo returnValue = new BoardPressStateInfo
             {
-                piece = PieceService.FindPieceEVById(token.pieceEntityId, entitiesDB),
+                piece = pieceFindService.FindPieceEVById(token.pieceEntityId, entitiesDB),
                 tile = TileService.FindTileEVById(token.tileEntityId, entitiesDB),
                 pieceAtDestination = null, // If movement-related information is later required
                 handPiece = handService.FindHighlightedHandPiece(entitiesDB)
@@ -28,7 +29,7 @@ namespace Service.Board
                 && returnValue.tile.Value.Tile.PieceRefEntityId.HasValue
                 && returnValue.tile.Value.Tile.PieceRefEntityId != 0) // Find by tile information
             {
-                returnValue.piece = PieceService.FindPieceEVById(
+                returnValue.piece = pieceFindService.FindPieceEVById(
                     returnValue.tile.Value.Tile.PieceRefEntityId.Value, entitiesDB);
             }
 
@@ -40,13 +41,13 @@ namespace Service.Board
 
             if (returnValue.tile.HasValue && !returnValue.piece.HasValue)
             {
-                returnValue.piece = PieceService.FindTopPieceByLocation(
+                returnValue.piece = pieceFindService.FindTopPieceByLocation(
                     returnValue.tile.Value.Location.Location, entitiesDB);
             }
 
             if (returnValue.tile.HasValue)
             {
-                returnValue.pieceAtDestination = PieceService.FindTopPieceByLocation(
+                returnValue.pieceAtDestination = pieceFindService.FindTopPieceByLocation(
                     returnValue.tile.Value.Location.Location, entitiesDB);
             }
 
@@ -57,7 +58,7 @@ namespace Service.Board
                 && returnValue.piece.HasValue
                 && returnValue.piece.Value.Location.Location == returnValue.tile.Value.Location.Location)
             {
-                returnValue.piece = PieceService.FindPieceEVById(
+                returnValue.piece = pieceFindService.FindPieceEVById(
                     returnValue.tile.Value.Tile.PieceRefEntityId.Value, entitiesDB);
             }
 

@@ -2,13 +2,15 @@
 using Data.Step;
 using ECS.EntityView.Piece;
 using Service.Highlight;
-using Service.Piece;
+using Service.Piece.Find;
 using Svelto.ECS;
 
 namespace ECS.Engine.Piece
 {
     public class PieceHighlightEngine : IStep<PressStepState>, IQueryingEntitiesEngine
     {
+        private PieceFindService pieceFindService = new PieceFindService();
+
         public IEntitiesDB entitiesDB { private get; set; }
 
         public void Ready()
@@ -16,7 +18,7 @@ namespace ECS.Engine.Piece
 
         public void Step(ref PressStepState token, int condition)
         {
-            PieceEV piece = PieceService.FindPieceEV(token.pieceEntityId, entitiesDB);
+            PieceEV piece = pieceFindService.FindPieceEV(token.pieceEntityId, entitiesDB);
             bool isClicked = token.piecePressState == PiecePressState.CLICKED;
             HighlightState colorToChange = HighlightService.CalcClickHighlightState(piece.PlayerOwner.PlayerColor);
 

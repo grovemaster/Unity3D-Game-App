@@ -4,7 +4,7 @@ using Data.Step.Piece.Click;
 using ECS.EntityView.Modal;
 using ECS.EntityView.Piece;
 using Service.Modal;
-using Service.Piece;
+using Service.Piece.Find;
 using Svelto.ECS;
 using System.Collections.Generic;
 
@@ -13,6 +13,7 @@ namespace ECS.Engine.Modal
     class TowerModalEngine : IStep<ClickPieceStepState>, IQueryingEntitiesEngine
     {
         private ModalService modalService = new ModalService();
+        private PieceFindService pieceFindService = new PieceFindService();
 
         public IEntitiesDB entitiesDB { private get; set; }
 
@@ -22,7 +23,7 @@ namespace ECS.Engine.Modal
         public void Step(ref ClickPieceStepState token, int condition)
         {
             ModalEV modal = modalService.FindModalEV(entitiesDB);
-            List<PieceEV> piecesAtLocation = PieceService.FindPiecesByLocation(
+            List<PieceEV> piecesAtLocation = pieceFindService.FindPiecesByLocation(
                 token.clickedPiece.Location.Location, entitiesDB);
 
             SetModalOptions(modal, piecesAtLocation);

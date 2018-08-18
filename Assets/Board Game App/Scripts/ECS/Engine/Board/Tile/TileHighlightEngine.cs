@@ -5,7 +5,7 @@ using ECS.EntityView.Piece;
 using ECS.EntityView.Turn;
 using Service.Board.Tile;
 using Service.Highlight;
-using Service.Piece;
+using Service.Piece.Find;
 using Service.Turn;
 using Svelto.ECS;
 using System.Collections.Generic;
@@ -15,6 +15,7 @@ namespace ECS.Engine.Board.Tile
 {
     public class TileHighlightEngine : IStep<PressStepState>, IQueryingEntitiesEngine
     {
+        private PieceFindService pieceFindService = new PieceFindService();
         public IEntitiesDB entitiesDB { private get; set; }
 
         public void Ready()
@@ -48,7 +49,7 @@ namespace ECS.Engine.Board.Tile
         private void ChangeTileColor(List<TileEV> tilesToChange, ref PressStepState token)
         {
             bool isClicked = token.piecePressState == PiecePressState.CLICKED;
-            PieceEV piece = PieceService.FindPieceEV(token.pieceEntityId, entitiesDB);
+            PieceEV piece = pieceFindService.FindPieceEV(token.pieceEntityId, entitiesDB);
             int pieceIdtoken = token.pieceEntityId;
             HighlightState newHighlightState = HighlightService.CalcClickHighlightState(piece.PlayerOwner.PlayerColor);
             TurnEV currentTurn = TurnService.GetCurrentTurnEV(entitiesDB);

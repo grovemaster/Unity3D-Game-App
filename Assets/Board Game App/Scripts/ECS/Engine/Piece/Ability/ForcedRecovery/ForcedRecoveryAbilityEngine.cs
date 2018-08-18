@@ -5,7 +5,7 @@ using ECS.EntityView.Hand;
 using ECS.EntityView.Piece;
 using ECS.EntityView.Turn;
 using Service.Hand;
-using Service.Piece;
+using Service.Piece.Set;
 using Service.Turn;
 using Svelto.ECS;
 
@@ -14,6 +14,7 @@ namespace ECS.Engine.Piece.Ability.ForcedRecovery
     class ForcedRecoveryAbilityEngine : IStep<ForcedRecoveryStepState>, IQueryingEntitiesEngine
     {
         private HandService handService = new HandService();
+        private PieceSetService pieceSetService = new PieceSetService();
 
         private readonly ISequencer forcedRecoverySequence;
 
@@ -41,7 +42,7 @@ namespace ECS.Engine.Piece.Ability.ForcedRecovery
 
         private void MovePawnToHand(PieceEV piece)
         {
-            PieceService.SetPieceLocationToHandLocation(piece, entitiesDB);
+            pieceSetService.SetPieceLocationToHandLocation(piece, entitiesDB);
             piece.Visibility.IsVisible.value = false;
 
             handService.AddPieceToHand(piece, entitiesDB);

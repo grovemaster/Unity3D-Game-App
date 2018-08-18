@@ -6,7 +6,7 @@ using ECS.EntityView.Piece;
 using Service.Board;
 using Service.Board.Tile;
 using Service.Highlight;
-using Service.Piece;
+using Service.Piece.Find;
 using Svelto.ECS;
 using System.Collections.Generic;
 using UnityEngine;
@@ -15,6 +15,9 @@ namespace ECS.Engine.Board.Tile.Highlight
 {
     public class HighlightAllDestinationTilesEngine : IStep<TurnStartStepState>, IQueryingEntitiesEngine
     {
+        private DestinationTileService destinationTileService = new DestinationTileService();
+        private PieceFindService pieceFindService = new PieceFindService();
+
         public IEntitiesDB entitiesDB { set; private get; }
 
         public void Ready()
@@ -32,10 +35,10 @@ namespace ECS.Engine.Board.Tile.Highlight
 
         private void FindAndHighlightTeamTiles(PlayerColor teamColor, TileEV[] tiles)
         {
-            PieceEV[] teamPieces = PieceService.FindPiecesByTeam(teamColor, entitiesDB);
+            PieceEV[] teamPieces = pieceFindService.FindPiecesByTeam(teamColor, entitiesDB);
 
             HashSet<Vector2> destinationLocations =
-                DestinationTileService.CalcDestinationTileLocations(teamPieces, entitiesDB);
+                destinationTileService.CalcDestinationTileLocations(teamPieces, entitiesDB);
 
             HighlightTiles(tiles, destinationLocations, HighlightService.CalcRangeHighlightState(teamColor));
         }

@@ -7,7 +7,7 @@ using ECS.EntityView.Hand;
 using ECS.EntityView.Piece;
 using Service.Board.Tile.Highlight;
 using Service.Hand;
-using Service.Piece;
+using Service.Piece.Find;
 using Service.Piece.Highlight;
 using Service.Turn;
 using Svelto.ECS;
@@ -19,6 +19,7 @@ namespace ECS.Engine.Piece
         IStep<HandPiecePressStepState>, IStep<PressStepState>, IStep<CancelModalStepState>, IQueryingEntitiesEngine
     {
         private HandService handService = new HandService();
+        private PieceFindService pieceFindService = new PieceFindService();
         private PieceHighlightService pieceHighlightService = new PieceHighlightService();
         private TileHighlightService tileHighlightService = new TileHighlightService();
 
@@ -36,7 +37,7 @@ namespace ECS.Engine.Piece
                 return;
             }
 
-            PieceEV piece = PieceService.FindPieceEV(token.pieceEntityId, entitiesDB);
+            PieceEV piece = pieceFindService.FindPieceEV(token.pieceEntityId, entitiesDB);
             DeHighlightPlayerPiecesAndTiles(piece);
             UnHighlightHandPieces();
         }

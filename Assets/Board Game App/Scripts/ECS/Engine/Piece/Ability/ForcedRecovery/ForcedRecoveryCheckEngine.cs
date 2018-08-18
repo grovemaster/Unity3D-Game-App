@@ -6,13 +6,16 @@ using Data.Step.Piece.Move;
 using Data.Step.Turn;
 using ECS.EntityView.Piece;
 using Service.Board;
-using Service.Piece;
+using Service.Piece.Factory;
 using Svelto.ECS;
 
 namespace ECS.Engine.Piece.Ability.ForcedRecovery
 {
     class ForcedRecoveryCheckEngine : IStep<ForcedRecoveryStepState>, IQueryingEntitiesEngine
     {
+        private DestinationTileService destinationTileService = new DestinationTileService();
+        private PieceFactory pieceFactory = new PieceFactory();
+
         private readonly ISequencer forcedRecoverySequence;
 
         public IEntitiesDB entitiesDB { private get; set; }
@@ -27,7 +30,7 @@ namespace ECS.Engine.Piece.Ability.ForcedRecovery
 
         public void Step(ref ForcedRecoveryStepState token, int condition)
         {
-            IPieceData piece = PieceService.CreateIPieceData(token.pieceMoved.Piece.PieceType);
+            IPieceData piece = pieceFactory.CreateIPieceData(token.pieceMoved.Piece.PieceType);
 
             bool forcedRecoveryPossible = token.pieceMoved.Tier.TopOfTower // Paranoia check
                 && piece.Abilities.PostMove.HasValue && piece.Abilities.PostMove.Value == PostMoveAbility.FORCED_RECOVERY
@@ -38,7 +41,7 @@ namespace ECS.Engine.Piece.Ability.ForcedRecovery
 
         private bool HasDestinationTiles(PieceEV piece)
         {
-            return DestinationTileService.CalcDestinationTileLocations(piece, entitiesDB).Count > 0;
+            return destinationTileService.CalcDestinationTileLocations(piece, entitiesDB).Count > 0;
         }
 
         private void NextAction(ref ForcedRecoveryStepState token, bool forcedRecoveryPossible)

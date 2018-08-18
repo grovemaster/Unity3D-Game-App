@@ -10,7 +10,7 @@ using ECS.EntityView.Piece;
 using Service.Board;
 using Service.Board.Tile;
 using Service.Modal;
-using Service.Piece;
+using Service.Piece.Find;
 using Svelto.ECS;
 using System;
 
@@ -20,6 +20,7 @@ namespace ECS.Engine.Modal.CaptureStack
     {
         private readonly ISequencer captureStackModalAnswerSequence;
         private ModalService modalService = new ModalService();
+        private PieceFindService pieceFindService = new PieceFindService();
 
         public IEntitiesDB entitiesDB { private get; set; }
 
@@ -60,7 +61,7 @@ namespace ECS.Engine.Modal.CaptureStack
         {
             ModalEV modal = modalService.FindModalEV(entitiesDB);
             TileEV destinationTile = FindDestinationTile(modal);
-            PieceEV topPieceAtDestinationTile = PieceService.FindTopPieceByLocation(
+            PieceEV topPieceAtDestinationTile = pieceFindService.FindTopPieceByLocation(
                 destinationTile.Location.Location, entitiesDB).Value;
             PieceEV pieceToMove = FindPieceToMove(destinationTile);
 
@@ -96,7 +97,7 @@ namespace ECS.Engine.Modal.CaptureStack
 
         private PieceEV FindPieceToMove(TileEV destinationTile)
         {
-            return PieceService.FindPieceEVById(
+            return pieceFindService.FindPieceEVById(
                 destinationTile.Tile.PieceRefEntityId.Value, entitiesDB).Value;
         }
     }

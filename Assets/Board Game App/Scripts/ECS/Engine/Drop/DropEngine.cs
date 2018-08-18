@@ -6,7 +6,8 @@ using ECS.EntityView.Board.Tile;
 using ECS.EntityView.Hand;
 using ECS.EntityView.Piece;
 using Service.Hand;
-using Service.Piece;
+using Service.Piece.Find;
+using Service.Piece.Set;
 using Svelto.ECS;
 using UnityEngine;
 
@@ -15,6 +16,8 @@ namespace ECS.Engine.Drop
     class DropEngine : IStep<DropStepState>, IQueryingEntitiesEngine
     {
         private HandService handService = new HandService();
+        private PieceFindService pieceFindService = new PieceFindService();
+        private PieceSetService pieceSetService = new PieceSetService();
 
         private readonly ISequencer dropSequence;
 
@@ -30,7 +33,7 @@ namespace ECS.Engine.Drop
 
         public void Step(ref DropStepState token, int condition)
         {
-            PieceEV pieceToDrop = PieceService.FindFirstPieceByLocationAndType(
+            PieceEV pieceToDrop = pieceFindService.FindFirstPieceByLocationAndType(
                 BoardConst.HAND_LOCATION, token.handPiece.HandPiece.PieceType, entitiesDB);
 
             DropPiece(ref pieceToDrop, ref token.destinationTile, token.handPiece.PlayerOwner.PlayerColor);
@@ -42,8 +45,8 @@ namespace ECS.Engine.Drop
         {
             Vector2 location = destinationTile.Location.Location;
 
-            PieceService.SetPieceLocationAndTier(pieceToDrop, location, 1, entitiesDB);
-            PieceService.SetPiecePlayerOwner(pieceToDrop, playerOwner, entitiesDB);
+            pieceSetService.SetPieceLocationAndTier(pieceToDrop, location, 1, entitiesDB);
+            pieceSetService.SetPiecePlayerOwner(pieceToDrop, playerOwner, entitiesDB);
             pieceToDrop.MovePiece.NewLocation = location;
             pieceToDrop.Visibility.IsVisible.value = true;
             pieceToDrop.ChangeColorTrigger.PlayChangeColor = true;

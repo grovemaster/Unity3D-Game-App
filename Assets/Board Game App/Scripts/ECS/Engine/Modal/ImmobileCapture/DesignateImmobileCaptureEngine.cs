@@ -3,7 +3,7 @@ using Data.Step.Modal;
 using ECS.EntityView.Modal;
 using ECS.EntityView.Piece;
 using Service.Modal;
-using Service.Piece;
+using Service.Piece.Find;
 using Svelto.ECS;
 using System.Collections.Generic;
 
@@ -12,6 +12,7 @@ namespace ECS.Engine.Modal.ImmobileCapture
     class DesignateImmobileCaptureEngine : IStep<ImmobileCaptureStepState>, IQueryingEntitiesEngine
     {
         private ModalService modalService = new ModalService();
+        private PieceFindService pieceFindService = new PieceFindService();
 
         public IEntitiesDB entitiesDB { private get; set; }
 
@@ -27,10 +28,10 @@ namespace ECS.Engine.Modal.ImmobileCapture
 
         private void SetModalOptions(ModalEV modal)
         {
-            PieceEV pieceTier1 = PieceService.FindPieceEVById(modal.Tier1.ReferencedPieceId, entitiesDB).Value;
-            List<PieceEV> piecesAtLocation = PieceService.FindPiecesByLocation(pieceTier1.Location.Location, entitiesDB);
+            PieceEV pieceTier1 = pieceFindService.FindPieceEVById(modal.Tier1.ReferencedPieceId, entitiesDB).Value;
+            List<PieceEV> piecesAtLocation = pieceFindService.FindPiecesByLocation(pieceTier1.Location.Location, entitiesDB);
 
-            PieceEV topPiece = PieceService.FindTopPieceByLocation(pieceTier1.Location.Location, entitiesDB).Value;
+            PieceEV topPiece = pieceFindService.FindTopPieceByLocation(pieceTier1.Location.Location, entitiesDB).Value;
             PlayerColor colorToEnable = topPiece.PlayerOwner.PlayerColor;
 
             PieceEV pieceTier2 = piecesAtLocation[1];

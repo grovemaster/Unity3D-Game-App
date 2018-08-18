@@ -10,6 +10,8 @@ namespace ECS.Engine.Piece.Click
 {
     class DetermineClickTypeEngine : IStep<ClickPieceStepState>, IQueryingEntitiesEngine
     {
+        private DestinationTileService destinationTileService = new DestinationTileService();
+
         private readonly ISequencer clickSequence;
 
         public IEntitiesDB entitiesDB { private get; set; }
@@ -55,7 +57,7 @@ namespace ECS.Engine.Piece.Click
             {
                 pieceEntityId = token.clickedPiece.ID.entityID,
                 piecePressState = token.clickedPiece.Highlight.IsHighlighted ? PiecePressState.UNCLICKED : PiecePressState.CLICKED,
-                affectedTiles = DestinationTileService.CalcDestinationTileLocations(token.clickedPiece, entitiesDB)
+                affectedTiles = destinationTileService.CalcDestinationTileLocations(token.clickedPiece, entitiesDB)
             };
 
             clickSequence.Next(this, ref pressState, (int)ClickState.CLICK_HIGHLIGHT);
