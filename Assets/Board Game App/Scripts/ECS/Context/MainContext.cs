@@ -102,22 +102,25 @@ namespace ECS.Context
             //but the HealthEntityStruct does. Here I show the official method to do it
             //var initializer = entityFactory.BuildEntity<PieceED>(pawn.GetInstanceID(), pawn.GetComponents<IImplementor>());
             var pieceCreateService = new PieceCreateService(entityFactory);
-            pieceCreateService.CreatePiece(PlayerColor.BLACK, 0, 0);
-            pieceCreateService.CreatePiece(PlayerColor.BLACK, 0, 1);
-            pieceCreateService.CreatePiece(PlayerColor.BLACK, 0, 2);
-            pieceCreateService.CreatePiece(PlayerColor.BLACK, 0, 3);
-            pieceCreateService.CreatePiece(PlayerColor.BLACK, 1, 7);
-            pieceCreateService.CreatePiece(PlayerColor.BLACK, 2, 1);
-            pieceCreateService.CreatePiece(PlayerColor.BLACK, 2, 7);
-            pieceCreateService.CreatePiece(PlayerColor.BLACK, 4, 2);
-            pieceCreateService.CreatePiece(PlayerColor.WHITE, 0, 5);
-            pieceCreateService.CreatePiece(PlayerColor.WHITE, 0, 6);
-            pieceCreateService.CreatePiece(PlayerColor.WHITE, 0, 7);
-            pieceCreateService.CreatePiece(PlayerColor.WHITE, 0, 8);
-            pieceCreateService.CreatePiece(PlayerColor.WHITE, 1, 8);
-            pieceCreateService.CreatePiece(PlayerColor.WHITE, 3, 7);
-            pieceCreateService.CreatePiece(PlayerColor.WHITE, 4, 6);
-            pieceCreateService.CreatePiece(PlayerColor.WHITE, 4, 7);
+            pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.COMMANDER, 1, 3);
+            pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.COMMANDER, 6, 5);
+
+            pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.PAWN, 0, 0);
+            pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.PAWN, 0, 1);
+            pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.PAWN, 0, 2);
+            pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.PAWN, 0, 3);
+            pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.PAWN, 1, 7);
+            pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.PAWN, 2, 1);
+            pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.PAWN, 2, 7);
+            pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.PAWN, 4, 2);
+            pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.PAWN, 0, 5);
+            pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.PAWN, 0, 6);
+            pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.PAWN, 0, 7);
+            pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.PAWN, 0, 8);
+            pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.PAWN, 1, 8);
+            pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.PAWN, 3, 7);
+            pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.PAWN, 4, 6);
+            pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.PAWN, 4, 7);
         }
 
         private void BuildTileEntities()
@@ -139,8 +142,10 @@ namespace ECS.Context
         private void BuildHandPieceEntities()
         {
             var handPieceCreateService = new HandPieceCreateService(entityFactory);
-            handPieceCreateService.CreateHandPiece(PlayerColor.BLACK, PieceType.PAWN);
-            handPieceCreateService.CreateHandPiece(PlayerColor.WHITE, PieceType.PAWN);
+            handPieceCreateService.CreateHandPiece(PlayerColor.BLACK, PieceType.PAWN, 0);
+            handPieceCreateService.CreateHandPiece(PlayerColor.BLACK, PieceType.COMMANDER, 1);
+            handPieceCreateService.CreateHandPiece(PlayerColor.WHITE, PieceType.PAWN, 0);
+            handPieceCreateService.CreateHandPiece(PlayerColor.WHITE, PieceType.COMMANDER, 1);
         }
 
         private void BuildModalEntity()

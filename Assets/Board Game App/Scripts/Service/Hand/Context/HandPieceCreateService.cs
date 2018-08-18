@@ -6,6 +6,7 @@ using ECS.Implementor;
 using ECS.Implementor.Hand;
 using PrefabUtil;
 using Svelto.ECS;
+using UnityEngine;
 
 namespace Service.Hand.Context
 {
@@ -20,7 +21,7 @@ namespace Service.Hand.Context
             prefabsDictionary = new PrefabsDictionary();
         }
 
-        public void CreateHandPiece(PlayerColor playerOwner, PieceType pieceType)
+        public void CreateHandPiece(PlayerColor playerOwner, PieceType pieceType, int num)
         {
             var handPiece = prefabsDictionary.Instantiate("Hand Piece");
             var handPieceImpl = handPiece.GetComponent<HandPieceImpl>();
@@ -30,14 +31,29 @@ namespace Service.Hand.Context
             handPieceImpl.PlayerColor = playerOwner;
 
             // TODO Abstract out offset position numbers into BoardConst later -- once I have those numbers.
+            // TODO Adjust transform.position based on, well, position of other hand pieces of that player
+            Vector3 handPieceLocation;
+
             if (playerOwner == PlayerColor.BLACK)
             {
-                handPiece.transform.position = BoardConst.HAND_PIECE_BLACK_OFFSET;
+                handPieceLocation = BoardConst.HAND_PIECE_BLACK_OFFSET;
+                handPieceLocation = new Vector3(
+                    handPieceLocation.x + BoardConst.HAND_PIECE_X_SPACE * (num % 7),
+                    handPieceLocation.y - BoardConst.HAND_PIECE_Y_SPACE * (num / 7),
+                    handPieceLocation.z
+                    );
             }
             else
             {
-                handPiece.transform.position = BoardConst.HAND_PIECE_WHITE_OFFSET;
+                handPieceLocation = BoardConst.HAND_PIECE_WHITE_OFFSET;
+                handPieceLocation = new Vector3(
+                    handPieceLocation.x + BoardConst.HAND_PIECE_X_SPACE * (num % 7),
+                    handPieceLocation.y + BoardConst.HAND_PIECE_Y_SPACE * (num / 7),
+                    handPieceLocation.z
+                    );
             }
+
+            handPiece.transform.position = handPieceLocation;
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Data.Enum;
 using Data.Piece;
 using Data.Piece.Back.Gold;
+using Data.Piece.Front.Commander;
 using Data.Piece.Front.Pawn;
 using System;
 
@@ -12,6 +13,8 @@ namespace Service.Piece.Factory
         {
             switch (pieceType)
             {
+                case PieceType.COMMANDER:
+                    return new CommanderData();
                 case PieceType.PAWN:
                     return new PawnData();
                 case PieceType.GOLD:

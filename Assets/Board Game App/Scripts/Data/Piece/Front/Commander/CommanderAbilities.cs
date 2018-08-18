@@ -1,15 +1,15 @@
 ﻿using Data.Enum.Piece.Drop;
 using Data.Enum.Piece.PostMove;
 
-namespace Data.Piece.Front.Pawn
+namespace Data.Piece.Front.Commander
 {
-    class PawnAbilities : IAbilities
+    class CommanderAbilities : IAbilities
     {
         public DropAbility? Drop
         {
             get
             {
-                return DropAbility.DOUBLE_PAWN_DROP;
+                return null;
             }
         }
 
@@ -17,7 +17,7 @@ namespace Data.Piece.Front.Pawn
         {
             get
             {
-                return PostMoveAbility.FORCED_RECOVERY;
+                return null;
             }
         }
     }

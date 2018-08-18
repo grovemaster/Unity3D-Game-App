@@ -1,26 +1,25 @@
 ﻿using Data.Enum;
-using Data.Piece.Default;
 using System.Collections.Generic;
 
-namespace Data.Piece.Back.Gold
+namespace Data.Piece.Front.Commander
 {
-    class GoldData : IPieceData
+    public class CommanderData : IPieceData
     {
         private static readonly IAbilities abilities;
         private static readonly List<IMoveSet> tiers;
 
-        static GoldData()
+        static CommanderData()
         {
-            abilities = new NoAbility();
+            abilities = new CommanderAbilities();
             tiers = new List<IMoveSet>(new IMoveSet[]
-            { new GoldMoveSetTier1st(), new GoldMoveSetTier2nd(), new GoldMoveSetTier3rd() });
+            { new CommanderMoveSetTier1st(), new CommanderMoveSetTier2nd(), new CommanderMoveSetTier3rd() });
         }
 
         public PieceType TypeOfPiece
         {
             get
             {
-                return PieceType.GOLD;
+                return PieceType.COMMANDER;
             }
         }
 

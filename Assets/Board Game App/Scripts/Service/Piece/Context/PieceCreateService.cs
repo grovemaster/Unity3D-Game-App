@@ -1,4 +1,5 @@
-﻿using Data.Enum.Player;
+﻿using Data.Enum;
+using Data.Enum.Player;
 using ECS.EntityDescriptor.Piece;
 using ECS.Implementor;
 using ECS.Implementor.Piece;
@@ -21,14 +22,15 @@ namespace Service.Piece.Context
             prefabsDictionary = new PrefabsDictionary();
         }
 
-        public void CreatePiece(PlayerColor playerOwner, int fileNum, int rankNum)
+        public void CreatePiece(PlayerColor playerOwner, PieceType pieceType, int fileNum, int rankNum)
         {
-            var piece = prefabsDictionary.Instantiate("Pawn");
+            var piece = prefabsDictionary.Instantiate("Piece");
             var pieceImpl = piece.GetComponent<PieceImpl>();
             var pieceLocationMoveImpl = piece.GetComponent<PieceLocationMoveImpl>();
             var pieceHighlightOwnerImpl = piece.GetComponent<PieceHighlightOwnerImpl>();
             entityFactory.BuildEntity<PieceED>(piece.GetInstanceID(), piece.GetComponents<IImplementor>());
 
+            pieceImpl.PieceType = pieceType;
             pieceImpl.Direction = DirectionService.CalcDirection(playerOwner);
             pieceHighlightOwnerImpl.PlayerColor = playerOwner;
 

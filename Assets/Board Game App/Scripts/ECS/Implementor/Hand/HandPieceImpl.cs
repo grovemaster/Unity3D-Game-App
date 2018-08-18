@@ -53,6 +53,9 @@ namespace ECS.Implementor.Hand
 
             switch(PieceType)
             {
+                case PieceType.COMMANDER:
+                    frontPieceTextMesh.text = "C";
+                    break;
                 case PieceType.PAWN:
                     frontPieceTextMesh.text = "P";
                     break;
