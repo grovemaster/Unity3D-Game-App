@@ -50,8 +50,12 @@ namespace ECS.Engine.Piece.Move
                     piecesPreviousLocation[piecesPreviousLocation.Count - 1], entitiesDB);
             }
 
-            var turnEndToken = new TurnEndStepState();
-            moveSequence.Next(this, ref turnEndToken);
+            var forcedRecoveryToken = new ForcedRecoveryStepState
+            {
+                pieceMoved = token.pieceToMove,
+                pieceCaptured = token.pieceToCapture
+            };
+            moveSequence.Next(this, ref forcedRecoveryToken);
         }
     }
 }

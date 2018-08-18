@@ -1,11 +1,17 @@
-﻿using Data.Step.Modal;
+﻿using Data.Enum.AB;
+using Data.Enum.Modal;
+using Data.Step.Modal;
+using Data.Step.Turn;
 using ECS.EntityView.Modal;
+using Service.Modal;
 using Svelto.ECS;
 
 namespace ECS.Engine.Modal
 {
     class CancelModalEngine : SingleEntityEngine<ModalEV>, IQueryingEntitiesEngine
     {
+        private ModalService modalService = new ModalService();
+
         private readonly ISequencer cancelModalSequence;
 
         public IEntitiesDB entitiesDB { private get; set; }
@@ -30,8 +36,11 @@ namespace ECS.Engine.Modal
 
         private void OnPressed(int entityId, bool cancel)
         {
+            ModalEV modal = modalService.FindModalEV(entitiesDB);
+            bool continueCancelling = modal.Type.Type != ModalType.CONFIRM;
+
             var token = new CancelModalStepState();
-            cancelModalSequence.Next(this, ref token);
+            cancelModalSequence.Next(this, ref token, (int)(continueCancelling ? StepAB.A : StepAB.B));
         }
     }
 }

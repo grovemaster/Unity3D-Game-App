@@ -5,6 +5,7 @@ using Data.Step.Turn;
 using ECS.EntityView.Board.Tile;
 using ECS.EntityView.Hand;
 using ECS.EntityView.Piece;
+using Service.Hand;
 using Service.Piece;
 using Svelto.ECS;
 using UnityEngine;
@@ -13,6 +14,8 @@ namespace ECS.Engine.Drop
 {
     class DropEngine : IStep<DropStepState>, IQueryingEntitiesEngine
     {
+        private HandService handService = new HandService();
+
         private readonly ISequencer dropSequence;
 
         public IEntitiesDB entitiesDB { private get; set; }
@@ -48,7 +51,7 @@ namespace ECS.Engine.Drop
 
         private void UpdateHandPiece(ref HandPieceEV handPiece)
         {
-            handPiece.HandPiece.NumPieces.value--;
+            handService.DecrementHandPiece(ref handPiece);
         }
 
         private void GotoTurnEndStep()

@@ -106,7 +106,9 @@ namespace ECS.Context
             pieceCreateService.CreatePiece(PlayerColor.BLACK, 0, 1);
             pieceCreateService.CreatePiece(PlayerColor.BLACK, 0, 2);
             pieceCreateService.CreatePiece(PlayerColor.BLACK, 0, 3);
+            pieceCreateService.CreatePiece(PlayerColor.BLACK, 1, 7);
             pieceCreateService.CreatePiece(PlayerColor.BLACK, 2, 1);
+            pieceCreateService.CreatePiece(PlayerColor.BLACK, 2, 7);
             pieceCreateService.CreatePiece(PlayerColor.BLACK, 4, 2);
             pieceCreateService.CreatePiece(PlayerColor.WHITE, 0, 5);
             pieceCreateService.CreatePiece(PlayerColor.WHITE, 0, 6);

@@ -1,4 +1,5 @@
 ﻿using Data.Enum.Piece.Drop;
+using Data.Enum.Piece.PostMove;
 
 namespace Data.Piece.Default
 {
@@ -7,6 +8,14 @@ namespace Data.Piece.Default
         public DropAbility? Drop()
         {
             return null;
+        }
+
+        public PostMoveAbility? PostMove
+        {
+            get
+            {
+                return null;
+            }
         }
     }
 }

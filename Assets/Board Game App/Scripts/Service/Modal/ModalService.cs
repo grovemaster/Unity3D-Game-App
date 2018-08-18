@@ -10,5 +10,10 @@ namespace Service.Modal
         {
             return CommonService.FindAllEntities<ModalEV>(entitiesDB)[0];
         }
+
+        public void DisplayModal(ModalEV modal)
+        {
+            modal.Visibility.IsVisible.value = true;
+        }
     }
 }

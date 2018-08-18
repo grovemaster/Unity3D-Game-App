@@ -1,10 +1,16 @@
-﻿using Data.Step.Piece.Capture;
+﻿using Data.Step.Modal;
+using Data.Step.Piece.Capture;
+using Data.Step.Piece.Move;
 using Data.Step.Turn;
 using Svelto.ECS;
 
 namespace ECS.Engine.Piece.Capture
 {
-    class GotoTurnEndEngine : IStep<ImmobileCapturePieceStepState>, IQueryingEntitiesEngine
+    class GotoTurnEndEngine :
+        IStep<ImmobileCapturePieceStepState>,
+        IStep<ForcedRecoveryStepState>,
+        IStep<CancelModalStepState>,
+        IQueryingEntitiesEngine
     {
         private Sequencer towerModalAnswerSequence;
 
@@ -19,6 +25,21 @@ namespace ECS.Engine.Piece.Capture
         { }
 
         public void Step(ref ImmobileCapturePieceStepState token, int condition)
+        {
+            NextActionTurnEnd();
+        }
+
+        public void Step(ref ForcedRecoveryStepState token, int condition)
+        {
+            NextActionTurnEnd();
+        }
+
+        public void Step(ref CancelModalStepState token, int condition)
+        {
+            NextActionTurnEnd();
+        }
+
+        private void NextActionTurnEnd()
         {
             var turnEndToken = new TurnEndStepState();
             towerModalAnswerSequence.Next(this, ref turnEndToken);

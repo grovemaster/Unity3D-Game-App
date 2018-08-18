@@ -1,7 +1,10 @@
 ﻿using Data.Enum;
 using Data.Enum.Player;
 using ECS.EntityView.Hand;
+using ECS.EntityView.Piece;
+using ECS.EntityView.Turn;
 using Service.Common;
+using Service.Turn;
 using Svelto.ECS;
 using System;
 using System.Collections.Generic;
@@ -72,6 +75,19 @@ namespace Service.Hand
                 .ToList();
 
             return handPieces.Count > 0 ? (HandPieceEV?)handPieces[0] : null;
+        }
+
+        public void AddPieceToHand(PieceEV pieceToCapture, IEntitiesDB entitiesDB, PlayerColor? handOwner = null)
+        {
+            TurnEV turnPlayer = handOwner.HasValue ? TurnService.GetTurnEV(handOwner.Value, entitiesDB) : TurnService.GetCurrentTurnEV(entitiesDB);
+            HandPieceEV handHoldingCapturedPiece = FindHandPiece(
+                pieceToCapture.Piece.PieceType, turnPlayer.TurnPlayer.PlayerColor, entitiesDB);
+            handHoldingCapturedPiece.HandPiece.NumPieces.value++;
+        }
+
+        public void DecrementHandPiece(ref HandPieceEV handPiece)
+        {
+            handPiece.HandPiece.NumPieces.value--;
         }
 
         private void DeHighlightHandPiece(HandPieceEV handPiece, IEntitiesDB entitiesDB)

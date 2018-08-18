@@ -1,12 +1,12 @@
 ﻿using Data.Enum.Modal;
-using Data.Step.Piece.Capture;
+using Data.Step.Piece.Move;
 using ECS.EntityView.Modal;
 using Service.Modal;
 using Svelto.ECS;
 
-namespace ECS.Engine.Modal.CaptureStack
+namespace ECS.Engine.Modal.Confirm
 {
-    class CaptureStackModalEngine : IStep<CapturePieceStepState>, IQueryingEntitiesEngine
+    class ConfirmModalEngine : IStep<ForcedRecoveryStepState>, IQueryingEntitiesEngine
     {
         private ModalService modalService = new ModalService();
 
@@ -15,23 +15,22 @@ namespace ECS.Engine.Modal.CaptureStack
         public void Ready()
         { }
 
-        public void Step(ref CapturePieceStepState token, int condition)
+        public void Step(ref ForcedRecoveryStepState token, int condition)
         {
             ModalEV modal = modalService.FindModalEV(entitiesDB);
-            SetModalOptions(modal, ref token);
+            SetModalData(token, modal);
             modalService.DisplayModal(modal);
         }
 
-        private void SetModalOptions(ModalEV modal, ref CapturePieceStepState token)
+        private void SetModalData(ForcedRecoveryStepState token, ModalEV modal)
         {
-            int tileReferenceId = token.destinationTile.ID.entityID;
-
             entitiesDB.ExecuteOnEntity(
                 modal.ID,
                 (ref ModalEV modalToChange) =>
                 {
-                    modal.Type.Type = ModalType.CAPTURE_STACK;
-                    modal.CaptureOrStack.TileReferenceId = tileReferenceId;
+                    modalToChange.Type.Type = ModalType.CONFIRM;
+                    modalToChange.Confirm.PieceMoved = token.pieceMoved;
+                    modalToChange.Confirm.PieceCaptured = token.pieceCaptured;
                 });
         }
     }

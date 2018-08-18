@@ -26,12 +26,7 @@ namespace ECS.Engine.Modal
                 token.clickedPiece.Location.Location, entitiesDB);
 
             SetModalOptions(modal, piecesAtLocation);
-            DisplayModal(modal);
-        }
-
-        private void DisplayModal(ModalEV modal)
-        {
-            modal.Visibility.IsVisible.value = true;
+            modalService.DisplayModal(modal);
         }
 
         private void SetModalOptions(ModalEV modal, List<PieceEV> piecesAtLocation)

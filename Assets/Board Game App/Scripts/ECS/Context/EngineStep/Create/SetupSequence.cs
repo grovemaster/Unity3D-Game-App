@@ -1,8 +1,10 @@
 ﻿using Data.Enum;
+using Data.Enum.AB;
 using Data.Enum.Click;
 using Data.Enum.Modal;
 using Data.Enum.Move;
 using Svelto.ECS;
+using System;
 using System.Collections.Generic;
 
 namespace ECS.Context.EngineStep.Create
@@ -32,6 +34,7 @@ namespace ECS.Context.EngineStep.Create
             sequences.Add("cancelModal", new Sequencer());
             sequences.Add("towerModalAnswer", new Sequencer());
             sequences.Add("captureStackModalAnswer", new Sequencer());
+            sequences.Add("confirmModalAnswer", new Sequencer());
         }
 
         public void SetSequences()
@@ -41,6 +44,7 @@ namespace ECS.Context.EngineStep.Create
             SetSequenceCancelModal();
             SetSequenceTowerModalAnswer();
             SetSequenceCaptureStackModal();
+            SetSequenceConfirmModal();
         }
 
         private void SetBoardPressSequence()
@@ -116,7 +120,7 @@ namespace ECS.Context.EngineStep.Create
                         engines["movePiece"],
                         new To
                         {
-                            steps["turnEnd"]
+                            steps["forcedRecoveryCheck"]
                         }
                     },
                     {
@@ -125,9 +129,30 @@ namespace ECS.Context.EngineStep.Create
                         {
                             steps["turnEnd"]
                         }
+                    },
+                    {
+                        engines["forcedRecoveryCheck"],
+                        new To
+                        {
+                            { (int)StepAB.A, steps["confirmModal"] },
+                            { (int)StepAB.B, steps["gotoTurnEndForcedRecoveryStepState"] }
+                        }
+                    },
+                    {
+                        engines["forcedRecoveryAbility"],
+                        new To
+                        {
+                            steps["turnEnd"]
+                        }
+                    },
+                    {
+                        engines["immobileCapture"],
+                        new To
+                        {
+                            steps["forcedRecoveryCheck"]
+                        }
                     }
-                }
-                );
+                });
         }
 
         private void SetSequenceHandPress()
@@ -142,8 +167,7 @@ namespace ECS.Context.EngineStep.Create
                             steps["handHighlight"]
                         }
                     }
-                }
-                );
+                });
         }
 
         private void SetSequenceCancelModal()
@@ -155,11 +179,11 @@ namespace ECS.Context.EngineStep.Create
                         engines["cancelModal"],
                         new To
                         {
-                            steps["deHighlight"]
+                            { (int)StepAB.A, steps["deHighlight"] },
+                            { (int)StepAB.B, steps["gotoTurnEndCancelModalStepState"] }
                         }
                     }
-                }
-                );
+                });
         }
 
         public void SetSequenceTowerModalAnswer()
@@ -183,8 +207,7 @@ namespace ECS.Context.EngineStep.Create
                             steps["turnEnd"]
                         }
                     }
-                }
-                );
+                });
         }
 
         private void SetSequenceCaptureStackModal()
@@ -200,8 +223,23 @@ namespace ECS.Context.EngineStep.Create
                             { (int)MoveState.MOBILE_CAPTURE, steps["capturePiece"] },
                         }
                     }
-                }
-                );
+                });
+        }
+
+        private void SetSequenceConfirmModal()
+        {
+            sequences["confirmModalAnswer"].SetSequence(
+                new Steps
+                {
+                    {
+                        engines["confirmModalAnswer"],
+                        new To
+                        {
+                            { (int)StepAB.A, steps["forcedRecoveryAbility"] },
+                            { (int)StepAB.B, steps["gotoTurnEndForcedRecoveryStepState"] }
+                        }
+                    }
+                });
         }
     }
 }

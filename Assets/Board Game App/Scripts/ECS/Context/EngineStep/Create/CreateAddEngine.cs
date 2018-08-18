@@ -6,10 +6,12 @@ using ECS.Engine.Hand;
 using ECS.Engine.Hand.Highlight;
 using ECS.Engine.Modal;
 using ECS.Engine.Modal.CaptureStack;
+using ECS.Engine.Modal.Confirm;
 using ECS.Engine.Modal.ImmobileCapture;
 using ECS.Engine.Move;
 using ECS.Engine.Piece;
 using ECS.Engine.Piece.Ability.Drop;
+using ECS.Engine.Piece.Ability.ForcedRecovery;
 using ECS.Engine.Piece.Capture;
 using ECS.Engine.Piece.Click;
 using ECS.Engine.Piece.Move;
@@ -64,10 +66,15 @@ namespace ECS.Context.EngineStep.Create
             engines.Add("preDropAbilities", new PreDropAbilitiesEngine(sequences["boardPress"]));
             engines.Add("drop", new DropEngine(sequences["boardPress"]));
 
+            engines.Add("forcedRecoveryCheck", new ForcedRecoveryCheckEngine(sequences["boardPress"]));
+            engines.Add("forcedRecoveryAbility", new ForcedRecoveryAbilityEngine(sequences["boardPress"]));
+
             engines.Add("determineClickType", new DetermineClickTypeEngine(sequences["boardPress"]));
             engines.Add("towerModal", new TowerModalEngine());
             engines.Add("cancelModal", new CancelModalEngine(sequences["cancelModal"]));
             engines.Add("towerModalAnswer", new TowerModalAnswerEngine(sequences["towerModalAnswer"]));
+            engines.Add("confirmModal", new ConfirmModalEngine());
+            engines.Add("confirmModalAnswer", new ConfirmModalAnswerEngine(sequences["confirmModalAnswer"]));
 
             engines.Add("captureStackModal", new CaptureStackModalEngine());
             engines.Add("captureStackModalAnswer", new CaptureStackModalAnswerEngine(sequences["captureStackModalAnswer"]));
@@ -106,10 +113,15 @@ namespace ECS.Context.EngineStep.Create
             enginesRoot.AddEngine(engines["preDropAbilities"]);
             enginesRoot.AddEngine(engines["drop"]);
 
+            enginesRoot.AddEngine(engines["forcedRecoveryCheck"]);
+            enginesRoot.AddEngine(engines["forcedRecoveryAbility"]);
+
             enginesRoot.AddEngine(engines["determineClickType"]);
             enginesRoot.AddEngine(engines["towerModal"]);
             enginesRoot.AddEngine(engines["cancelModal"]);
             enginesRoot.AddEngine(engines["towerModalAnswer"]);
+            enginesRoot.AddEngine(engines["confirmModal"]);
+            enginesRoot.AddEngine(engines["confirmModalAnswer"]);
 
             enginesRoot.AddEngine(engines["captureStackModal"]);
             enginesRoot.AddEngine(engines["captureStackModalAnswer"]);

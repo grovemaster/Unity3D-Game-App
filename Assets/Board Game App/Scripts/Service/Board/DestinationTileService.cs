@@ -1,4 +1,5 @@
-﻿using Data.Enum;
+﻿using Data.Constants.Board;
+using Data.Enum;
 using Data.Enum.Player;
 using ECS.EntityView.Piece;
 using Service.Piece;
@@ -50,6 +51,7 @@ namespace Service.Board
             bool useGoldMovement = IsOpponentPieceDirectlyBelow(pieceEV, allPieces);
             List<Vector2> returnValue = GetRawSingleDestinationLocations(pieceEV, useGoldMovement);
             AdjustRawDataWithPieceLocationAndDirection(pieceEV, returnValue);
+            ExcludeOutOfBoard(returnValue);
             ExcludeDestinationsWithFriendlyTier3Tower(pieceEV, returnValue, allPieces);
             // Do NOT allow destinations other pieces in the way
             ExcludeDestinationsWithObstructingPieces(pieceEV, returnValue, allPieces);
@@ -84,6 +86,17 @@ namespace Service.Board
                     pieceEV.Location.Location.x + (rawLocationData[i].x * (int)pieceEV.Piece.Direction),
                     pieceEV.Location.Location.y + (rawLocationData[i].y * (int)pieceEV.Piece.Direction));
             }
+        }
+
+        /**
+         * If destinations are outside board, such as (-2, 1), then exclude them.
+         */
+        private static void ExcludeOutOfBoard(List<Vector2> returnValue)
+        {
+            returnValue.RemoveAll(location =>
+                location.x < 0 || location.x >= BoardConst.NUM_FILES_RANKS
+                || location.y < 0 || location.y >= BoardConst.NUM_FILES_RANKS
+            );
         }
 
         /**

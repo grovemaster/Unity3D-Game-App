@@ -71,6 +71,11 @@ namespace ECS.Context.EngineStep.Create
             {
                 (IStep<CapturePieceStepState>)engines["captureStackModal"]
             });
+
+            steps.Add("confirmModal", new IStep<ForcedRecoveryStepState>[]
+            {
+                (IStep<ForcedRecoveryStepState>)engines["confirmModal"]
+            });
             #endregion
 
             #region Highlight
@@ -96,6 +101,18 @@ namespace ECS.Context.EngineStep.Create
             steps.Add("drop", new IStep<DropStepState>[]
             {
                 (IStep<DropStepState>)engines["drop"]
+            });
+            #endregion
+
+            #region Forced Recovery
+            steps.Add("forcedRecoveryCheck", new IStep<ForcedRecoveryStepState>[]
+            {
+                (IStep<ForcedRecoveryStepState>)engines["forcedRecoveryCheck"]
+            });
+
+            steps.Add("forcedRecoveryAbility", new IStep<ForcedRecoveryStepState>[]
+            {
+                (IStep<ForcedRecoveryStepState>)engines["forcedRecoveryAbility"]
             });
             #endregion
 
@@ -133,6 +150,18 @@ namespace ECS.Context.EngineStep.Create
                 (IStep<ImmobileCapturePieceStepState>)engines["immobileCapture"],
                 (IStep<ImmobileCapturePieceStepState>)engines["addPieceToHand"],
                 (IStep<ImmobileCapturePieceStepState>)engines["gotoTurnEnd"]
+            });
+            #endregion
+
+            #region Goto Turn End
+            steps.Add("gotoTurnEndForcedRecoveryStepState", new IStep<ForcedRecoveryStepState>[]
+            {
+                (IStep<ForcedRecoveryStepState>)engines["gotoTurnEnd"]
+            });
+
+            steps.Add("gotoTurnEndCancelModalStepState", new IStep<CancelModalStepState>[]
+            {
+                (IStep<CancelModalStepState>)engines["gotoTurnEnd"]
             });
             #endregion
         }
