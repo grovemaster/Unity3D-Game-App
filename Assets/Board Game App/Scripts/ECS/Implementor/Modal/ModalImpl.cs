@@ -35,13 +35,15 @@ namespace ECS.Implementor.Modal
         // Services
         private ModalViewService modalViewService;
 
+        private ModalType? previousModalType = null;
+
         public ModalType Type { get; set; }
         public DispatchOnSet<int> Answer { get; set; }
         public bool ImmobileCaptureDesignated { get; set; }
 
         void Awake()
         {
-            modalViewService = new ModalViewService(ClosePanel);
+            modalViewService = new ModalViewService(ClosePanelVisibility);
             Answer = new DispatchOnSet<int>();
         }
 
@@ -124,6 +126,7 @@ namespace ECS.Implementor.Modal
             }
 
             ActivateModal();
+            previousModalType = Type;
             isModalOpen.IsModalOpen = true;
         }
 
@@ -146,6 +149,24 @@ namespace ECS.Implementor.Modal
             overlayRect.offsetMax = new Vector2(0, overlayRect.offsetMax.y);
         }
 
+        private void ClosePanelVisibility()
+        {
+            /**
+             * Dealing with problem of asynchronous events and overusing a single modal.
+             * Closing this modal and then opening this same modal of the same/different type has no guarantee of when
+             * this function is run; it could be run after the 2nd opening.  This is a simple work-around, but it
+             * doesn't handle the case of closing the confirm modal.  That is handled in the answer engine
+             */
+            if (Type == ModalType.CONFIRM && previousModalType == ModalType.CONFIRM)
+            {
+                previousModalType = null;
+            }
+            else
+            {
+                visibility.IsVisible.value = false;
+            }
+        }
+
         private void ClosePanel()
         {
             //Overlay.SetActive(false); //Close the Modal Dialog
@@ -154,6 +175,7 @@ namespace ECS.Implementor.Modal
             overlayRect.offsetMin = new Vector2(-400f, overlayRect.offsetMin.y);
             overlayRect.offsetMax = new Vector2(-400f, overlayRect.offsetMax.y);
             isModalOpen.IsModalOpen = false;
+            previousModalType = null;
         }
     }
 }

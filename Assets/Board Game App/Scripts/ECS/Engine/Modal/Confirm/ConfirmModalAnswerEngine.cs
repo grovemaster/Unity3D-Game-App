@@ -1,7 +1,5 @@
-﻿using System;
-using Data.Enum.AB;
+﻿using Data.Enum.AB;
 using Data.Step.Piece.Move;
-using Data.Step.Turn;
 using ECS.EntityView.Modal;
 using Service.Modal;
 using Svelto.ECS;
@@ -36,6 +34,7 @@ namespace ECS.Engine.Modal.Confirm
         private void OnPressed(int entityId, bool answer)
         {
             ModalEV modal = modalService.FindModalEV(entitiesDB);
+            modal.Visibility.IsVisible.value = false; // Forcibly close confirm modal
             NextAction(modal, answer);
         }
 

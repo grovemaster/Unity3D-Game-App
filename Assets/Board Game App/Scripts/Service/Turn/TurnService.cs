@@ -22,13 +22,6 @@ namespace Service.Turn
             return turnEVs[0];
         }
 
-        public static TurnEV GetTurnEV(PlayerColor playerColor, IEntitiesDB entitiesDB)
-        {
-            TurnEV[] turnEVs = CommonService.FindAllEntities<TurnEV>(entitiesDB);
-
-            return turnEVs.First(turn => turn.TurnPlayer.PlayerColor == playerColor);
-        }
-
         public static PlayerColor CalcOtherTurnPlayer(PlayerColor playerColor)
         {
             return playerColor == PlayerColor.BLACK ? PlayerColor.WHITE : PlayerColor.BLACK;

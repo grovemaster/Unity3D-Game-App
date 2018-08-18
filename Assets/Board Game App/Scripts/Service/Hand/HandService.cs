@@ -79,9 +79,13 @@ namespace Service.Hand
 
         public void AddPieceToHand(PieceEV pieceToCapture, IEntitiesDB entitiesDB, PlayerColor? handOwner = null)
         {
-            TurnEV turnPlayer = handOwner.HasValue ? TurnService.GetTurnEV(handOwner.Value, entitiesDB) : TurnService.GetCurrentTurnEV(entitiesDB);
+            if (!handOwner.HasValue)
+            {
+                handOwner = TurnService.GetCurrentTurnEV(entitiesDB).TurnPlayer.PlayerColor;
+            }
+
             HandPieceEV handHoldingCapturedPiece = FindHandPiece(
-                pieceToCapture.Piece.PieceType, turnPlayer.TurnPlayer.PlayerColor, entitiesDB);
+                pieceToCapture.Piece.PieceType, handOwner.Value, entitiesDB);
             handHoldingCapturedPiece.HandPiece.NumPieces.value++;
         }
 
