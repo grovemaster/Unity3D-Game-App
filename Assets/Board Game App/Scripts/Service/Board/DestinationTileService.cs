@@ -1,4 +1,5 @@
-﻿using Data.Constants.Board;
+﻿using Data.Check.PreviousMove;
+using Data.Constants.Board;
 using Data.Enum;
 using Data.Enum.Player;
 using ECS.EntityView.Piece;
@@ -16,12 +17,13 @@ namespace Service.Board
     {
         private PieceFactory pieceFactory = new PieceFactory();
         private PieceFindService pieceFindService = new PieceFindService();
+
         /**
          * This will return values exceeding board boundaries (such as below the zero-th rank).  It is the
          * responsibility of the client to not abuse this data.
          */
         public List<Vector2> CalcDestinationTileLocations(
-            PieceEV pieceEV, IEntitiesDB entitiesDB, List<PieceEV> allPieces = null)
+            PieceEV pieceEV, IEntitiesDB entitiesDB, List<PieceEV> allPieces = null, bool excludeCheckViolations = true)
         {
             List<Vector2> returnValue = new List<Vector2>();
 
@@ -31,37 +33,50 @@ namespace Service.Board
                 allPieces = pieceFindService.FindAllBoardPieces(entitiesDB).ToList();
             }
 
-            returnValue.AddRange(CalcSingleDestinations(pieceEV, allPieces));
+            returnValue.AddRange(CalcSingleDestinations(pieceEV, allPieces, excludeCheckViolations));
 
             return returnValue;
         }
 
-        public HashSet<Vector2> CalcDestinationTileLocations(PieceEV[] pieces, IEntitiesDB entitiesDB)
+        public HashSet<Vector2> CalcDestinationTileLocations(PieceEV[] pieces, bool excludeCheckViolations, IEntitiesDB entitiesDB)
         {
             HashSet<Vector2> returnValue = new HashSet<Vector2>();
             List<PieceEV> allPieces = pieceFindService.FindAllBoardPieces(entitiesDB).ToList();
 
             for (int i = 0; i < pieces.Length; ++i)
             {
-                returnValue.UnionWith(CalcDestinationTileLocations(pieces[i], entitiesDB, allPieces));
+                returnValue.UnionWith(CalcDestinationTileLocations(pieces[i], entitiesDB, allPieces, excludeCheckViolations));
             }
 
             return returnValue;
         }
 
-        private List<Vector2> CalcSingleDestinations(PieceEV pieceEV, List<PieceEV> allPieces)
+        private List<Vector2> CalcSingleDestinations(
+            PieceEV pieceEV,
+            List<PieceEV> allPieces,
+            bool excludeCheckViolations = false,
+            bool excludeObstructedDestinations = true)
         {
             bool useGoldMovement = IsOpponentPieceDirectlyBelow(pieceEV, allPieces);
             List<Vector2> returnValue = GetRawSingleDestinationLocations(pieceEV, useGoldMovement);
             AdjustRawDataWithPieceLocationAndDirection(pieceEV, returnValue);
             ExcludeOutOfBoard(returnValue);
             ExcludeDestinationsWithFriendlyTier3Tower(pieceEV, returnValue, allPieces);
-            // Do NOT allow destinations other pieces in the way
-            ExcludeDestinationsWithObstructingPieces(pieceEV, returnValue, allPieces);
+
+            if (excludeObstructedDestinations) // Do NOT allow destinations other pieces in the way
+            {
+                ExcludeDestinationsWithObstructingPieces(pieceEV, returnValue, allPieces);
+            }
+
+            if (excludeCheckViolations) // Should only happen for turn player
+            {
+                ExcludeCheckViolations(pieceEV, returnValue, allPieces);
+            }
 
             return returnValue;
         }
 
+        #region Excludes
         private bool IsOpponentPieceDirectlyBelow(PieceEV pieceEV, List<PieceEV> allPieces)
         {
             return pieceEV.Tier.Tier != 1
@@ -202,5 +217,264 @@ namespace Service.Board
 
             return returnValue;
         }
+        #endregion
+
+        #region Exclude Check Violations
+        private void ExcludeCheckViolations(PieceEV pieceEV, List<Vector2> returnValue, List<PieceEV> allPieces)
+        {
+            PieceEV commander = allPieces.First(piece =>
+                piece.Piece.PieceType == PieceType.COMMANDER && piece.PlayerOwner.PlayerColor == pieceEV.PlayerOwner.PlayerColor);
+            List<PieceEV> commanderTowerPieces = allPieces.Where(piece => piece.Location.Location == commander.Location.Location).ToList();
+            commanderTowerPieces.Sort(delegate (PieceEV p1, PieceEV p2)
+                { return p1.Tier.Tier.CompareTo(p2.Tier.Tier); });
+
+            // If Commander safely buried in a tower whose adjacent piece(s) are not changing, Commander cannot be in check this turn
+            if (pieceEV.Location.Location != commander.Location.Location
+                && !commander.Tier.TopOfTower
+                && !IsAdjacentPieceEnemy(commander, commanderTowerPieces))
+            {
+                return;
+            }
+
+            // If piece below Commander is enemy piece, moving another piece won't help
+            if (pieceEV.ID.entityID != commander.ID.entityID
+                && commander.Tier.Tier > 1
+                && commander.PlayerOwner.PlayerColor != commanderTowerPieces[commander.Tier.Tier - 2].PlayerOwner.PlayerColor)
+            {
+                returnValue.RemoveAll(delegate (Vector2 v1)
+                { return true; });
+
+                return;
+            }
+
+            // Commander is topOfTower
+            List<Vector2> destinationsToRemove = new List<Vector2>();
+            List<PieceEV> enemyThreats = new List<PieceEV>();
+
+            if (pieceEV.ID.entityID != commander.ID.entityID)
+            {
+                enemyThreats = FindEnemyThreats(commander, pieceEV, allPieces);
+
+                if (enemyThreats.Count == 0)
+                {
+                    return;
+                }
+            }
+
+            foreach (Vector2 destination in returnValue)
+            {
+                // Make temp move while saving old info
+                PreviousMoveState previousMoveState = SaveCurrentMove(pieceEV, destination, allPieces);
+                MakeTemporaryMove(pieceEV, destination, allPieces);
+
+                // If piece covers Commander, no threat to Commander
+                if (pieceEV.ID.entityID != commander.ID.entityID
+                    && !commander.Tier.TopOfTower && pieceEV.Location.Location == commander.Location.Location)
+                {
+                    RestorePreviousState(previousMoveState);
+                    continue;
+                }
+
+                // If Commander captures enemy piece, it cannot put itself into check b/c of another enemy piece right below that piece
+                if (pieceEV.ID.entityID == commander.ID.entityID && SecondFromTopTowerPiecesEnemy(pieceEV, allPieces))
+                {
+                    destinationsToRemove.Add(destination);
+                    RestorePreviousState(previousMoveState);
+                    continue;
+                }
+
+                if (pieceEV.ID.entityID == commander.ID.entityID)
+                {
+                    enemyThreats = FindEnemyThreats(commander, pieceEV, allPieces);
+                }
+
+                // If no threats
+                if (enemyThreats.Count == 0)
+                {
+                    RestorePreviousState(previousMoveState);
+                    continue;
+                }
+
+                foreach (PieceEV threat in enemyThreats)
+                {
+                    if (threat.Tier.TopOfTower // Temporarily moved piece may have captured/stacked this enemy piece
+                        && (threat.Location.Location == commander.Location.Location
+                        || CalcSingleDestinations(threat, allPieces, false).Contains(commander.Location.Location)))
+                    {
+                        destinationsToRemove.Add(destination);
+                        break;
+                    }
+                }
+
+                // Restore old info into values
+                RestorePreviousState(previousMoveState);
+            }
+
+            foreach (Vector2 removeDestination in destinationsToRemove)
+            {
+                returnValue.Remove(removeDestination);
+            }
+        }
+
+        private bool IsAdjacentPieceEnemy(PieceEV pieceToCompare, List<PieceEV> towerPieces)
+        {
+            switch(pieceToCompare.Tier.Tier)
+            {
+                case 1:
+                case 3:
+                    return pieceToCompare.PlayerOwner.PlayerColor != towerPieces[1].PlayerOwner.PlayerColor;
+                case 2:
+                    return pieceToCompare.PlayerOwner.PlayerColor != towerPieces[0].PlayerOwner.PlayerColor
+                        || (towerPieces.Count > 2 && pieceToCompare.PlayerOwner.PlayerColor != towerPieces[2].PlayerOwner.PlayerColor);
+                default:
+                    throw new InvalidOperationException("Invalid tier number");
+            }
+        }
+
+        private bool SecondFromTopTowerPiecesEnemy(PieceEV commander, List<PieceEV> allPieces)
+        {
+            List<PieceEV> piecesAtLocation = allPieces.Where(piece =>
+                piece.Location.Location == commander.Location.Location && piece.ID.entityID != commander.ID.entityID).ToList();
+
+            return piecesAtLocation.Count >= 1
+                && piecesAtLocation[piecesAtLocation.Count - 1].PlayerOwner.PlayerColor != commander.PlayerOwner.PlayerColor;
+        }
+
+        #region Find Enemy Threats
+        private List<PieceEV> FindEnemyThreats(PieceEV commander, PieceEV pieceToMove, List<PieceEV> allPieces)
+        {
+            List<PieceEV> enemyPieces = allPieces.Where(piece =>
+                piece.PlayerOwner.PlayerColor != commander.PlayerOwner.PlayerColor).ToList();
+            List<PieceEV> piecesAtCurrentLocation = allPieces.Where(piece => // Min size one
+                piece.Location.Location == pieceToMove.Location.Location).ToList();
+
+            List<PieceEV> returnValue = enemyPieces.Where(piece =>
+                piece.Tier.TopOfTower
+                && ( piece.Location.Location == commander.Location.Location
+                || CalcUnobstructedDestinationTiles(piece, allPieces).Contains(commander.Location.Location))
+                )
+            .ToList();
+
+            // One more scenario: Moving the pieceToMove could expose the underlying enemy piece that could check the Commander
+            // That piece is UNABLE check the commander if other pieces obstruct it
+            if (piecesAtCurrentLocation.Count > 1)
+            {
+                PieceEV pieceToEvaluate = piecesAtCurrentLocation[piecesAtCurrentLocation.Count - 2];
+
+                if (pieceToEvaluate.PlayerOwner.PlayerColor != commander.PlayerOwner.PlayerColor
+                && CalcUnobstructedDestinationTiles(pieceToEvaluate, allPieces).Contains(commander.Location.Location))
+                {
+                    returnValue.Add(pieceToEvaluate);
+                }
+            }
+
+            return returnValue;
+        }
+
+        private List<Vector2> CalcUnobstructedDestinationTiles(PieceEV piece, List<PieceEV> allPieces)
+        {
+            return CalcSingleDestinations(piece, allPieces, false, false);
+        }
+        #endregion
+
+        #region Previous Move State
+        private PreviousMoveState SaveCurrentMove(PieceEV pieceToMove, Vector2 destination, List<PieceEV> allPieces)
+        {
+            List<PieceEV> piecesAtCurrentLocation = allPieces.Where(piece => // Min size one
+                piece.Location.Location == pieceToMove.Location.Location).ToList();
+            piecesAtCurrentLocation.Sort(delegate (PieceEV p1, PieceEV p2)
+            { return p1.Tier.Tier.CompareTo(p2.Tier.Tier); });
+            List<PieceEV> topPieceAtDestination = allPieces.Where(piece => // Size one or zero
+                piece.Location.Location == destination && piece.Tier.TopOfTower).ToList();
+
+            PreviousMoveState returnValue = new PreviousMoveState
+            {
+                pieceToMove = new PreviousPieceState
+                {
+                    Piece = pieceToMove,
+                    Location = new Vector2(pieceToMove.Location.Location.x, pieceToMove.Location.Location.y),
+                    Tier = pieceToMove.Tier.Tier,
+                    TopOfTower = pieceToMove.Tier.TopOfTower
+                },
+
+                pieceBelow = piecesAtCurrentLocation.Count == 1 ? null : (PreviousPieceState?)new PreviousPieceState
+                {
+                    Piece = piecesAtCurrentLocation[pieceToMove.Tier.Tier - 2],
+                    Location = new Vector2(
+                        piecesAtCurrentLocation[pieceToMove.Tier.Tier - 2].Location.Location.x,
+                        piecesAtCurrentLocation[pieceToMove.Tier.Tier - 2].Location.Location.y),
+                    Tier = piecesAtCurrentLocation[pieceToMove.Tier.Tier - 2].Tier.Tier,
+                    TopOfTower = piecesAtCurrentLocation[pieceToMove.Tier.Tier - 2].Tier.TopOfTower
+                },
+
+                pieceCaptured = topPieceAtDestination.Count == 0 ? null : (PreviousPieceState?)new PreviousPieceState
+                    {
+                        Piece = topPieceAtDestination[0],
+                        Location = new Vector2(topPieceAtDestination[0].Location.Location.x, topPieceAtDestination[0].Location.Location.y),
+                        Tier = topPieceAtDestination[0].Tier.Tier,
+                        TopOfTower = topPieceAtDestination[0].Tier.TopOfTower
+                    }
+            };
+
+            return returnValue;
+        }
+
+        private void MakeTemporaryMove(PieceEV pieceToMove, Vector2 destination, List<PieceEV> allPieces)
+        {
+            List<PieceEV> piecesAtCurrentLocation = allPieces.Where(piece => // Min size one
+                piece.Location.Location == pieceToMove.Location.Location).ToList();
+            piecesAtCurrentLocation.Sort(delegate (PieceEV p1, PieceEV p2)
+            { return p1.Tier.Tier.CompareTo(p2.Tier.Tier); });
+            List<PieceEV> topPieceAtDestination = allPieces.Where(piece => // Size one or zero
+                piece.Location.Location == destination && piece.Tier.TopOfTower).ToList();
+
+            pieceToMove.Location.Location = destination;
+
+            if (piecesAtCurrentLocation.Count > 1)
+            {
+                piecesAtCurrentLocation[piecesAtCurrentLocation.Count - 2].Tier.TopOfTower = true;
+            }
+
+            if (topPieceAtDestination.Count > 0)
+            {
+                topPieceAtDestination[0].Tier.TopOfTower = false;
+
+                if (topPieceAtDestination[0].PlayerOwner.PlayerColor == pieceToMove.PlayerOwner.PlayerColor)
+                {
+                    pieceToMove.Tier.Tier = topPieceAtDestination[0].Tier.Tier + 1;
+                }
+                else
+                {
+                    pieceToMove.Tier.Tier = topPieceAtDestination[0].Tier.Tier;
+                    topPieceAtDestination[0].Location.Location = new Vector2(-1, -1);
+                }
+            }
+        }
+
+        private void RestorePreviousState(PreviousMoveState previousState)
+        {
+            PieceEV pieceMoved = previousState.pieceToMove.Piece;
+            pieceMoved.Location.Location = previousState.pieceToMove.Location;
+            pieceMoved.Tier.Tier = previousState.pieceToMove.Tier;
+            pieceMoved.Tier.TopOfTower = previousState.pieceToMove.TopOfTower;
+
+            if (previousState.pieceBelow.HasValue)
+            {
+                PieceEV pieceBelow = previousState.pieceBelow.Value.Piece;
+                pieceBelow.Location.Location = previousState.pieceBelow.Value.Location;
+                pieceBelow.Tier.Tier = previousState.pieceBelow.Value.Tier;
+                pieceBelow.Tier.TopOfTower = previousState.pieceBelow.Value.TopOfTower;
+            }
+
+            if (previousState.pieceCaptured.HasValue)
+            {
+                PieceEV pieceCaptured = previousState.pieceCaptured.Value.Piece;
+                pieceCaptured.Location.Location = previousState.pieceCaptured.Value.Location;
+                pieceCaptured.Tier.Tier = previousState.pieceCaptured.Value.Tier;
+                pieceCaptured.Tier.TopOfTower = previousState.pieceCaptured.Value.TopOfTower;
+            }
+        }
+        #endregion
+        #endregion
     }
 }

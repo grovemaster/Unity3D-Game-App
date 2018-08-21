@@ -2,7 +2,9 @@
 using Data.Enum.Click;
 using Data.Step;
 using Data.Step.Piece.Click;
+using ECS.EntityView.Turn;
 using Service.Board;
+using Service.Turn;
 using Svelto.ECS;
 using System;
 
@@ -11,6 +13,7 @@ namespace ECS.Engine.Piece.Click
     class DetermineClickTypeEngine : IStep<ClickPieceStepState>, IQueryingEntitiesEngine
     {
         private DestinationTileService destinationTileService = new DestinationTileService();
+        private TurnService turnService = new TurnService();
 
         private readonly ISequencer clickSequence;
 
@@ -52,12 +55,18 @@ namespace ECS.Engine.Piece.Click
 
         private void NextActionClickHighlight(ref ClickPieceStepState token)
         {
+            TurnEV currentTurn = turnService.GetCurrentTurnEV(entitiesDB);
+
             // Determine PiecePressState, click or un-click, and destination tiles
             var pressState = new PressStepState
             {
                 pieceEntityId = token.clickedPiece.ID.entityID,
                 piecePressState = token.clickedPiece.Highlight.IsHighlighted ? PiecePressState.UNCLICKED : PiecePressState.CLICKED,
-                affectedTiles = destinationTileService.CalcDestinationTileLocations(token.clickedPiece, entitiesDB)
+                affectedTiles = destinationTileService.CalcDestinationTileLocations(
+                    token.clickedPiece,
+                    entitiesDB,
+                    null,
+                    currentTurn.TurnPlayer.PlayerColor == token.clickedPiece.PlayerOwner.PlayerColor)
             };
 
             clickSequence.Next(this, ref pressState, (int)ClickState.CLICK_HIGHLIGHT);

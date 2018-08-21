@@ -1,5 +1,4 @@
 ﻿using Data.Step.Piece.Move;
-using Data.Step.Turn;
 using ECS.EntityView.Piece;
 using Service.Piece.Find;
 using Service.Piece.Set;
