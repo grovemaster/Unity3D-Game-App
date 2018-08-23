@@ -1,6 +1,7 @@
 ﻿using ECS.Engine.Board;
 using ECS.Engine.Board.Tile;
 using ECS.Engine.Board.Tile.Highlight;
+using ECS.Engine.Check;
 using ECS.Engine.Drop;
 using ECS.Engine.Hand;
 using ECS.Engine.Hand.Highlight;
@@ -54,6 +55,7 @@ namespace ECS.Context.EngineStep.Create
             engines.Add("movePieceCleanup", new MovePieceCleanupEngine());
             engines.Add("turnEnd", new TurnEndEngine(sequences["boardPress"]));
 
+            engines.Add("commanderCheck", new CommanderCheckEngine());
             engines.Add("highlightAllDestinationTiles", new HighlightAllDestinationTilesEngine());
 
             engines.Add("mobileCapturePiece", new MobileCapturePieceEngine());
@@ -101,6 +103,7 @@ namespace ECS.Context.EngineStep.Create
             enginesRoot.AddEngine(engines["movePieceCleanup"]);
             enginesRoot.AddEngine(engines["turnEnd"]);
 
+            enginesRoot.AddEngine(engines["commanderCheck"]);
             enginesRoot.AddEngine(engines["highlightAllDestinationTiles"]);
 
             enginesRoot.AddEngine(engines["mobileCapturePiece"]);

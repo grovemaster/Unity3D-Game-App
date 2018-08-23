@@ -26,6 +26,13 @@ namespace Service.Turn
             return turnEVs[0];
         }
 
+        public void SetCheckStatus(TurnEV currentTurn, bool inCheck, IEntitiesDB entitiesDB)
+        {
+            entitiesDB.ExecuteOnEntity(
+                currentTurn.ID,
+                (ref TurnEV turnToChange) => { turnToChange.Check.CommanderInCheck = inCheck; });
+        }
+
         private void SetTurnEV(TurnEV currentTurn, IEntitiesDB entitiesDB)
         {
             PlayerColor nextTurnPlayer =

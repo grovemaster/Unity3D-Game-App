@@ -99,5 +99,11 @@ namespace Service.Piece.Find
                 piece.Piece.PieceType == pieceType && piece.Location.Location.x == file)
                 .ToList();
         }
+
+        public PieceEV FindCommander(PlayerColor commanderColor, IEntitiesDB entitiesDB)
+        {
+            return FindAllBoardPieces(entitiesDB).First(piece =>
+                piece.Piece.PieceType == PieceType.COMMANDER && piece.PlayerOwner.PlayerColor == commanderColor);
+        }
     }
 }

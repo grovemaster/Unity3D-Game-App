@@ -4,8 +4,10 @@ using UnityEngine;
 
 namespace ECS.Implementor.Turn
 {
-    class TurnImpl : MonoBehaviour, IImplementor, IPlayerComponent
+    class TurnImpl : MonoBehaviour, IImplementor, IPlayerComponent, ICheckComponent
     {
         public PlayerColor PlayerColor { get; set; }
+
+        public bool CommanderInCheck { get; set; }
     }
 }

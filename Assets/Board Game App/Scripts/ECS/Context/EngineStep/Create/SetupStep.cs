@@ -81,6 +81,7 @@ namespace ECS.Context.EngineStep.Create
             #region Highlight
             steps.Add("highlightAllDestinationTiles", new IStep<TurnStartStepState>[]
             {
+                (IStep<TurnStartStepState>)engines["commanderCheck"],
                 (IStep<TurnStartStepState>)engines["highlightAllDestinationTiles"]
             });
 

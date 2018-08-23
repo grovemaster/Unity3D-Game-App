@@ -4,6 +4,7 @@ using ECS.EntityView.Modal;
 using ECS.EntityView.Piece;
 using Service.Modal;
 using Service.Piece.Find;
+using Service.Piece.ImmobileCapture;
 using Svelto.ECS;
 using System.Collections.Generic;
 
@@ -11,6 +12,7 @@ namespace ECS.Engine.Modal.ImmobileCapture
 {
     class DesignateImmobileCaptureEngine : IStep<ImmobileCaptureStepState>, IQueryingEntitiesEngine
     {
+        private ImmobileCaptureService immobileCaptureService = new ImmobileCaptureService();
         private ModalService modalService = new ModalService();
         private PieceFindService pieceFindService = new PieceFindService();
 
@@ -37,13 +39,17 @@ namespace ECS.Engine.Modal.ImmobileCapture
             PieceEV pieceTier2 = piecesAtLocation[1];
             PieceEV? pieceTier3 = piecesAtLocation.Count > 2 ? (PieceEV?)piecesAtLocation[2] : null;
 
+            // TODO I think this logic is unnecessary, but I'm too scared to remove it now (all handled in TowerModalEngine).  Later refactor.
+            bool noTier1CheckViolationsExist = immobileCaptureService.NoTier1CheckViolationsExist(piecesAtLocation, entitiesDB);
+
             entitiesDB.ExecuteOnEntity(
                 modal.ID,
                 (ref ModalEV modalToChange) =>
                 {
                     modalToChange.ImmobileCaptureState.ImmobileCaptureDesignated = true;
 
-                    modalToChange.Tier1.Enabled = pieceTier1.PlayerOwner.PlayerColor == colorToEnable
+                    modalToChange.Tier1.Enabled = noTier1CheckViolationsExist
+                        && pieceTier1.PlayerOwner.PlayerColor == colorToEnable
                         && pieceTier1.PlayerOwner.PlayerColor != pieceTier2.PlayerOwner.PlayerColor;
 
                     modalToChange.Tier2.Enabled = pieceTier2.PlayerOwner.PlayerColor == colorToEnable

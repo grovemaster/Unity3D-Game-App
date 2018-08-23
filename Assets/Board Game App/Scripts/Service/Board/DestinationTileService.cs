@@ -18,6 +18,7 @@ namespace Service.Board
         private PieceFactory pieceFactory = new PieceFactory();
         private PieceFindService pieceFindService = new PieceFindService();
 
+        #region Public API
         /**
          * This will return values exceeding board boundaries (such as below the zero-th rank).  It is the
          * responsibility of the client to not abuse this data.
@@ -50,6 +51,21 @@ namespace Service.Board
 
             return returnValue;
         }
+
+        #region Small Commander Checks
+        public bool IsCommanderBuried(PieceEV commander, List<PieceEV> commanderTowerPieces)
+        {
+            return !commander.Tier.TopOfTower
+                && !IsAdjacentPieceEnemy(commander, commanderTowerPieces);
+        }
+
+        public bool IsCommanderInDangerFromBelow(PieceEV commander, List<PieceEV> commanderTowerPieces)
+        {
+            return commander.Tier.Tier > 1
+                && commander.PlayerOwner.PlayerColor != commanderTowerPieces[commander.Tier.Tier - 2].PlayerOwner.PlayerColor;
+        }
+        #endregion
+        #endregion
 
         private List<Vector2> CalcSingleDestinations(
             PieceEV pieceEV,
@@ -229,17 +245,13 @@ namespace Service.Board
                 { return p1.Tier.Tier.CompareTo(p2.Tier.Tier); });
 
             // If Commander safely buried in a tower whose adjacent piece(s) are not changing, Commander cannot be in check this turn
-            if (pieceEV.Location.Location != commander.Location.Location
-                && !commander.Tier.TopOfTower
-                && !IsAdjacentPieceEnemy(commander, commanderTowerPieces))
+            if (pieceEV.Location.Location != commander.Location.Location && IsCommanderBuried(commander, commanderTowerPieces))
             {
                 return;
             }
 
             // If piece below Commander is enemy piece, moving another piece won't help
-            if (pieceEV.ID.entityID != commander.ID.entityID
-                && commander.Tier.Tier > 1
-                && commander.PlayerOwner.PlayerColor != commanderTowerPieces[commander.Tier.Tier - 2].PlayerOwner.PlayerColor)
+            if (pieceEV.ID.entityID != commander.ID.entityID && IsCommanderInDangerFromBelow(commander, commanderTowerPieces))
             {
                 returnValue.RemoveAll(delegate (Vector2 v1)
                 { return true; });
@@ -316,6 +328,7 @@ namespace Service.Board
             }
         }
 
+        // TODO Move to utility service/class and call from there
         private bool IsAdjacentPieceEnemy(PieceEV pieceToCompare, List<PieceEV> towerPieces)
         {
             switch(pieceToCompare.Tier.Tier)
@@ -335,6 +348,15 @@ namespace Service.Board
         {
             List<PieceEV> piecesAtLocation = allPieces.Where(piece =>
                 piece.Location.Location == commander.Location.Location && piece.ID.entityID != commander.ID.entityID).ToList();
+
+            // Temporarily-modified commander not necessarily at piecesAtLocation
+            if (piecesAtLocation.Count >= 1
+                && commander.Tier.TopOfTower
+                && piecesAtLocation[piecesAtLocation.Count - 1].ID.entityID != commander.ID.entityID
+                && piecesAtLocation[0].Location.Location == commander.Location.Location)
+            {
+                piecesAtLocation.Add(commander);
+            }
 
             return piecesAtLocation.Count >= 1
                 && piecesAtLocation[piecesAtLocation.Count - 1].PlayerOwner.PlayerColor != commander.PlayerOwner.PlayerColor;
