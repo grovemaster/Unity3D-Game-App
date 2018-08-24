@@ -410,8 +410,8 @@ namespace Service.Board
                 piecesAtLocation.Add(commander);
             }
 
-            return piecesAtLocation.Count >= 1
-                && piecesAtLocation[piecesAtLocation.Count - 1].PlayerOwner.PlayerColor != commander.PlayerOwner.PlayerColor;
+            return piecesAtLocation.Count >= 2
+                && piecesAtLocation[piecesAtLocation.Count - 2].PlayerOwner.PlayerColor != commander.PlayerOwner.PlayerColor;
         }
 
         private bool DestinationOccupiedByFriendly(PlayerColor playerColor, Vector2 destination, List<PieceEV> allPieces)
