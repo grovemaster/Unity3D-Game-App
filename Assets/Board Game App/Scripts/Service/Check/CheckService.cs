@@ -20,42 +20,12 @@ namespace Service.Check
 
         public int CalcNumCommanderThreats(PlayerColor commanderColor, IEntitiesDB entitiesDB)
         {
-            int returnValue = 0;
-            PieceEV commander = pieceFindService.FindCommander(commanderColor, entitiesDB);
-            List<PieceEV> allPieces = pieceFindService.FindAllBoardPieces(entitiesDB).ToList();
-            List<PieceEV> commanderTowerPieces = pieceFindService.FindPiecesByLocation(commander.Location.Location, entitiesDB);
-
-            if (destinationTileService.IsCommanderBuried(commander, commanderTowerPieces))
-            {
-                // Commander cannot be captured this turn
-                return returnValue;
-            }
-
-            if (destinationTileService.IsCommanderInDangerFromBelow(commander, commanderTowerPieces))
-            {
-                returnValue++;
-            }
-
-            if (commander.Tier.TopOfTower)
-            {
-                List<PieceEV> enemyPieces = allPieces.Where(piece =>
-                    piece.PlayerOwner.PlayerColor != commanderColor && piece.Tier.TopOfTower).ToList();
-
-                foreach (PieceEV enemy in enemyPieces)
-                {
-                    if (destinationTileService.CalcDestinationTileLocations(enemy, entitiesDB, allPieces, false).Contains(commander.Location.Location))
-                    {
-                        returnValue++;
-                    }
-                }
-            }
-
-            return returnValue;
+            return destinationTileService.CalcNumCommanderThreats(commanderColor, entitiesDB);
         }
 
         public bool IsCommanderInCheck(PlayerColor turnPlayer, IEntitiesDB entitiesDB)
         {
-            return CalcNumCommanderThreats(turnPlayer, entitiesDB) > 0;
+            return destinationTileService.CalcNumCommanderThreats(turnPlayer, entitiesDB) > 0;
         }
 
         public bool DropReleasesCheck(PieceEV pieceToDrop, Vector2 location, TurnEV turn, IEntitiesDB entitiesDB)

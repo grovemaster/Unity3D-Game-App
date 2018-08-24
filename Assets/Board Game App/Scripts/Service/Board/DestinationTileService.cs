@@ -34,7 +34,7 @@ namespace Service.Board
                 allPieces = pieceFindService.FindAllBoardPieces(entitiesDB).ToList();
             }
 
-            returnValue.AddRange(CalcSingleDestinations(pieceEV, allPieces, excludeCheckViolations));
+            returnValue.AddRange(CalcSingleDestinations(pieceEV, allPieces, entitiesDB, excludeCheckViolations));
 
             return returnValue;
         }
@@ -51,6 +51,48 @@ namespace Service.Board
 
             return returnValue;
         }
+
+        #region In Check
+        public int CalcNumCommanderThreats(PlayerColor commanderColor, IEntitiesDB entitiesDB)
+        {
+            int returnValue = 0;
+            PieceEV commander = pieceFindService.FindCommander(commanderColor, entitiesDB);
+            List<PieceEV> allPieces = pieceFindService.FindAllBoardPieces(entitiesDB).ToList();
+            List<PieceEV> commanderTowerPieces = pieceFindService.FindPiecesByLocation(commander.Location.Location, entitiesDB);
+
+            if (IsCommanderBuried(commander, commanderTowerPieces))
+            {
+                // Commander cannot be captured this turn
+                return returnValue;
+            }
+
+            if (IsCommanderInDangerFromBelow(commander, commanderTowerPieces))
+            {
+                returnValue++;
+            }
+
+            if (commander.Tier.TopOfTower)
+            {
+                List<PieceEV> enemyPieces = allPieces.Where(piece =>
+                    piece.PlayerOwner.PlayerColor != commanderColor && piece.Tier.TopOfTower).ToList();
+
+                foreach (PieceEV enemy in enemyPieces)
+                {
+                    if (CalcDestinationTileLocations(enemy, entitiesDB, allPieces, false).Contains(commander.Location.Location))
+                    {
+                        returnValue++;
+                    }
+                }
+            }
+
+            return returnValue;
+        }
+
+        public bool IsCommanderInCheck(PlayerColor turnPlayer, IEntitiesDB entitiesDB)
+        {
+            return CalcNumCommanderThreats(turnPlayer, entitiesDB) > 0;
+        }
+        #endregion
 
         #region Small Commander Checks
         public bool IsCommanderBuried(PieceEV commander, List<PieceEV> commanderTowerPieces)
@@ -70,6 +112,7 @@ namespace Service.Board
         private List<Vector2> CalcSingleDestinations(
             PieceEV pieceEV,
             List<PieceEV> allPieces,
+            IEntitiesDB entitiesDB,
             bool excludeCheckViolations = false,
             bool excludeObstructedDestinations = true)
         {
@@ -86,7 +129,7 @@ namespace Service.Board
 
             if (excludeCheckViolations) // Should only happen for turn player
             {
-                ExcludeCheckViolations(pieceEV, returnValue, allPieces);
+                ExcludeCheckViolations(pieceEV, returnValue, allPieces, entitiesDB);
             }
 
             return returnValue;
@@ -236,7 +279,7 @@ namespace Service.Board
         #endregion
 
         #region Exclude Check Violations
-        private void ExcludeCheckViolations(PieceEV pieceEV, List<Vector2> returnValue, List<PieceEV> allPieces)
+        private void ExcludeCheckViolations(PieceEV pieceEV, List<Vector2> returnValue, List<PieceEV> allPieces, IEntitiesDB entitiesDB)
         {
             PieceEV commander = allPieces.First(piece =>
                 piece.Piece.PieceType == PieceType.COMMANDER && piece.PlayerOwner.PlayerColor == pieceEV.PlayerOwner.PlayerColor);
@@ -265,7 +308,7 @@ namespace Service.Board
 
             if (pieceEV.ID.entityID != commander.ID.entityID)
             {
-                enemyThreats = FindEnemyThreats(commander, pieceEV, allPieces);
+                enemyThreats = FindEnemyThreats(commander, pieceEV, allPieces, entitiesDB);
 
                 if (enemyThreats.Count == 0)
                 {
@@ -275,6 +318,15 @@ namespace Service.Board
 
             foreach (Vector2 destination in returnValue)
             {
+                // Commander in check cannot move to a tile occupied by a friendly piece
+                if (pieceEV.ID.entityID == commander.ID.entityID
+                    && DestinationOccupiedByFriendly(pieceEV.PlayerOwner.PlayerColor, destination, allPieces)
+                    && IsCommanderInCheck(pieceEV.PlayerOwner.PlayerColor, entitiesDB))
+                {
+                    destinationsToRemove.Add(destination);
+                    continue;
+                }
+
                 // Make temp move while saving old info
                 PreviousMoveState previousMoveState = SaveCurrentMove(pieceEV, destination, allPieces);
                 MakeTemporaryMove(pieceEV, destination, allPieces);
@@ -297,7 +349,7 @@ namespace Service.Board
 
                 if (pieceEV.ID.entityID == commander.ID.entityID)
                 {
-                    enemyThreats = FindEnemyThreats(commander, pieceEV, allPieces);
+                    enemyThreats = FindEnemyThreats(commander, pieceEV, allPieces, entitiesDB);
                 }
 
                 // If no threats
@@ -311,7 +363,7 @@ namespace Service.Board
                 {
                     if (threat.Tier.TopOfTower // Temporarily moved piece may have captured/stacked this enemy piece
                         && (threat.Location.Location == commander.Location.Location
-                        || CalcSingleDestinations(threat, allPieces, false).Contains(commander.Location.Location)))
+                        || CalcSingleDestinations(threat, allPieces, entitiesDB, false).Contains(commander.Location.Location)))
                     {
                         destinationsToRemove.Add(destination);
                         break;
@@ -362,8 +414,16 @@ namespace Service.Board
                 && piecesAtLocation[piecesAtLocation.Count - 1].PlayerOwner.PlayerColor != commander.PlayerOwner.PlayerColor;
         }
 
+        private bool DestinationOccupiedByFriendly(PlayerColor playerColor, Vector2 destination, List<PieceEV> allPieces)
+        {
+            List<PieceEV> piecesAtLocation = allPieces.Where(piece => piece.Location.Location == destination).ToList();
+
+            return piecesAtLocation.Count > 0
+                && piecesAtLocation[piecesAtLocation.Count - 1].PlayerOwner.PlayerColor == playerColor;
+        }
+
         #region Find Enemy Threats
-        private List<PieceEV> FindEnemyThreats(PieceEV commander, PieceEV pieceToMove, List<PieceEV> allPieces)
+        private List<PieceEV> FindEnemyThreats(PieceEV commander, PieceEV pieceToMove, List<PieceEV> allPieces, IEntitiesDB entitiesDB)
         {
             List<PieceEV> enemyPieces = allPieces.Where(piece =>
                 piece.PlayerOwner.PlayerColor != commander.PlayerOwner.PlayerColor).ToList();
@@ -373,7 +433,7 @@ namespace Service.Board
             List<PieceEV> returnValue = enemyPieces.Where(piece =>
                 piece.Tier.TopOfTower
                 && ( piece.Location.Location == commander.Location.Location
-                || CalcUnobstructedDestinationTiles(piece, allPieces).Contains(commander.Location.Location))
+                || CalcUnobstructedDestinationTiles(piece, allPieces, entitiesDB).Contains(commander.Location.Location))
                 )
             .ToList();
 
@@ -384,7 +444,7 @@ namespace Service.Board
                 PieceEV pieceToEvaluate = piecesAtCurrentLocation[piecesAtCurrentLocation.Count - 2];
 
                 if (pieceToEvaluate.PlayerOwner.PlayerColor != commander.PlayerOwner.PlayerColor
-                && CalcUnobstructedDestinationTiles(pieceToEvaluate, allPieces).Contains(commander.Location.Location))
+                && CalcUnobstructedDestinationTiles(pieceToEvaluate, allPieces, entitiesDB).Contains(commander.Location.Location))
                 {
                     returnValue.Add(pieceToEvaluate);
                 }
@@ -393,9 +453,9 @@ namespace Service.Board
             return returnValue;
         }
 
-        private List<Vector2> CalcUnobstructedDestinationTiles(PieceEV piece, List<PieceEV> allPieces)
+        private List<Vector2> CalcUnobstructedDestinationTiles(PieceEV piece, List<PieceEV> allPieces, IEntitiesDB entitiesDB)
         {
-            return CalcSingleDestinations(piece, allPieces, false, false);
+            return CalcSingleDestinations(piece, allPieces, entitiesDB, false, false);
         }
         #endregion
 
