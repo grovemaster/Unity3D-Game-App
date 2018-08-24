@@ -72,6 +72,23 @@ namespace Service.Check
             return returnValue;
         }
 
+        public bool ForcedRecoveryResolvesOrDoesNotCreateCheck(PieceEV pieceMoved, TurnEV turn, IEntitiesDB entitiesDB)
+        {
+            bool returnValue = false;
+            Vector2 oldLocation = new Vector2(pieceMoved.Location.Location.x, pieceMoved.Location.Location.y);
+            int oldTier = pieceMoved.Tier.Tier;
+            bool oldTopOfTower = pieceMoved.Tier.TopOfTower;
+
+            pieceSetService.SetPieceLocationToHandLocation(pieceMoved, entitiesDB);
+
+            returnValue = !IsCommanderInCheck(turn.TurnPlayer.PlayerColor, entitiesDB);
+
+            pieceSetService.SetPieceLocationAndTier(pieceMoved, oldLocation, oldTier, entitiesDB);
+            pieceSetService.SetTopOfTower(pieceMoved, entitiesDB, oldTopOfTower);
+
+            return returnValue;
+        }
+
         public bool DoesTopOfTowerThreatenCommander(PieceEV commander, PieceEV enemyPiece, IEntitiesDB entitiesDB)
         {
             return (commander.Tier.TopOfTower
