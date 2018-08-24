@@ -1,11 +1,11 @@
 ﻿using ECS.EntityView.Board.Tile;
-using ECS.EntityView.Hand;
+using ECS.EntityView.Piece;
 
 namespace Data.Step.Drop
 {
-    public struct DropStepState
+    public struct DropPrepStepState
     {
-        public HandPieceEV HandPiece;
+        public PieceEV PieceToDrop;
         public TileEV DestinationTile;
     }
 }

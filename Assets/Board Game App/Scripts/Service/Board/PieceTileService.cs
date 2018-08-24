@@ -17,8 +17,8 @@ namespace Service.Board
         {
             BoardPressStateInfo returnValue = new BoardPressStateInfo
             {
-                piece = pieceFindService.FindPieceEVById(token.pieceEntityId, entitiesDB),
-                tile = tileService.FindTileEVById(token.tileEntityId, entitiesDB),
+                piece = pieceFindService.FindPieceEVById(token.PieceEntityId, entitiesDB),
+                tile = tileService.FindTileEVById(token.TileEntityId, entitiesDB),
                 pieceAtDestination = null, // If movement-related information is later required
                 handPiece = handService.FindHighlightedHandPiece(entitiesDB)
             };

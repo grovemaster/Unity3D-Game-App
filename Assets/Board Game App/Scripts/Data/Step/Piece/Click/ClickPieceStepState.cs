@@ -4,6 +4,6 @@ namespace Data.Step.Piece.Click
 {
     public struct ClickPieceStepState
     {
-        public PieceEV clickedPiece;
+        public PieceEV ClickedPiece;
     }
 }

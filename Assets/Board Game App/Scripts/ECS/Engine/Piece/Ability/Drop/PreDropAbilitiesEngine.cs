@@ -34,7 +34,7 @@ namespace ECS.Engine.Piece.Ability.Drop
 
         private bool IsValidDrop(ref DropStepState token)
         {
-            return !HasDoublePawnDrop(token.handPiece.HandPiece.PieceType) || IsValidDropTile(ref token);
+            return !HasDoublePawnDrop(token.HandPiece.HandPiece.PieceType) || IsValidDropTile(ref token);
         }
 
         private bool HasDoublePawnDrop(PieceType pieceType)
@@ -46,8 +46,8 @@ namespace ECS.Engine.Piece.Ability.Drop
         private bool IsValidDropTile(ref DropStepState token)
         {
             return pieceFindService.FindPiecesByTypeAndFile(
-                token.handPiece.HandPiece.PieceType,
-                token.destinationTile.Location.Location.x,
+                token.HandPiece.HandPiece.PieceType,
+                token.DestinationTile.Location.Location.x,
                 entitiesDB
                 ).Count == 0;
         }

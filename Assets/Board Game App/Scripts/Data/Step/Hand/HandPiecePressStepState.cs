@@ -2,6 +2,6 @@
 {
     public struct HandPiecePressStepState
     {
-        public int handPieceEntityId;
+        public int HandPieceEntityId;
     }
 }

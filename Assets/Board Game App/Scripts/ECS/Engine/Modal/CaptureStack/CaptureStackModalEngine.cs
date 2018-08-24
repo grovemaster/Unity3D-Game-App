@@ -24,7 +24,7 @@ namespace ECS.Engine.Modal.CaptureStack
 
         private void SetModalOptions(ModalEV modal, ref CapturePieceStepState token)
         {
-            int tileReferenceId = token.destinationTile.ID.entityID;
+            int tileReferenceId = token.DestinationTile.ID.entityID;
 
             entitiesDB.ExecuteOnEntity(
                 modal.ID,

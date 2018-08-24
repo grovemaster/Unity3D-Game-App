@@ -66,9 +66,9 @@ namespace ECS.Engine.Modal.CaptureStack
 
             var captureToken = new CapturePieceStepState
             {
-                pieceToCapture = topPieceAtDestinationTile,
-                pieceToMove = pieceToMove,
-                destinationTile = destinationTile
+                PieceToCapture = topPieceAtDestinationTile,
+                PieceToMove = pieceToMove,
+                DestinationTile = destinationTile
             };
 
             captureStackModalAnswerSequence.Next(this, ref captureToken, (int)MoveState.MOBILE_CAPTURE);
@@ -82,8 +82,8 @@ namespace ECS.Engine.Modal.CaptureStack
 
             var movePieceStepState = new MovePieceStepState
             {
-                destinationTile = destinationTile,
-                pieceToMove = pieceToMove
+                DestinationTile = destinationTile,
+                PieceToMove = pieceToMove
             };
 
             captureStackModalAnswerSequence.Next(this, ref movePieceStepState, (int)MoveState.MOVE_PIECE);

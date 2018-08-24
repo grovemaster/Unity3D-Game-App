@@ -16,7 +16,7 @@ namespace ECS.Engine.Piece.Capture
 
         public void Step(ref CapturePieceStepState token, int condition)
         {
-            PieceEV pieceToCapture = token.pieceToCapture;
+            PieceEV pieceToCapture = token.PieceToCapture;
             pieceSetService.SetPieceLocationToHandLocation(pieceToCapture, entitiesDB);
             pieceToCapture.Visibility.IsVisible.value = false;
         }

@@ -33,19 +33,19 @@ namespace ECS.Engine.Piece
         {
             // Purpose of this engine is to ensure only a single piece per team is highlighted at any given time
             // If the goal is to UN-highlight a piece, there is no need to check for other highlighted pieces
-            if (token.piecePressState == PiecePressState.UNCLICKED)
+            if (token.PiecePressState == PiecePressState.UNCLICKED)
             {
                 return;
             }
 
-            PieceEV piece = pieceFindService.FindPieceEV(token.pieceEntityId, entitiesDB);
+            PieceEV piece = pieceFindService.FindPieceEV(token.PieceEntityId, entitiesDB);
             DeHighlightPlayerPiecesAndTiles(piece);
             UnHighlightHandPieces();
         }
 
         public void Step(ref HandPiecePressStepState token, int condition)
         {
-            HandPieceEV handPieceToChange = handService.FindHandPiece(token.handPieceEntityId, entitiesDB);
+            HandPieceEV handPieceToChange = handService.FindHandPiece(token.HandPieceEntityId, entitiesDB);
 
             List<PieceEV> alteredPieces = pieceHighlightService.DeHighlightPlayerPieces(
                 handPieceToChange.PlayerOwner.PlayerColor, entitiesDB);
@@ -57,7 +57,7 @@ namespace ECS.Engine.Piece
             }
 
             List<HandPieceEV> otherHandPieces = handService.FindAllTeamHandPiecesExcept(
-                token.handPieceEntityId, handPieceToChange.PlayerOwner.PlayerColor, entitiesDB);
+                token.HandPieceEntityId, handPieceToChange.PlayerOwner.PlayerColor, entitiesDB);
             handService.DeHighlightHandPieces(otherHandPieces, entitiesDB);
         }
 

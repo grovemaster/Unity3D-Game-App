@@ -2,8 +2,8 @@
 {
     public struct BoardPressStepState
     {
-        public int? pieceEntityId;
-        public int? tileEntityId;
+        public int? PieceEntityId;
+        public int? TileEntityId;
     }
 }
 

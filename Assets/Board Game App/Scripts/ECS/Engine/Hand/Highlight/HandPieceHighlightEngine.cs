@@ -21,7 +21,7 @@ namespace ECS.Engine.Hand.Highlight
 
         public void Step(ref HandPiecePressStepState token, int condition)
         {
-            HandPieceEV handPiece = handService.FindHandPiece(token.handPieceEntityId, entitiesDB);
+            HandPieceEV handPiece = handService.FindHandPiece(token.HandPieceEntityId, entitiesDB);
             bool isClicked = !handPiece.Highlight.IsHighlighted;
             HighlightState colorToChange = HighlightService.CalcClickHighlightState(handPiece.PlayerOwner.PlayerColor);
 

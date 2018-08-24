@@ -54,7 +54,7 @@ namespace ECS.Engine.Hand
 
             var pressState = new HandPiecePressStepState
             {
-                handPieceEntityId = entityId
+                HandPieceEntityId = entityId
             };
 
             boardPressSequence.Next(this, ref pressState);

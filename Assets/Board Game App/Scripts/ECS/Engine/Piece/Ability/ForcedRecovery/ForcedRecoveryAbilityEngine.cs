@@ -31,11 +31,11 @@ namespace ECS.Engine.Piece.Ability.ForcedRecovery
 
         public void Step(ref ForcedRecoveryStepState token, int condition)
         {
-            MovePawnToHand(token.pieceMoved);
+            MovePawnToHand(token.PieceMoved);
 
-            if (token.pieceCaptured.HasValue)
+            if (token.PieceCaptured.HasValue)
             {
-                MoveCapturePieceToOtherPlayersHand(token.pieceCaptured.Value);
+                MoveCapturePieceToOtherPlayersHand(token.PieceCaptured.Value);
             }
 
             NextActionTurnEnd();

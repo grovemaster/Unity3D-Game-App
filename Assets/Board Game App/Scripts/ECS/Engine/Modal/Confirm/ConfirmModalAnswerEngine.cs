@@ -42,8 +42,8 @@ namespace ECS.Engine.Modal.Confirm
         {
             var forcedRecoveryToken = new ForcedRecoveryStepState
             {
-                pieceMoved = modal.Confirm.PieceMoved,
-                pieceCaptured = modal.Confirm.PieceCaptured
+                PieceMoved = modal.Confirm.PieceMoved,
+                PieceCaptured = modal.Confirm.PieceCaptured
             };
 
             confirmModalConfirmSequence.Next(this, ref forcedRecoveryToken, (int)(answer ? StepAB.A : StepAB.B));

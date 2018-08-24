@@ -97,9 +97,9 @@ namespace ECS.Engine.Modal
         {
             var pressState = new PressStepState
             {
-                pieceEntityId = piece.ID.entityID,
-                piecePressState = piece.Highlight.IsHighlighted ? PiecePressState.UNCLICKED : PiecePressState.CLICKED,
-                affectedTiles = destinationTileService.CalcDestinationTileLocations(piece, entitiesDB)
+                PieceEntityId = piece.ID.entityID,
+                PiecePressState = piece.Highlight.IsHighlighted ? PiecePressState.UNCLICKED : PiecePressState.CLICKED,
+                AffectedTiles = destinationTileService.CalcDestinationTileLocations(piece, entitiesDB)
             };
 
             towerModalConfirmSequence.Next(this, ref pressState, (int)TowerAnswerState.CLICK_HIGHLIGHT);
@@ -160,7 +160,7 @@ namespace ECS.Engine.Modal
 
             var immobileCapturePieceStepState = new ImmobileCapturePieceStepState
             {
-                pieceToCapture = pieceToCapture
+                PieceToCapture = pieceToCapture
             };
 
             towerModalConfirmSequence.Next(this, ref immobileCapturePieceStepState, (int)TowerAnswerState.INITIATE_IMMOBILE_CAPTURE);

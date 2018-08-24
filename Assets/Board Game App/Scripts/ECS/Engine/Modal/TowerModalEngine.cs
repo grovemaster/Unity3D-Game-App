@@ -26,7 +26,7 @@ namespace ECS.Engine.Modal
         {
             ModalEV modal = modalService.FindModalEV(entitiesDB);
             List<PieceEV> piecesAtLocation = pieceFindService.FindPiecesByLocation(
-                token.clickedPiece.Location.Location, entitiesDB);
+                token.ClickedPiece.Location.Location, entitiesDB);
 
             SetModalOptions(modal, piecesAtLocation);
             modalService.DisplayModal(modal);

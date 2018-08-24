@@ -26,7 +26,7 @@ namespace ECS.Engine.Board.Tile
 
         public void Step(ref PressStepState token, int condition)
         {
-            List<TileEV> tilesToChange = FindTilesToChange(token.affectedTiles);
+            List<TileEV> tilesToChange = FindTilesToChange(token.AffectedTiles);
             ChangeTileColor(tilesToChange, ref token);
         }
 
@@ -51,9 +51,9 @@ namespace ECS.Engine.Board.Tile
 
         private void ChangeTileColor(List<TileEV> tilesToChange, ref PressStepState token)
         {
-            bool isClicked = token.piecePressState == PiecePressState.CLICKED;
-            PieceEV piece = pieceFindService.FindPieceEV(token.pieceEntityId, entitiesDB);
-            int pieceIdtoken = token.pieceEntityId;
+            bool isClicked = token.PiecePressState == PiecePressState.CLICKED;
+            PieceEV piece = pieceFindService.FindPieceEV(token.PieceEntityId, entitiesDB);
+            int pieceIdtoken = token.PieceEntityId;
             HighlightState newHighlightState = HighlightService.CalcClickHighlightState(piece.PlayerOwner.PlayerColor);
             TurnEV currentTurn = turnService.GetCurrentTurnEV(entitiesDB);
             bool doesPieceBelongToTurnPlayer = currentTurn.TurnPlayer.PlayerColor == piece.PlayerOwner.PlayerColor;

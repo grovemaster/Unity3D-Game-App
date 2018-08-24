@@ -47,8 +47,8 @@ namespace ECS.Engine.Board
         /// <exception cref="InvalidOperationException">Both token member variables are null/zero.</exception>
         private void ConstraintCheck(ref BoardPressStepState token)
         {
-            if (token.pieceEntityId.GetValueOrDefault() == 0
-                && token.tileEntityId.GetValueOrDefault() == 0)
+            if (token.PieceEntityId.GetValueOrDefault() == 0
+                && token.TileEntityId.GetValueOrDefault() == 0)
             {
                 throw new InvalidOperationException("BoardPressEngine: Both piece and tile id are null");
             }
@@ -79,7 +79,7 @@ namespace ECS.Engine.Board
             // Give desired state, up to later engines to make changes accordingly
             var clickPieceStepState = new ClickPieceStepState
             {
-                clickedPiece = pieceEV
+                ClickedPiece = pieceEV
             };
 
             boardPressSequence.Next(this, ref clickPieceStepState, (int)BoardPress.CLICK_HIGHLIGHT);
@@ -89,8 +89,8 @@ namespace ECS.Engine.Board
         {
             var movePieceInfo = new MovePieceStepState
             {
-                pieceToMove = pieceEV,
-                destinationTile = tileEV
+                PieceToMove = pieceEV,
+                DestinationTile = tileEV
             };
 
             boardPressSequence.Next(this, ref movePieceInfo, (int)BoardPress.MOVE_PIECE);
@@ -100,8 +100,8 @@ namespace ECS.Engine.Board
         {
             var dropInfo = new DropStepState
             {
-                handPiece = handPiece,
-                destinationTile = destinationTile
+                HandPiece = handPiece,
+                DestinationTile = destinationTile
             };
 
             boardPressSequence.Next(this, ref dropInfo, (int)BoardPress.DROP);

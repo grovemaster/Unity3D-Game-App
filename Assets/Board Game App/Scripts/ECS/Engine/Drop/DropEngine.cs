@@ -37,13 +37,13 @@ namespace ECS.Engine.Drop
         {
             TurnEV currentTurn = turnService.GetCurrentTurnEV(entitiesDB);
             PieceEV pieceToDrop = pieceFindService.FindFirstPieceByLocationAndType(
-                BoardConst.HAND_LOCATION, token.handPiece.HandPiece.PieceType, entitiesDB);
+                BoardConst.HAND_LOCATION, token.HandPiece.HandPiece.PieceType, entitiesDB);
 
             if (!currentTurn.Check.CommanderInCheck
-                || checkService.DropReleasesCheck(pieceToDrop, token.destinationTile.Location.Location, currentTurn, entitiesDB))
+                || checkService.DropReleasesCheck(pieceToDrop, token.DestinationTile.Location.Location, currentTurn, entitiesDB))
             {
-                dropService.DropPiece(ref pieceToDrop, ref token.destinationTile, token.handPiece.PlayerOwner.PlayerColor, entitiesDB);
-                UpdateHandPiece(ref token.handPiece);
+                dropService.DropPiece(ref pieceToDrop, ref token.DestinationTile, token.HandPiece.PlayerOwner.PlayerColor, entitiesDB);
+                UpdateHandPiece(ref token.HandPiece);
                 GotoTurnEndStep();
             }
         }

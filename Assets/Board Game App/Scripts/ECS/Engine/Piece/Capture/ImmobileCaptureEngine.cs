@@ -20,7 +20,7 @@ namespace ECS.Engine.Piece.Capture
 
         public void Step(ref ImmobileCapturePieceStepState token, int condition)
         {
-            PieceEV pieceToCapture = token.pieceToCapture;
+            PieceEV pieceToCapture = token.PieceToCapture;
             Vector2 towerLocation = new Vector2(pieceToCapture.Location.Location.x, pieceToCapture.Location.Location.y);
             pieceSetService.SetPieceLocationToHandLocation(pieceToCapture, entitiesDB);
             pieceToCapture.Visibility.IsVisible.value = false;

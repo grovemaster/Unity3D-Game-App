@@ -15,12 +15,12 @@ namespace ECS.Engine.Hand
 
         public void Step(ref CapturePieceStepState token, int condition)
         {
-            handService.AddPieceToHand(token.pieceToCapture, entitiesDB);
+            handService.AddPieceToHand(token.PieceToCapture, entitiesDB);
         }
 
         public void Step(ref ImmobileCapturePieceStepState token, int condition)
         {
-            handService.AddPieceToHand(token.pieceToCapture, entitiesDB);
+            handService.AddPieceToHand(token.PieceToCapture, entitiesDB);
         }
     }
 }

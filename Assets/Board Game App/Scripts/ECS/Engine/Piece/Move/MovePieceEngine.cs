@@ -28,21 +28,21 @@ namespace ECS.Engine.Piece.Move
         public void Step(ref MovePieceStepState token, int condition)
         {
             // TODO Find top piece at PREVIOUS location and set topOfTower = true
-            Vector2 previousLocation = token.pieceToMove.Location.Location;
+            Vector2 previousLocation = token.PieceToMove.Location.Location;
 
             PieceEV? topPieceCurrentlyAtDestination = pieceFindService.FindTopPieceByLocation(
-                token.destinationTile.Location.Location, entitiesDB);
-            int currentTowerTier = pieceFindService.FindPiecesByLocation(token.destinationTile.Location.Location, entitiesDB).Count;
+                token.DestinationTile.Location.Location, entitiesDB);
+            int currentTowerTier = pieceFindService.FindPiecesByLocation(token.DestinationTile.Location.Location, entitiesDB).Count;
             pieceSetService.SetTopOfTowerToFalse(topPieceCurrentlyAtDestination, entitiesDB);
 
             int newTier = currentTowerTier + 1;
 
             // Set location.z, topOfTower = false of all pieces at destination tile,
             // set tier of moving piece, set topOfTower = true for moving piece
-            var newLocation = token.destinationTile.Location.Location;
+            var newLocation = token.DestinationTile.Location.Location;
 
-            pieceSetService.SetPieceLocationAndTier(token.pieceToMove, newLocation, newTier, entitiesDB);
-            token.pieceToMove.MovePiece.NewLocation = newLocation;
+            pieceSetService.SetPieceLocationAndTier(token.PieceToMove, newLocation, newTier, entitiesDB);
+            token.PieceToMove.MovePiece.NewLocation = newLocation;
 
             List<PieceEV> piecesPreviousLocation = pieceFindService.FindPiecesByLocation(
                 previousLocation, entitiesDB);
@@ -55,8 +55,8 @@ namespace ECS.Engine.Piece.Move
 
             var forcedRecoveryToken = new ForcedRecoveryStepState
             {
-                pieceMoved = token.pieceToMove,
-                pieceCaptured = token.pieceToCapture
+                PieceMoved = token.PieceToMove,
+                PieceCaptured = token.PieceToCapture
             };
             moveSequence.Next(this, ref forcedRecoveryToken);
         }
