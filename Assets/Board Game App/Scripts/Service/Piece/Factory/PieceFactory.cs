@@ -1,5 +1,6 @@
 ﻿using Data.Enum;
 using Data.Piece;
+using Data.Piece.Back.Bronze;
 using Data.Piece.Back.Gold;
 using Data.Piece.Front.Commander;
 using Data.Piece.Front.Pawn;
@@ -17,6 +18,8 @@ namespace Service.Piece.Factory
                     return new CommanderData();
                 case PieceType.PAWN:
                     return new PawnData();
+                case PieceType.BRONZE:
+                    return new BronzeData();
                 case PieceType.GOLD:
                     return new GoldData();
                 default:

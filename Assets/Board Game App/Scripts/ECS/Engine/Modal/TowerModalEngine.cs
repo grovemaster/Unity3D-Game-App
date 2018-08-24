@@ -5,6 +5,7 @@ using ECS.EntityView.Modal;
 using ECS.EntityView.Piece;
 using Service.Modal;
 using Service.Piece.Find;
+using Service.Piece.ImmobileCapture;
 using Svelto.ECS;
 using System.Collections.Generic;
 
@@ -12,6 +13,7 @@ namespace ECS.Engine.Modal
 {
     class TowerModalEngine : IStep<ClickPieceStepState>, IQueryingEntitiesEngine
     {
+        private ImmobileCaptureService immobileCaptureService = new ImmobileCaptureService();
         private ModalService modalService = new ModalService();
         private PieceFindService pieceFindService = new PieceFindService();
 
@@ -70,6 +72,7 @@ namespace ECS.Engine.Modal
                 pieceTier3.Value.PlayerOwner.PlayerColor : pieceTier2.PlayerOwner.PlayerColor;
             bool immobileCapturePossible = pieceTier2.PlayerOwner.PlayerColor != pieceTier1.PlayerOwner.PlayerColor
                 || (pieceTier3.HasValue && pieceTier2.PlayerOwner.PlayerColor != pieceTier3.Value.PlayerOwner.PlayerColor);
+            bool noCheckViolationsExist = immobileCaptureService.NoCheckViolationsExist(piecesAtLocation, immobileCapturePossible, entitiesDB);
 
             entitiesDB.ExecuteOnEntity(
                 modal.ID,
@@ -78,14 +81,14 @@ namespace ECS.Engine.Modal
                     modalToChange.ImmobileCaptureState.ImmobileCaptureDesignated = false;
 
                     modalToChange.Tier1.Enabled = pieceTier1.Tier.TopOfTower
-                        || (immobileCapturePossible
+                        || (immobileCapturePossible && noCheckViolationsExist
                             && pieceTier1.PlayerOwner.PlayerColor != pieceTier2.PlayerOwner.PlayerColor
                             && pieceTier1.PlayerOwner.PlayerColor != topPlayerColor);
                     modalToChange.Tier1.Name = CalcButtonText(pieceTier1);
                     modalToChange.Tier1.ReferencedPieceId = pieceTier1.ID.entityID;
 
                     modalToChange.Tier2.Enabled = pieceTier2.Tier.TopOfTower
-                        || (immobileCapturePossible
+                        || (immobileCapturePossible && noCheckViolationsExist
                             && (pieceTier2.PlayerOwner.PlayerColor != pieceTier1.PlayerOwner.PlayerColor
                             || (!pieceTier3.HasValue || pieceTier2.PlayerOwner.PlayerColor != pieceTier3.Value.PlayerOwner.PlayerColor))
                             && pieceTier2.PlayerOwner.PlayerColor != topPlayerColor);

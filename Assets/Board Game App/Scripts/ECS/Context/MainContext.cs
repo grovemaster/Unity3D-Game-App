@@ -102,7 +102,7 @@ namespace ECS.Context
             //but the HealthEntityStruct does. Here I show the official method to do it
             //var initializer = entityFactory.BuildEntity<PieceED>(pawn.GetInstanceID(), pawn.GetComponents<IImplementor>());
             var pieceCreateService = new PieceCreateService(entityFactory);
-            pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.COMMANDER, 1, 3);
+            pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.COMMANDER, 2, 4);
             pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.COMMANDER, 6, 5);
 
             pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.PAWN, 0, 0);

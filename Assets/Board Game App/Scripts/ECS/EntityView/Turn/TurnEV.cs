@@ -8,5 +8,6 @@ namespace ECS.EntityView.Turn
         public EGID ID { get; set; }
 
         public IPlayerComponent TurnPlayer;
+        public ICheckComponent Check;
     }
 }

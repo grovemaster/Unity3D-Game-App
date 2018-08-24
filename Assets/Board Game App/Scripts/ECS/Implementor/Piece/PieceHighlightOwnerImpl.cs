@@ -41,7 +41,6 @@ namespace ECS.Implementor.Piece
 
         void OnMouseDown()
         {
-            Debug.Log("Pawn OnMouseDown");
             if (!isModalOpen.IsModalOpen)
             {
                 IsPressed.value = true;
@@ -50,7 +49,6 @@ namespace ECS.Implementor.Piece
 
         private void ChangeColor()
         {
-            Debug.Log("Changing color of Pawn");
             var sprite = GetComponentInChildren<SpriteRenderer>();
 
             bool hasBlackClick = CurrentColorStates.Contains(HighlightState.PLAYER_BLACK_CLICK_HIGHLIGHT);

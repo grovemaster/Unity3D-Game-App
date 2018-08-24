@@ -40,7 +40,6 @@ namespace ECS.Implementor.Hand
 
         void OnMouseDown()
         {
-            Debug.Log("Hand Piece OnMouseDown");
             if (!isModalOpen.IsModalOpen)
             {
                 IsPressed.value = true;
@@ -49,7 +48,6 @@ namespace ECS.Implementor.Hand
 
         private void ChangeColor()
         {
-            Debug.Log("Changing color of Hand Piece");
             var sprite = GetComponentInChildren<SpriteRenderer>();
 
             if (CurrentColorStates.Any())

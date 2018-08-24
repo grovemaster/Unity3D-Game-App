@@ -1,23 +1,25 @@
 ﻿using Data.Constants.Board;
-using Data.Enum.Player;
 using Data.Step.Drop;
 using Data.Step.Turn;
-using ECS.EntityView.Board.Tile;
 using ECS.EntityView.Hand;
 using ECS.EntityView.Piece;
+using ECS.EntityView.Turn;
+using Service.Check;
+using Service.Drop;
 using Service.Hand;
 using Service.Piece.Find;
-using Service.Piece.Set;
+using Service.Turn;
 using Svelto.ECS;
-using UnityEngine;
 
 namespace ECS.Engine.Drop
 {
     class DropEngine : IStep<DropStepState>, IQueryingEntitiesEngine
     {
+        private CheckService checkService = new CheckService();
+        private DropService dropService = new DropService();
         private HandService handService = new HandService();
         private PieceFindService pieceFindService = new PieceFindService();
-        private PieceSetService pieceSetService = new PieceSetService();
+        private TurnService turnService = new TurnService();
 
         private readonly ISequencer dropSequence;
 
@@ -33,23 +35,17 @@ namespace ECS.Engine.Drop
 
         public void Step(ref DropStepState token, int condition)
         {
+            TurnEV currentTurn = turnService.GetCurrentTurnEV(entitiesDB);
             PieceEV pieceToDrop = pieceFindService.FindFirstPieceByLocationAndType(
                 BoardConst.HAND_LOCATION, token.handPiece.HandPiece.PieceType, entitiesDB);
 
-            DropPiece(ref pieceToDrop, ref token.destinationTile, token.handPiece.PlayerOwner.PlayerColor);
-            UpdateHandPiece(ref token.handPiece);
-            GotoTurnEndStep();
-        }
-
-        private void DropPiece(ref PieceEV pieceToDrop, ref TileEV destinationTile, PlayerColor playerOwner)
-        {
-            Vector2 location = destinationTile.Location.Location;
-
-            pieceSetService.SetPieceLocationAndTier(pieceToDrop, location, 1, entitiesDB);
-            pieceSetService.SetPiecePlayerOwner(pieceToDrop, playerOwner, entitiesDB);
-            pieceToDrop.MovePiece.NewLocation = location;
-            pieceToDrop.Visibility.IsVisible.value = true;
-            pieceToDrop.ChangeColorTrigger.PlayChangeColor = true;
+            if (!currentTurn.Check.CommanderInCheck
+                || checkService.DropReleasesCheck(pieceToDrop, token.destinationTile.Location.Location, currentTurn, entitiesDB))
+            {
+                dropService.DropPiece(ref pieceToDrop, ref token.destinationTile, token.handPiece.PlayerOwner.PlayerColor, entitiesDB);
+                UpdateHandPiece(ref token.handPiece);
+                GotoTurnEndStep();
+            }
         }
 
         private void UpdateHandPiece(ref HandPieceEV handPiece)

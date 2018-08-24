@@ -1,4 +1,5 @@
-﻿using Data.Enum.Move;
+﻿using Data.Enum;
+using Data.Enum.Move;
 using Data.Step.Piece.Capture;
 using Data.Step.Piece.Move;
 using ECS.EntityView.Piece;
@@ -39,8 +40,9 @@ namespace ECS.Engine.Move
             if (topPieceAtDestinationTile.HasValue
                 && topPieceAtDestinationTile.Value.PlayerOwner.PlayerColor != token.pieceToMove.PlayerOwner.PlayerColor)
             {
-                returnValue = topPieceAtDestinationTile.Value.Tier.Tier != 3 ?
-                    MoveState.CAPTURE_STACK_MODAL : MoveState.MOBILE_CAPTURE;
+                returnValue = topPieceAtDestinationTile.Value.Tier.Tier != 3
+                        && token.pieceToMove.Piece.PieceType != PieceType.COMMANDER
+                    ? MoveState.CAPTURE_STACK_MODAL : MoveState.MOBILE_CAPTURE;
             }
 
             return returnValue;
