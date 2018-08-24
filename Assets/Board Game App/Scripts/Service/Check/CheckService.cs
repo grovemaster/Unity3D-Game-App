@@ -1,17 +1,21 @@
 ﻿using Data.Enum.Player;
 using ECS.EntityView.Piece;
+using ECS.EntityView.Turn;
 using Service.Board;
 using Service.Piece.Find;
+using Service.Piece.Set;
 using Svelto.ECS;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 namespace Service.Check
 {
     public class CheckService
     {
         private PieceFindService pieceFindService = new PieceFindService();
+        private PieceSetService pieceSetService = new PieceSetService();
         private DestinationTileService destinationTileService = new DestinationTileService();
 
         public int CalcNumCommanderThreats(PlayerColor commanderColor, IEntitiesDB entitiesDB)
@@ -52,6 +56,20 @@ namespace Service.Check
         public bool IsCommanderInCheck(PlayerColor turnPlayer, IEntitiesDB entitiesDB)
         {
             return CalcNumCommanderThreats(turnPlayer, entitiesDB) > 0;
+        }
+
+        public bool DropReleasesCheck(PieceEV pieceToDrop, Vector2 location, TurnEV turn, IEntitiesDB entitiesDB)
+        {
+            bool returnValue = false;
+
+            pieceSetService.SetPieceLocationAndTier(pieceToDrop, location, 1, entitiesDB);
+            pieceSetService.SetPiecePlayerOwner(pieceToDrop, turn.TurnPlayer.PlayerColor, entitiesDB);
+
+            returnValue = !IsCommanderInCheck(turn.TurnPlayer.PlayerColor, entitiesDB);
+
+            pieceSetService.SetPieceLocationToHandLocation(pieceToDrop, entitiesDB);
+
+            return returnValue;
         }
 
         public bool DoesTopOfTowerThreatenCommander(PieceEV commander, PieceEV enemyPiece, IEntitiesDB entitiesDB)
