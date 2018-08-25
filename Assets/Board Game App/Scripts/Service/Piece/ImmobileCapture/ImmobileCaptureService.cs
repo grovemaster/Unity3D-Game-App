@@ -1,5 +1,5 @@
 ﻿using Data.Constants.Board;
-using Data.Enum;
+using Data.Enum.Piece;
 using Data.Enum.Player;
 using ECS.EntityView.Piece;
 using ECS.EntityView.Turn;
@@ -18,7 +18,6 @@ namespace Service.Piece.ImmobileCapture
     {
         private CheckService checkService = new CheckService();
         private PieceFindService pieceFindService = new PieceFindService();
-        private DestinationTileService destinationTileService = new DestinationTileService();
         private TurnService turnService = new TurnService();
 
         public bool NoCheckViolationsExist(List<PieceEV> towerPieces, bool immobileCapturePossible, IEntitiesDB entitiesDB)

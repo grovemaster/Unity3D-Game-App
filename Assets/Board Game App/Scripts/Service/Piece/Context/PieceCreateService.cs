@@ -1,4 +1,4 @@
-﻿using Data.Enum;
+﻿using Data.Enum.Piece;
 using Data.Enum.Player;
 using ECS.EntityDescriptor.Piece;
 using ECS.Implementor;

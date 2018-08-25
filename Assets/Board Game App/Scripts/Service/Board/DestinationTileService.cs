@@ -1,6 +1,6 @@
 ﻿using Data.Check.PreviousMove;
 using Data.Constants.Board;
-using Data.Enum;
+using Data.Enum.Piece;
 using Data.Enum.Player;
 using ECS.EntityView.Piece;
 using Service.Piece.Factory;

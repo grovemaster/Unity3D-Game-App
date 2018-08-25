@@ -1,4 +1,4 @@
-﻿using Data.Enum;
+﻿using Data.Enum.Piece;
 using Data.Enum.Piece.Side;
 using Svelto.ECS;
 

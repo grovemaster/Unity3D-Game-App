@@ -1,5 +1,5 @@
 ﻿using Data.Constants.Board;
-using Data.Enum;
+using Data.Enum.Piece;
 using Data.Enum.Player;
 using ECS.EntityDescriptor.Hand;
 using ECS.Implementor;

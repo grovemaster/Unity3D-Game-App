@@ -1,4 +1,5 @@
 ﻿using Data.Enum;
+using Data.Enum.Piece;
 
 namespace ECS.Component.Piece
 {

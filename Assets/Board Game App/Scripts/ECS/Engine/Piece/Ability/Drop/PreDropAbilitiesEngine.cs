@@ -1,6 +1,5 @@
-﻿using System;
-using Data.Enum;
-using Data.Enum.AB;
+﻿using Data.Enum.AB;
+using Data.Enum.Piece;
 using Data.Enum.Piece.Drop;
 using Data.Enum.Piece.Side;
 using Data.Step.Drop;

@@ -1,4 +1,4 @@
-﻿using Data.Enum;
+﻿using Data.Enum.Piece;
 using Data.Enum.Player;
 using ECS.EntityView.Hand;
 using ECS.EntityView.Piece;
