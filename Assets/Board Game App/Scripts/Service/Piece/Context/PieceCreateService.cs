@@ -22,7 +22,13 @@ namespace Service.Piece.Context
             prefabsDictionary = new PrefabsDictionary();
         }
 
-        public void CreatePiece(PlayerColor playerOwner, PieceType pieceType, int fileNum, int rankNum)
+        public void CreatePiece(
+            PlayerColor playerOwner,
+            PieceType front,
+            PieceType back,
+            PieceType pieceType,
+            int fileNum,
+            int rankNum)
         {
             var piece = prefabsDictionary.Instantiate("Piece");
             var pieceImpl = piece.GetComponent<PieceImpl>();
@@ -30,6 +36,8 @@ namespace Service.Piece.Context
             var pieceHighlightOwnerImpl = piece.GetComponent<PieceHighlightOwnerImpl>();
             entityFactory.BuildEntity<PieceED>(piece.GetInstanceID(), piece.GetComponents<IImplementor>());
 
+            pieceImpl.Front = front;
+            pieceImpl.Back = back;
             pieceImpl.PieceType = pieceType;
             pieceImpl.Direction = DirectionService.CalcDirection(playerOwner);
             pieceHighlightOwnerImpl.PlayerColor = playerOwner;

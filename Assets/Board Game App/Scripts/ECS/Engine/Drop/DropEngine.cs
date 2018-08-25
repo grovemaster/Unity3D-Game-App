@@ -42,7 +42,12 @@ namespace ECS.Engine.Drop
             if (!currentTurn.Check.CommanderInCheck
                 || checkService.DropReleasesCheck(pieceToDrop, token.DestinationTile.Location.Location, currentTurn, entitiesDB))
             {
-                dropService.DropPiece(ref pieceToDrop, ref token.DestinationTile, token.HandPiece.PlayerOwner.PlayerColor, entitiesDB);
+                dropService.DropPiece(
+                    ref pieceToDrop,
+                    ref token.DestinationTile,
+                    token.Side,
+                    token.HandPiece.PlayerOwner.PlayerColor,
+                    entitiesDB);
                 UpdateHandPiece(ref token.HandPiece);
                 GotoTurnEndStep();
             }

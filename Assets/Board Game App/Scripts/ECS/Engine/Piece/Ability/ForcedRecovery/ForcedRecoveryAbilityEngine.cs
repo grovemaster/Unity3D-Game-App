@@ -53,7 +53,11 @@ namespace ECS.Engine.Piece.Ability.ForcedRecovery
         {
             // Remove piece from player hand
             TurnEV currentTurn = turnService.GetCurrentTurnEV(entitiesDB);
-            HandPieceEV handPiece = handService.FindHandPiece(pieceCaptured.Piece.PieceType, currentTurn.TurnPlayer.PlayerColor, entitiesDB);
+            HandPieceEV handPiece = handService.FindHandPiece(
+                pieceCaptured.Piece.Front,
+                pieceCaptured.Piece.Back,
+                currentTurn.TurnPlayer.PlayerColor,
+                entitiesDB);
             handService.DecrementHandPiece(ref handPiece);
 
             // Add piece to other player's hand

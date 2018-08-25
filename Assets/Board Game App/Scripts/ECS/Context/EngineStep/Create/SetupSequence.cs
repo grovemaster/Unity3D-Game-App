@@ -35,6 +35,7 @@ namespace ECS.Context.EngineStep.Create
             sequences.Add("towerModalAnswer", new Sequencer());
             sequences.Add("captureStackModalAnswer", new Sequencer());
             sequences.Add("confirmModalAnswer", new Sequencer());
+            sequences.Add("dropModalAnswer", new Sequencer());
         }
 
         public void SetSequences()
@@ -45,6 +46,7 @@ namespace ECS.Context.EngineStep.Create
             SetSequenceTowerModalAnswer();
             SetSequenceCaptureStackModal();
             SetSequenceConfirmModal();
+            SetSequenceDropFrontBackModal();
         }
 
         private void SetBoardPressSequence()
@@ -113,7 +115,7 @@ namespace ECS.Context.EngineStep.Create
                         engines["preDropAbilities"],
                         new To
                         {
-                            steps["drop"]
+                            steps["dropModal"]
                         }
                     },
                     {
@@ -237,6 +239,21 @@ namespace ECS.Context.EngineStep.Create
                         {
                             { (int)StepAB.A, steps["forcedRecoveryAbility"] },
                             { (int)StepAB.B, steps["gotoTurnEndForcedRecoveryStepState"] }
+                        }
+                    }
+                });
+        }
+
+        private void SetSequenceDropFrontBackModal()
+        {
+            sequences["dropModalAnswer"].SetSequence(
+                new Steps
+                {
+                    {
+                        engines["dropModalAnswer"],
+                        new To
+                        {
+                            steps["drop"]
                         }
                     }
                 });

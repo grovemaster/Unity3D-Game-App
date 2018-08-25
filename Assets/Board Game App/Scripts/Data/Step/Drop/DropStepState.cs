@@ -1,4 +1,5 @@
-﻿using ECS.EntityView.Board.Tile;
+﻿using Data.Enum.Piece.Side;
+using ECS.EntityView.Board.Tile;
 using ECS.EntityView.Hand;
 
 namespace Data.Step.Drop
@@ -7,5 +8,6 @@ namespace Data.Step.Drop
     {
         public HandPieceEV HandPiece;
         public TileEV DestinationTile;
+        public PieceSide Side;
     }
 }

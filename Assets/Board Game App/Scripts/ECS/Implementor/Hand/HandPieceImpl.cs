@@ -5,11 +5,14 @@ using ECS.Component.Player;
 using Svelto.ECS;
 using System;
 using UnityEngine;
+using View.Hand;
 
 namespace ECS.Implementor.Hand
 {
     class HandPieceImpl : MonoBehaviour, IImplementor, IHandPieceComponent, IPlayerComponent
     {
+        private HandViewService handViewService = new HandViewService();
+
         private PieceType pieceType;
 
         public PieceType PieceType
@@ -26,8 +29,23 @@ namespace ECS.Implementor.Hand
             }
         }
 
-        public DispatchOnSet<int> NumPieces { get; set; }
+        private PieceType back;
 
+        public PieceType Back
+        {
+            get
+            {
+                return back;
+            }
+
+            set
+            {
+                back = value;
+                ChangeBackPieceText();
+            }
+        }
+
+        public DispatchOnSet<int> NumPieces { get; set; }
         public PlayerColor PlayerColor { get; set; }
 
         void Awake()
@@ -48,20 +66,12 @@ namespace ECS.Implementor.Hand
 
         private void ChangeFrontPieceText()
         {
-            GameObject frontPieceTextComponent = gameObject.transform.Find("Front Piece Text").gameObject;
-            TextMesh frontPieceTextMesh = frontPieceTextComponent.GetComponent<TextMesh>();
+            handViewService.ChangePieceUpSideText(gameObject, PieceType);
+        }
 
-            switch(PieceType)
-            {
-                case PieceType.COMMANDER:
-                    frontPieceTextMesh.text = "C";
-                    break;
-                case PieceType.PAWN:
-                    frontPieceTextMesh.text = "P";
-                    break;
-                default:
-                    throw new InvalidOperationException("Unsupported PieceType for HandPiece");
-            }
+        private void ChangeBackPieceText()
+        {
+            handViewService.ChangePieceDownSideText(gameObject, Back);
         }
     }
 }

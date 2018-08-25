@@ -7,7 +7,7 @@ using Svelto.ECS;
 
 namespace ECS.Engine.Piece.Ability.Drop
 {
-    class PreDropAbilitiesEngine : IStep<DropStepState>, IQueryingEntitiesEngine
+    class PreDropAbilitiesEngine : IStep<DropPrepStepState>, IQueryingEntitiesEngine
     {
         private PieceFactory pieceFactory = new PieceFactory();
         private PieceFindService pieceFindService = new PieceFindService();
@@ -24,7 +24,7 @@ namespace ECS.Engine.Piece.Ability.Drop
         public void Ready()
         { }
 
-        public void Step(ref DropStepState token, int condition)
+        public void Step(ref DropPrepStepState token, int condition)
         {
             if (IsValidDrop(ref token))
             {
@@ -32,7 +32,7 @@ namespace ECS.Engine.Piece.Ability.Drop
             }
         }
 
-        private bool IsValidDrop(ref DropStepState token)
+        private bool IsValidDrop(ref DropPrepStepState token)
         {
             return !HasDoublePawnDrop(token.HandPiece.HandPiece.PieceType) || IsValidDropTile(ref token);
         }
@@ -43,7 +43,7 @@ namespace ECS.Engine.Piece.Ability.Drop
             return dropAbility.HasValue && dropAbility.Value == DropAbility.DOUBLE_PAWN_DROP;
         }
 
-        private bool IsValidDropTile(ref DropStepState token)
+        private bool IsValidDropTile(ref DropPrepStepState token)
         {
             return pieceFindService.FindPiecesByTypeAndFile(
                 token.HandPiece.HandPiece.PieceType,
@@ -52,7 +52,7 @@ namespace ECS.Engine.Piece.Ability.Drop
                 ).Count == 0;
         }
 
-        private void NextActionDrop(ref DropStepState token)
+        private void NextActionDrop(ref DropPrepStepState token)
         {
             dropSequence.Next(this, ref token);
         }

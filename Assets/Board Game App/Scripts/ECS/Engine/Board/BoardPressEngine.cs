@@ -98,7 +98,7 @@ namespace ECS.Engine.Board
 
         private void NextActionDropPiece(HandPieceEV handPiece, TileEV destinationTile)
         {
-            var dropInfo = new DropStepState
+            var dropInfo = new DropPrepStepState
             {
                 HandPiece = handPiece,
                 DestinationTile = destinationTile

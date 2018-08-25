@@ -8,6 +8,7 @@ using ECS.Engine.Hand.Highlight;
 using ECS.Engine.Modal;
 using ECS.Engine.Modal.CaptureStack;
 using ECS.Engine.Modal.Confirm;
+using ECS.Engine.Modal.Drop;
 using ECS.Engine.Modal.ImmobileCapture;
 using ECS.Engine.Move;
 using ECS.Engine.Piece;
@@ -75,6 +76,8 @@ namespace ECS.Context.EngineStep.Create
             engines.Add("towerModal", new TowerModalEngine());
             engines.Add("cancelModal", new CancelModalEngine(sequences["cancelModal"]));
             engines.Add("towerModalAnswer", new TowerModalAnswerEngine(sequences["towerModalAnswer"]));
+            engines.Add("dropModal", new DropModalEngine());
+            engines.Add("dropModalAnswer", new DropModalAnswerEngine(sequences["dropModalAnswer"]));
             engines.Add("confirmModal", new ConfirmModalEngine());
             engines.Add("confirmModalAnswer", new ConfirmModalAnswerEngine(sequences["confirmModalAnswer"]));
 
@@ -123,6 +126,8 @@ namespace ECS.Context.EngineStep.Create
             enginesRoot.AddEngine(engines["towerModal"]);
             enginesRoot.AddEngine(engines["cancelModal"]);
             enginesRoot.AddEngine(engines["towerModalAnswer"]);
+            enginesRoot.AddEngine(engines["dropModal"]);
+            enginesRoot.AddEngine(engines["dropModalAnswer"]);
             enginesRoot.AddEngine(engines["confirmModal"]);
             enginesRoot.AddEngine(engines["confirmModalAnswer"]);
 

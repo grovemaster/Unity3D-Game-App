@@ -13,6 +13,7 @@ namespace ECS.EntityView.Modal
         public ITier2OptionComponent Tier2;
         public ITier3OptionComponent Tier3;
         public ICaptureOrStackComponent CaptureOrStack;
+        public IDropFrontBackComponent DropFrontBackModal;
         public IAnswerComponent Answer;
         public ICancelComponent Cancel;
         public IConfirmComponent Confirm;

@@ -1,5 +1,6 @@
 ﻿using Data.Constants.Board;
 using Data.Enum;
+using Data.Enum.Piece.Side;
 using Data.Enum.Player;
 using ECS.EntityView.Piece;
 using Service.Directions;
@@ -24,6 +25,16 @@ namespace Service.Piece.Set
                     pieceToChange.Tier.TopOfTower = true;
                     pieceToChange.Tier.Tier = tier;
                     pieceToChange.Location.Location = location;
+                });
+        }
+
+        public void SetPieceSide(PieceEV pieceEV, PieceSide side, IEntitiesDB entitiesDB)
+        {
+            entitiesDB.ExecuteOnEntity(
+                pieceEV.ID,
+                (ref PieceEV pieceToChange) =>
+                {
+                    pieceToChange.Piece.PieceType = side == PieceSide.FRONT ? pieceToChange.Piece.Front : pieceToChange.Piece.Back;
                 });
         }
 

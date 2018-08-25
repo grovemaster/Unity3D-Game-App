@@ -15,11 +15,12 @@ namespace Service.Hand
     {
         private TurnService turnService = new TurnService();
 
-        public HandPieceEV FindHandPiece(PieceType pieceType, PlayerColor turnPlayer, IEntitiesDB entitiesDB)
+        public HandPieceEV FindHandPiece(PieceType front, PieceType back, PlayerColor turnPlayer, IEntitiesDB entitiesDB)
         {
             List<HandPieceEV> handPieces = FindAllHandPieces(entitiesDB)
                 .Where(hp =>
-                    hp.HandPiece.PieceType == pieceType
+                    hp.HandPiece.PieceType == front
+                    && hp.HandPiece.Back == back
                     && hp.PlayerOwner.PlayerColor == turnPlayer)
                 .ToList();
 
@@ -85,7 +86,10 @@ namespace Service.Hand
             }
 
             HandPieceEV handHoldingCapturedPiece = FindHandPiece(
-                pieceToCapture.Piece.PieceType, handOwner.Value, entitiesDB);
+                pieceToCapture.Piece.Front,
+                pieceToCapture.Piece.Back,
+                handOwner.Value,
+                entitiesDB);
             handHoldingCapturedPiece.HandPiece.NumPieces.value++;
         }
 
