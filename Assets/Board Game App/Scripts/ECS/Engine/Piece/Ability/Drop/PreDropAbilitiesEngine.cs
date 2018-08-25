@@ -1,5 +1,8 @@
-﻿using Data.Enum;
+﻿using System;
+using Data.Enum;
+using Data.Enum.AB;
 using Data.Enum.Piece.Drop;
+using Data.Enum.Piece.Side;
 using Data.Step.Drop;
 using Service.Piece.Factory;
 using Service.Piece.Find;
@@ -26,9 +29,16 @@ namespace ECS.Engine.Piece.Ability.Drop
 
         public void Step(ref DropPrepStepState token, int condition)
         {
-            if (IsValidDrop(ref token))
+            bool isFrontValid = IsValidDrop(ref token);
+            bool isBackValid = true;
+
+            if (isFrontValid && isBackValid)
             {
-                NextActionDrop(ref token);
+                NextActionDropModal(ref token);
+            }
+            else if (isFrontValid ^ isBackValid)
+            {
+                NextActionDrop(ref token, isFrontValid ? PieceSide.FRONT : PieceSide.BACK);
             }
         }
 
@@ -52,9 +62,21 @@ namespace ECS.Engine.Piece.Ability.Drop
                 ).Count == 0;
         }
 
-        private void NextActionDrop(ref DropPrepStepState token)
+        private void NextActionDropModal(ref DropPrepStepState token)
         {
-            dropSequence.Next(this, ref token);
+            dropSequence.Next(this, ref token, (int)StepAB.A);
+        }
+
+        private void NextActionDrop(ref DropPrepStepState token, PieceSide pieceSide)
+        {
+            var dropToken = new DropStepState
+            {
+                DestinationTile = token.DestinationTile,
+                HandPiece = token.HandPiece,
+                Side = pieceSide
+            };
+
+            dropSequence.Next(this, ref dropToken, (int)StepAB.B);
         }
     }
 }

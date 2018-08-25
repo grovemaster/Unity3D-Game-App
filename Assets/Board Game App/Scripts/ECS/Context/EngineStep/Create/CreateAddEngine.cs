@@ -18,6 +18,7 @@ using ECS.Engine.Piece.Capture;
 using ECS.Engine.Piece.Click;
 using ECS.Engine.Piece.Move;
 using ECS.Engine.Turn;
+using Engine.Check.Drop;
 using Svelto.ECS;
 using System.Collections.Generic;
 
@@ -66,6 +67,7 @@ namespace ECS.Context.EngineStep.Create
             engines.Add("handPiecePress", new HandPiecePressEngine(sequences["handPiecePress"]));
             engines.Add("handPieceHighlight", new HandPieceHighlightEngine());
 
+            engines.Add("dropCheckStatus", new DropCheckStatusEngine(sequences["boardPress"]));
             engines.Add("preDropAbilities", new PreDropAbilitiesEngine(sequences["boardPress"]));
             engines.Add("drop", new DropEngine(sequences["boardPress"]));
 
@@ -116,6 +118,7 @@ namespace ECS.Context.EngineStep.Create
             enginesRoot.AddEngine(engines["handPiecePress"]);
             enginesRoot.AddEngine(engines["handPieceHighlight"]);
 
+            enginesRoot.AddEngine(engines["dropCheckStatus"]);
             enginesRoot.AddEngine(engines["preDropAbilities"]);
             enginesRoot.AddEngine(engines["drop"]);
 

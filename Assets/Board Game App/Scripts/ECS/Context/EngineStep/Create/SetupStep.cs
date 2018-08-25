@@ -110,6 +110,11 @@ namespace ECS.Context.EngineStep.Create
             {
                 (IStep<DropStepState>)engines["drop"]
             });
+
+            steps.Add("dropCheckStatus", new IStep<DropPrepStepState>[]
+            {
+                (IStep<DropPrepStepState>)engines["dropCheckStatus"]
+            });
             #endregion
 
             #region Forced Recovery
