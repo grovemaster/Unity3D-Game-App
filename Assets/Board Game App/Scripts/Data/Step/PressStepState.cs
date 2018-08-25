@@ -6,8 +6,8 @@ namespace Data.Step
 {
     public struct PressStepState
     {
-        public int pieceEntityId;
-        public PiecePressState piecePressState;
-        public List<Vector2> affectedTiles;
+        public int PieceEntityId;
+        public PiecePressState PiecePressState;
+        public List<Vector2> AffectedTiles;
     }
 }

@@ -18,8 +18,8 @@ namespace ECS.Engine.Piece
 
         public void Step(ref PressStepState token, int condition)
         {
-            PieceEV piece = pieceFindService.FindPieceEV(token.pieceEntityId, entitiesDB);
-            bool isClicked = token.piecePressState == PiecePressState.CLICKED;
+            PieceEV piece = pieceFindService.FindPieceEV(token.PieceEntityId, entitiesDB);
+            bool isClicked = token.PiecePressState == PiecePressState.CLICKED;
             HighlightState colorToChange = HighlightService.CalcClickHighlightState(piece.PlayerOwner.PlayerColor);
 
             entitiesDB.ExecuteOnEntity(

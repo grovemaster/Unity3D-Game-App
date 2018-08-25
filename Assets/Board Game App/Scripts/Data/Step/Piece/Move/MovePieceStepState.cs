@@ -5,8 +5,8 @@ namespace Data.Step.Piece.Move
 {
     public struct MovePieceStepState
     {
-        public PieceEV pieceToMove;
-        public PieceEV? pieceToCapture;
-        public TileEV destinationTile;
+        public PieceEV PieceToMove;
+        public PieceEV? PieceToCapture;
+        public TileEV DestinationTile;
     }
 }

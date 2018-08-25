@@ -55,9 +55,9 @@ namespace ECS.Context.EngineStep.Create
             #endregion
 
             #region Abilities
-            steps.Add("preDropAbilities", new IStep<DropStepState>[]
+            steps.Add("preDropAbilities", new IStep<DropPrepStepState>[]
             {
-                (IStep<DropStepState>)engines["preDropAbilities"]
+                (IStep<DropPrepStepState>)engines["preDropAbilities"]
             });
             #endregion
 
@@ -76,6 +76,13 @@ namespace ECS.Context.EngineStep.Create
             {
                 (IStep<ForcedRecoveryStepState>)engines["confirmModal"]
             });
+
+            #region Drop Modal
+            steps.Add("dropModal", new IStep<DropPrepStepState>[]
+            {
+                (IStep<DropPrepStepState>)engines["dropModal"]
+            });
+            #endregion
             #endregion
 
             #region Highlight
@@ -102,6 +109,11 @@ namespace ECS.Context.EngineStep.Create
             steps.Add("drop", new IStep<DropStepState>[]
             {
                 (IStep<DropStepState>)engines["drop"]
+            });
+
+            steps.Add("dropCheckStatus", new IStep<DropPrepStepState>[]
+            {
+                (IStep<DropPrepStepState>)engines["dropCheckStatus"]
             });
             #endregion
 

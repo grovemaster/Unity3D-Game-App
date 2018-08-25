@@ -29,8 +29,8 @@ namespace ECS.Engine.Modal.Confirm
                 (ref ModalEV modalToChange) =>
                 {
                     modalToChange.Type.Type = ModalType.CONFIRM;
-                    modalToChange.Confirm.PieceMoved = token.pieceMoved;
-                    modalToChange.Confirm.PieceCaptured = token.pieceCaptured;
+                    modalToChange.Confirm.PieceMoved = token.PieceMoved;
+                    modalToChange.Confirm.PieceCaptured = token.PieceCaptured;
                 });
         }
     }

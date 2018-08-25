@@ -22,9 +22,9 @@ namespace ECS.Engine.Piece.Capture
         {
             var movePieceInfo = new MovePieceStepState
             {
-                pieceToMove = token.pieceToMove,
-                pieceToCapture = token.pieceToCapture,
-                destinationTile = token.destinationTile
+                PieceToMove = token.PieceToMove,
+                PieceToCapture = token.PieceToCapture,
+                DestinationTile = token.DestinationTile
             };
 
             gotoMovePiece.Next(this, ref movePieceInfo);

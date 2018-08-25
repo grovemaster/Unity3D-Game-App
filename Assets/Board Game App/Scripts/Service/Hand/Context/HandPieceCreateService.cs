@@ -21,13 +21,14 @@ namespace Service.Hand.Context
             prefabsDictionary = new PrefabsDictionary();
         }
 
-        public void CreateHandPiece(PlayerColor playerOwner, PieceType pieceType, int num)
+        public void CreateHandPiece(PlayerColor playerOwner, PieceType front, PieceType back, int num)
         {
             var handPiece = prefabsDictionary.Instantiate("Hand Piece");
             var handPieceImpl = handPiece.GetComponent<HandPieceImpl>();
             entityFactory.BuildEntity<HandPieceED>(handPiece.GetInstanceID(), handPiece.GetComponents<IImplementor>());
 
-            handPieceImpl.PieceType = pieceType;
+            handPieceImpl.PieceType = front;
+            handPieceImpl.Back = back;
             handPieceImpl.PlayerColor = playerOwner;
 
             // TODO Abstract out offset position numbers into BoardConst later -- once I have those numbers.

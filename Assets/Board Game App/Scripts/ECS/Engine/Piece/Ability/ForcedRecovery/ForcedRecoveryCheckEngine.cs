@@ -36,12 +36,12 @@ namespace ECS.Engine.Piece.Ability.ForcedRecovery
         public void Step(ref ForcedRecoveryStepState token, int condition)
         {
             TurnEV currentTurn = turnService.GetCurrentTurnEV(entitiesDB);
-            IPieceData piece = pieceFactory.CreateIPieceData(token.pieceMoved.Piece.PieceType);
+            IPieceData piece = pieceFactory.CreateIPieceData(token.PieceMoved.Piece.PieceType);
 
-            bool forcedRecoveryPossible = token.pieceMoved.Tier.TopOfTower // Paranoia check
+            bool forcedRecoveryPossible = token.PieceMoved.Tier.TopOfTower // Paranoia check
                 && piece.Abilities.PostMove.HasValue && piece.Abilities.PostMove.Value == PostMoveAbility.FORCED_RECOVERY
-                && !HasDestinationTiles(token.pieceMoved)
-                && checkService.ForcedRecoveryResolvesOrDoesNotCreateCheck(token.pieceMoved, currentTurn, entitiesDB);
+                && !HasDestinationTiles(token.PieceMoved)
+                && checkService.ForcedRecoveryResolvesOrDoesNotCreateCheck(token.PieceMoved, currentTurn, entitiesDB);
 
             NextAction(ref token, forcedRecoveryPossible);
         }

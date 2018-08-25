@@ -1,4 +1,5 @@
 ﻿using Data.Enum.Modal;
+using Data.Enum.Piece.Side;
 using ECS.Component.Modal;
 using Svelto.ECS;
 using System;
@@ -29,6 +30,7 @@ namespace ECS.Implementor.Modal
         private Tier2OptionImpl tier2Option;
         private Tier3OptionImpl tier3Option;
         private ModalQuestionImpl questionAnswer;
+        private ModalDropFrontBackImpl dropFrontBack;
         private ModalConfirmImpl confirm;
         private ModalVisibilityImpl visibility;
 
@@ -55,6 +57,7 @@ namespace ECS.Implementor.Modal
             tier2Option = gameObject.GetComponentInChildren<Tier2OptionImpl>();
             tier3Option = gameObject.GetComponentInChildren<Tier3OptionImpl>();
             questionAnswer = gameObject.GetComponentInChildren<ModalQuestionImpl>();
+            dropFrontBack = gameObject.GetComponentInChildren<ModalDropFrontBackImpl>();
             confirm = gameObject.GetComponentInChildren<ModalConfirmImpl>();
             visibility = gameObject.GetComponentInChildren<ModalVisibilityImpl>();
 
@@ -120,6 +123,13 @@ namespace ECS.Implementor.Modal
                     modalViewService.DeactivateButton(Button1);
                     modalViewService.SetupButton(Button2, confirm, "Yes", true);
                     modalViewService.SetupButton(Button3, confirm, "No", false);
+                    break;
+                case ModalType.FRONT_BACK:
+                    SetTitle("Drop");
+                    SetQuestion("Drop front or back side?");
+                    modalViewService.DeactivateButton(Button1);
+                    modalViewService.SetupButton(Button2, dropFrontBack, dropFrontBack.Front.ToString(), PieceSide.FRONT);
+                    modalViewService.SetupButton(Button3, dropFrontBack, dropFrontBack.Back.ToString(), PieceSide.BACK);
                     break;
                 default:
                     throw new InvalidOperationException("Unsupported ModalType");

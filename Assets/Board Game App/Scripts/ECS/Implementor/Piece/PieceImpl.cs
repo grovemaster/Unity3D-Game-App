@@ -24,11 +24,14 @@ namespace ECS.Implementor.Piece
             }
         }
 
+        public PieceType Front { get; set; }
+        public PieceType Back { get; set; }
         public Direction Direction { get; set; }
 
         private void ChangePieceUpSideText()
         {
             pieceViewService.ChangePieceUpSideText(gameObject, PieceType);
+            pieceViewService.ChangePieceDownSideText(gameObject, PieceType == Front ? Back : Front);
         }
     }
 }

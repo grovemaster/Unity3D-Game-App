@@ -35,6 +35,7 @@ namespace ECS.Context.EngineStep.Create
             sequences.Add("towerModalAnswer", new Sequencer());
             sequences.Add("captureStackModalAnswer", new Sequencer());
             sequences.Add("confirmModalAnswer", new Sequencer());
+            sequences.Add("dropModalAnswer", new Sequencer());
         }
 
         public void SetSequences()
@@ -45,6 +46,7 @@ namespace ECS.Context.EngineStep.Create
             SetSequenceTowerModalAnswer();
             SetSequenceCaptureStackModal();
             SetSequenceConfirmModal();
+            SetSequenceDropFrontBackModal();
         }
 
         private void SetBoardPressSequence()
@@ -74,7 +76,7 @@ namespace ECS.Context.EngineStep.Create
                             // Move piece or capture piece
                             { (int)BoardPress.MOVE_PIECE, steps["determineMoveType"] },
                             // Drop piece
-                            { (int)BoardPress.DROP, steps["preDropAbilities"] }
+                            { (int)BoardPress.DROP, steps["dropCheckStatus"] }
                         }
                     },
                     {
@@ -110,10 +112,19 @@ namespace ECS.Context.EngineStep.Create
                         }
                     },
                     {
+                        engines["dropCheckStatus"],
+                        new To
+                        {
+                            steps["preDropAbilities"]
+                        }
+                    },
+                    {
                         engines["preDropAbilities"],
                         new To
                         {
-                            steps["drop"]
+
+                            { (int)StepAB.A, steps["dropModal"] },
+                            { (int)StepAB.B, steps["drop"] }
                         }
                     },
                     {
@@ -237,6 +248,21 @@ namespace ECS.Context.EngineStep.Create
                         {
                             { (int)StepAB.A, steps["forcedRecoveryAbility"] },
                             { (int)StepAB.B, steps["gotoTurnEndForcedRecoveryStepState"] }
+                        }
+                    }
+                });
+        }
+
+        private void SetSequenceDropFrontBackModal()
+        {
+            sequences["dropModalAnswer"].SetSequence(
+                new Steps
+                {
+                    {
+                        engines["dropModalAnswer"],
+                        new To
+                        {
+                            steps["drop"]
                         }
                     }
                 });

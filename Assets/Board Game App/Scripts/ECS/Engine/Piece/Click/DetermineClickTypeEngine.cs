@@ -35,7 +35,7 @@ namespace ECS.Engine.Piece.Click
 
         private ClickState DetermineMoveAction(ref ClickPieceStepState token)
         {
-            return token.clickedPiece.Tier.Tier > 1 ? ClickState.TOWER_MODAL : ClickState.CLICK_HIGHLIGHT;
+            return token.ClickedPiece.Tier.Tier > 1 ? ClickState.TOWER_MODAL : ClickState.CLICK_HIGHLIGHT;
         }
 
         private void PerformNextAction(ClickState nextAction, ref ClickPieceStepState token)
@@ -60,13 +60,13 @@ namespace ECS.Engine.Piece.Click
             // Determine PiecePressState, click or un-click, and destination tiles
             var pressState = new PressStepState
             {
-                pieceEntityId = token.clickedPiece.ID.entityID,
-                piecePressState = token.clickedPiece.Highlight.IsHighlighted ? PiecePressState.UNCLICKED : PiecePressState.CLICKED,
-                affectedTiles = destinationTileService.CalcDestinationTileLocations(
-                    token.clickedPiece,
+                PieceEntityId = token.ClickedPiece.ID.entityID,
+                PiecePressState = token.ClickedPiece.Highlight.IsHighlighted ? PiecePressState.UNCLICKED : PiecePressState.CLICKED,
+                AffectedTiles = destinationTileService.CalcDestinationTileLocations(
+                    token.ClickedPiece,
                     entitiesDB,
                     null,
-                    currentTurn.TurnPlayer.PlayerColor == token.clickedPiece.PlayerOwner.PlayerColor)
+                    currentTurn.TurnPlayer.PlayerColor == token.ClickedPiece.PlayerOwner.PlayerColor)
             };
 
             clickSequence.Next(this, ref pressState, (int)ClickState.CLICK_HIGHLIGHT);

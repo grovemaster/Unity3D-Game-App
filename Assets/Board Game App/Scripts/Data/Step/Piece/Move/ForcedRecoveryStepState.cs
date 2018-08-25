@@ -4,7 +4,7 @@ namespace Data.Step.Piece.Move
 {
     public struct ForcedRecoveryStepState
     {
-        public PieceEV pieceMoved;
-        public PieceEV? pieceCaptured;
+        public PieceEV PieceMoved;
+        public PieceEV? PieceCaptured;
     }
 }

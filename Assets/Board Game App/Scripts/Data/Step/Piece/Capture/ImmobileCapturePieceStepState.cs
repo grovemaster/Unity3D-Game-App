@@ -4,6 +4,6 @@ namespace Data.Step.Piece.Capture
 {
     public struct ImmobileCapturePieceStepState
     {
-        public PieceEV pieceToCapture;
+        public PieceEV PieceToCapture;
     }
 }

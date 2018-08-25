@@ -31,11 +31,11 @@ namespace ECS.Engine.Piece.Ability.ForcedRecovery
 
         public void Step(ref ForcedRecoveryStepState token, int condition)
         {
-            MovePawnToHand(token.pieceMoved);
+            MovePawnToHand(token.PieceMoved);
 
-            if (token.pieceCaptured.HasValue)
+            if (token.PieceCaptured.HasValue)
             {
-                MoveCapturePieceToOtherPlayersHand(token.pieceCaptured.Value);
+                MoveCapturePieceToOtherPlayersHand(token.PieceCaptured.Value);
             }
 
             NextActionTurnEnd();
@@ -53,7 +53,11 @@ namespace ECS.Engine.Piece.Ability.ForcedRecovery
         {
             // Remove piece from player hand
             TurnEV currentTurn = turnService.GetCurrentTurnEV(entitiesDB);
-            HandPieceEV handPiece = handService.FindHandPiece(pieceCaptured.Piece.PieceType, currentTurn.TurnPlayer.PlayerColor, entitiesDB);
+            HandPieceEV handPiece = handService.FindHandPiece(
+                pieceCaptured.Piece.Front,
+                pieceCaptured.Piece.Back,
+                currentTurn.TurnPlayer.PlayerColor,
+                entitiesDB);
             handService.DecrementHandPiece(ref handPiece);
 
             // Add piece to other player's hand

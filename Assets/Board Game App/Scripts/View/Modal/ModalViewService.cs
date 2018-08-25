@@ -1,4 +1,5 @@
 ﻿using Data.Enum.Modal;
+using Data.Enum.Piece.Side;
 using ECS.Component.Modal;
 using Svelto.ECS;
 using UnityEngine.Events;
@@ -49,8 +50,7 @@ namespace View.Modal
             button.onClick.AddListener(closePanel);
             button.GetComponentInChildren<Text>().text = answer.ToString();
 
-            button.gameObject.SetActive(true);
-            button.interactable = true;
+            ActivateButton(button);
         }
 
         public void SetupButton(Button button, IConfirmComponent confimContainer, string buttonText, bool answer)
@@ -65,14 +65,34 @@ namespace View.Modal
             button.onClick.AddListener(closePanel);
             button.GetComponentInChildren<Text>().text = buttonText;
 
-            button.gameObject.SetActive(true);
-            button.interactable = true;
+            ActivateButton(button);
+        }
+
+        public void SetupButton(Button button, IDropFrontBackComponent dropFrontBack, string buttonText, PieceSide answer)
+        {
+            DeactivateButton(button);
+
+            button.onClick.AddListener(delegate ()
+            {
+                // Trigger clicked answer for listening engine to pick up
+                dropFrontBack.Answer.value = answer;
+            });
+            button.onClick.AddListener(closePanel);
+            button.GetComponentInChildren<Text>().text = buttonText;
+
+            ActivateButton(button);
         }
 
         public void DeactivateButton(Button button)
         {
             button.onClick.RemoveAllListeners();
             button.gameObject.SetActive(false);
+        }
+
+        private void ActivateButton(Button button)
+        {
+            button.gameObject.SetActive(true);
+            button.interactable = true;
         }
     }
 }

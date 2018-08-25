@@ -28,7 +28,7 @@ namespace ECS.Engine.Move
         public void Step(ref MovePieceStepState token, int condition)
         {
             PieceEV? topPieceAtDestinationTile = pieceFindService.FindTopPieceByLocation(
-                   token.destinationTile.Location.Location, entitiesDB);
+                   token.DestinationTile.Location.Location, entitiesDB);
             MoveState nextAction = DetermineMoveAction(ref token, topPieceAtDestinationTile);
             PerformNextAction(nextAction, ref token, topPieceAtDestinationTile);
         }
@@ -38,10 +38,10 @@ namespace ECS.Engine.Move
             MoveState returnValue = MoveState.MOVE_PIECE;
 
             if (topPieceAtDestinationTile.HasValue
-                && topPieceAtDestinationTile.Value.PlayerOwner.PlayerColor != token.pieceToMove.PlayerOwner.PlayerColor)
+                && topPieceAtDestinationTile.Value.PlayerOwner.PlayerColor != token.PieceToMove.PlayerOwner.PlayerColor)
             {
                 returnValue = topPieceAtDestinationTile.Value.Tier.Tier != 3
-                        && token.pieceToMove.Piece.PieceType != PieceType.COMMANDER
+                        && token.PieceToMove.Piece.PieceType != PieceType.COMMANDER
                     ? MoveState.CAPTURE_STACK_MODAL : MoveState.MOBILE_CAPTURE;
             }
 
@@ -76,9 +76,9 @@ namespace ECS.Engine.Move
         {
             var captureToken = new CapturePieceStepState
             {
-                pieceToCapture = topPieceAtDestinationTile,
-                pieceToMove = token.pieceToMove,
-                destinationTile = token.destinationTile
+                PieceToCapture = topPieceAtDestinationTile,
+                PieceToMove = token.PieceToMove,
+                DestinationTile = token.DestinationTile
             };
 
             moveSequence.Next(this, ref captureToken, (int)MoveState.MOBILE_CAPTURE);
@@ -88,9 +88,9 @@ namespace ECS.Engine.Move
         {
             var captureToken = new CapturePieceStepState
             {
-                pieceToCapture = topPieceAtDestinationTile,
-                pieceToMove = token.pieceToMove,
-                destinationTile = token.destinationTile
+                PieceToCapture = topPieceAtDestinationTile,
+                PieceToMove = token.PieceToMove,
+                DestinationTile = token.DestinationTile
             };
 
             moveSequence.Next(this, ref captureToken, (int)MoveState.CAPTURE_STACK_MODAL);

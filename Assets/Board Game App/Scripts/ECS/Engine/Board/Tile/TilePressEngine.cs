@@ -37,8 +37,8 @@ namespace ECS.Engine.Board.Tile
 
             var pressState = new BoardPressStepState
             {
-                pieceEntityId = null,
-                tileEntityId = entityId
+                PieceEntityId = null,
+                TileEntityId = entityId
             };
 
             boardPressSequence.Next(this, ref pressState);
