@@ -2,6 +2,7 @@
 using Data.Piece;
 using Data.Piece.Back.Bronze;
 using Data.Piece.Back.Gold;
+using Data.Piece.Front.Bow;
 using Data.Piece.Front.Commander;
 using Data.Piece.Front.Pawn;
 using System;
@@ -14,10 +15,15 @@ namespace Service.Piece.Factory
         {
             switch (pieceType)
             {
+                // Front
                 case PieceType.COMMANDER:
                     return new CommanderData();
                 case PieceType.PAWN:
                     return new PawnData();
+                case PieceType.BOW:
+                    return new BowData();
+
+                // Back
                 case PieceType.BRONZE:
                     return new BronzeData();
                 case PieceType.GOLD:

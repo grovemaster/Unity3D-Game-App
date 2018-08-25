@@ -1,16 +1,13 @@
 ﻿using Data.Constants.Board;
-using Data.Enum.Piece;
 using Data.Enum.Player;
 using ECS.EntityView.Piece;
 using ECS.EntityView.Turn;
-using Service.Board;
 using Service.Check;
 using Service.Piece.Find;
 using Service.Turn;
 using Svelto.ECS;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Service.Piece.ImmobileCapture
 {
@@ -30,8 +27,7 @@ namespace Service.Piece.ImmobileCapture
             bool returnValue = true;
 
             TurnEV currentTurn = turnService.GetCurrentTurnEV(entitiesDB);
-            PieceEV commander = pieceFindService.FindPiecesByTeam(currentTurn.TurnPlayer.PlayerColor, entitiesDB).First(piece =>
-                piece.Piece.PieceType == PieceType.COMMANDER);
+            PieceEV commander = pieceFindService.FindCommander(currentTurn.TurnPlayer.PlayerColor, entitiesDB);
             int numCommanderThreats = checkService.CalcNumCommanderThreats(commander.PlayerOwner.PlayerColor, entitiesDB);
 
             if (commander.Location.Location == towerPieces[0].Location.Location)
@@ -108,8 +104,7 @@ namespace Service.Piece.ImmobileCapture
              *      AND top E would threaten Commander as a result, deny bottom capture
              */
             TurnEV currentTurn = turnService.GetCurrentTurnEV(entitiesDB);
-            PieceEV commander = pieceFindService.FindPiecesByTeam(currentTurn.TurnPlayer.PlayerColor, entitiesDB).First(piece =>
-                piece.Piece.PieceType == PieceType.COMMANDER);
+            PieceEV commander = pieceFindService.FindCommander(currentTurn.TurnPlayer.PlayerColor, entitiesDB);
 
             return !IsTowerEFEOrFEE(towerPieces, currentTurn.TurnPlayer.PlayerColor)
                 || !checkService.DoesLowerTierThreatenCommander(commander, towerPieces[towerPieces.Count - 1], entitiesDB);

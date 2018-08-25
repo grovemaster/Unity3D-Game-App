@@ -19,6 +19,11 @@ namespace View.Piece
             char[] charArray = pieceType.ToString().Substring(0, 2).ToCharArray();
             string twoChars = charArray[0].ToString() + charArray[1].ToString().ToLower();
 
+            if (pieceType == PieceType.COMMANDER)
+            {
+                twoChars = ""; // Exception to general rule
+            }
+
             TextMesh upSideText = pieceGameObject.transform.Find("Back Side Text").GetComponent<TextMesh>();
             upSideText.text = twoChars;
         }

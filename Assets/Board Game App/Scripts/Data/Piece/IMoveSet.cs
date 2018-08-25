@@ -13,5 +13,6 @@ namespace Data.Piece
     public interface IMoveSet
     {
         List<Vector2> Single { get; }
+        List<Vector2> Jump { get; }
     }
 }

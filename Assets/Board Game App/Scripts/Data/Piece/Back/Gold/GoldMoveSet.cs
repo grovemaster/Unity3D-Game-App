@@ -15,11 +15,21 @@ namespace Data.Piece.Back.Gold
             new Vector2(-1, 1)
         });
 
+        private static readonly List<Vector2> jump = new List<Vector2>();
+
         public List<Vector2> Single
         {
             get
             {
                 return single.ConvertAll(vec => new Vector2(vec.x, vec.y));
+            }
+        }
+
+        public List<Vector2> Jump
+        {
+            get
+            {
+                return jump.ConvertAll(vec => new Vector2(vec.x, vec.y)); ;
             }
         }
     }
@@ -36,11 +46,21 @@ namespace Data.Piece.Back.Gold
             new Vector2(-1, 1)
         });
 
+        private static readonly List<Vector2> jump = new List<Vector2>();
+
         public List<Vector2> Single
         {
             get
             {
                 return single.ConvertAll(vec => new Vector2(vec.x, vec.y));
+            }
+        }
+
+        public List<Vector2> Jump
+        {
+            get
+            {
+                return jump.ConvertAll(vec => new Vector2(vec.x, vec.y)); ;
             }
         }
     }
@@ -57,11 +77,21 @@ namespace Data.Piece.Back.Gold
             new Vector2(-1, 1)
         });
 
+        private static readonly List<Vector2> jump = new List<Vector2>();
+
         public List<Vector2> Single
         {
             get
             {
                 return single.ConvertAll(vec => new Vector2(vec.x, vec.y));
+            }
+        }
+
+        public List<Vector2> Jump
+        {
+            get
+            {
+                return jump.ConvertAll(vec => new Vector2(vec.x, vec.y)); ;
             }
         }
     }

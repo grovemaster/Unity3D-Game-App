@@ -1,17 +1,18 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace Data.Piece.Back.Bronze
+namespace Data.Piece.Front.Bow
 {
-    class BronzeMoveSetTier1st : IMoveSet
+    class BowMoveSetTier1st : IMoveSet
     {
-        private static readonly List<Vector2> single = new List<Vector2>(new Vector2[]
-        {
-            new Vector2(1, 0),
-            new Vector2(-1, 0),
-        });
+        private static readonly List<Vector2> single = new List<Vector2>();
 
-        private static readonly List<Vector2> jump = new List<Vector2>();
+        private static readonly List<Vector2> jump = new List<Vector2>(new Vector2[]
+        {
+            new Vector2(2, 0),
+            new Vector2(-2, 0),
+            new Vector2(0, 2)
+        });
 
         public List<Vector2> Single
         {
@@ -30,15 +31,19 @@ namespace Data.Piece.Back.Bronze
         }
     }
 
-    class BronzeMoveSetTier2nd : IMoveSet
+    class BowMoveSetTier2nd : IMoveSet
     {
         private static readonly List<Vector2> single = new List<Vector2>(new Vector2[]
         {
-            new Vector2(1, 0),
-            new Vector2(-1, 0),
+            new Vector2(0, -1),
+            new Vector2(0, 1)
         });
 
-        private static readonly List<Vector2> jump = new List<Vector2>();
+        private static readonly List<Vector2> jump = new List<Vector2>(new Vector2[]
+        {
+            new Vector2(2, 2),
+            new Vector2(-2, 2)
+        });
 
         public List<Vector2> Single
         {
@@ -57,15 +62,18 @@ namespace Data.Piece.Back.Bronze
         }
     }
 
-    class BronzeMoveSetTier3rd : IMoveSet
+    class BowMoveSetTier3rd : IMoveSet
     {
-        private static readonly List<Vector2> single = new List<Vector2>(new Vector2[]
-        {
-            new Vector2(1, 0),
-            new Vector2(-1, 0),
-        });
+        private static readonly List<Vector2> single = new List<Vector2>();
 
-        private static readonly List<Vector2> jump = new List<Vector2>();
+        private static readonly List<Vector2> jump = new List<Vector2>(new Vector2[]
+        {
+            new Vector2(2, 2),
+            new Vector2(2, 0),
+            new Vector2(0, -2),
+            new Vector2(-2, 0),
+            new Vector2(-2, 2)
+        });
 
         public List<Vector2> Single
         {

@@ -113,6 +113,7 @@ namespace ECS.Context
             pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.PAWN, PieceType.BRONZE, PieceType.PAWN, 2, 1);
             pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.PAWN, PieceType.BRONZE, PieceType.PAWN, 2, 7);
             pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.PAWN, PieceType.BRONZE, PieceType.PAWN, 4, 2);
+
             pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.PAWN, PieceType.BRONZE, PieceType.PAWN, 0, 5);
             pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.PAWN, PieceType.BRONZE, PieceType.PAWN, 0, 6);
             pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.PAWN, PieceType.BRONZE, PieceType.PAWN, 0, 7);
@@ -121,6 +122,9 @@ namespace ECS.Context
             pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.PAWN, PieceType.BRONZE, PieceType.PAWN, 3, 7);
             pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.PAWN, PieceType.BRONZE, PieceType.PAWN, 4, 6);
             pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.PAWN, PieceType.BRONZE, PieceType.PAWN, 4, 7);
+
+            pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.BOW, PieceType.BRONZE, PieceType.BOW, 2, 0);
+            pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.BOW, PieceType.BRONZE, PieceType.BOW, 2, 8);
         }
 
         private void BuildTileEntities()
@@ -142,10 +146,15 @@ namespace ECS.Context
         private void BuildHandPieceEntities()
         {
             var handPieceCreateService = new HandPieceCreateService(entityFactory);
-            handPieceCreateService.CreateHandPiece(PlayerColor.BLACK, PieceType.PAWN, PieceType.BRONZE, 0);
-            handPieceCreateService.CreateHandPiece(PlayerColor.BLACK, PieceType.COMMANDER, PieceType.COMMANDER, 1);
-            handPieceCreateService.CreateHandPiece(PlayerColor.WHITE, PieceType.PAWN, PieceType.BRONZE, 0);
-            handPieceCreateService.CreateHandPiece(PlayerColor.WHITE, PieceType.COMMANDER, PieceType.COMMANDER, 1);
+            int index = 0;
+            handPieceCreateService.CreateHandPiece(PlayerColor.BLACK, PieceType.PAWN, PieceType.BRONZE, index++);
+            handPieceCreateService.CreateHandPiece(PlayerColor.BLACK, PieceType.BOW, PieceType.BRONZE, index++);
+            handPieceCreateService.CreateHandPiece(PlayerColor.BLACK, PieceType.COMMANDER, PieceType.COMMANDER, index++);
+
+            index = 0;
+            handPieceCreateService.CreateHandPiece(PlayerColor.WHITE, PieceType.PAWN, PieceType.BRONZE, index++);
+            handPieceCreateService.CreateHandPiece(PlayerColor.WHITE, PieceType.BOW, PieceType.BRONZE, index++);
+            handPieceCreateService.CreateHandPiece(PlayerColor.WHITE, PieceType.COMMANDER, PieceType.COMMANDER, index++);
         }
 
         private void BuildModalEntity()

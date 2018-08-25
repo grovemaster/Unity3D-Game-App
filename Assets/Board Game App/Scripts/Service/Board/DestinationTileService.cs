@@ -2,6 +2,7 @@
 using Data.Constants.Board;
 using Data.Enum.Piece;
 using Data.Enum.Player;
+using Data.Piece;
 using ECS.EntityView.Piece;
 using Service.Piece.Factory;
 using Service.Piece.Find;
@@ -34,7 +35,7 @@ namespace Service.Board
                 allPieces = pieceFindService.FindAllBoardPieces(entitiesDB).ToList();
             }
 
-            returnValue.AddRange(CalcSingleDestinations(pieceEV, allPieces, entitiesDB, excludeCheckViolations));
+            returnValue.AddRange(CalcDestinations(pieceEV, allPieces, entitiesDB, excludeCheckViolations));
 
             return returnValue;
         }
@@ -109,7 +110,7 @@ namespace Service.Board
         #endregion
         #endregion
 
-        private List<Vector2> CalcSingleDestinations(
+        private List<Vector2> CalcDestinations(
             PieceEV pieceEV,
             List<PieceEV> allPieces,
             IEntitiesDB entitiesDB,
@@ -117,15 +118,19 @@ namespace Service.Board
             bool excludeObstructedDestinations = true)
         {
             bool useGoldMovement = IsOpponentPieceDirectlyBelow(pieceEV, allPieces);
-            List<Vector2> returnValue = GetRawSingleDestinationLocations(pieceEV, useGoldMovement);
-            AdjustRawDataWithPieceLocationAndDirection(pieceEV, returnValue);
-            ExcludeOutOfBoard(returnValue);
-            ExcludeDestinationsWithFriendlyTier3Tower(pieceEV, returnValue, allPieces);
+            IPieceData pieceData = CreatePieceData(pieceEV, useGoldMovement);
 
-            if (excludeObstructedDestinations) // Do NOT allow destinations other pieces in the way
-            {
-                ExcludeDestinationsWithObstructingPieces(pieceEV, returnValue, allPieces);
-            }
+            List<Vector2> returnValue = AdjustAndExcludeSingleDestinations(
+                pieceData,
+                pieceEV,
+                allPieces,
+                excludeObstructedDestinations);
+
+            returnValue.AddRange(AdjustJumpDestinations(
+                pieceData,
+                pieceEV,
+                allPieces
+                ));
 
             if (excludeCheckViolations) // Should only happen for turn player
             {
@@ -134,8 +139,57 @@ namespace Service.Board
 
             return returnValue;
         }
+        #region Create Piece Data
+        private IPieceData CreatePieceData(PieceEV pieceEV, bool useGoldMovement)
+        {
+            PieceType pieceToCreate = !useGoldMovement ? pieceEV.Piece.PieceType : PieceType.GOLD;
+
+            return pieceFactory.CreateIPieceData(pieceToCreate);
+        }
+        #endregion
+
+        #region Adjust, & Exclude
+        private List<Vector2> AdjustAndExcludeSingleDestinations(
+            IPieceData pieceData,
+            PieceEV pieceEV,
+            List<PieceEV> allPieces,
+            bool excludeObstructedDestinations)
+        {
+            List<Vector2> returnValue = pieceData.Tiers[pieceEV.Tier.Tier - 1].Single;
+            AdjustDestinations(returnValue, pieceEV, allPieces);
+
+            if (excludeObstructedDestinations) // Do NOT allow destinations other pieces in the way
+            {
+                ExcludeDestinationsWithObstructingPieces(pieceEV, returnValue, allPieces);
+            }
+
+            return returnValue;
+        }
+
+        private List<Vector2> AdjustJumpDestinations(
+            IPieceData pieceData,
+            PieceEV pieceEV,
+            List<PieceEV> allPieces)
+        {
+            List<Vector2> returnValue = pieceData.Tiers[pieceEV.Tier.Tier - 1].Jump;
+            AdjustDestinations(returnValue, pieceEV, allPieces);
+
+            return returnValue;
+        }
+
+        private void AdjustDestinations(
+            List<Vector2> destinations,
+            PieceEV pieceEV,
+            List<PieceEV> allPieces)
+        {
+            AdjustRawDataWithPieceLocationAndDirection(pieceEV, destinations);
+            ExcludeOutOfBoard(destinations);
+            ExcludeDestinationsWithFriendlyTier3Tower(pieceEV, destinations, allPieces);
+        }
+        #endregion
 
         #region Excludes
+
         private bool IsOpponentPieceDirectlyBelow(PieceEV pieceEV, List<PieceEV> allPieces)
         {
             return pieceEV.Tier.Tier != 1
@@ -144,13 +198,6 @@ namespace Service.Board
                     && piece.PlayerOwner.PlayerColor != pieceEV.PlayerOwner.PlayerColor
                     && piece.Tier.Tier + 1 == pieceEV.Tier.Tier)
                 .Count() > 0;
-        }
-
-        private List<Vector2> GetRawSingleDestinationLocations(PieceEV pieceEV, bool useGoldMovement)
-        {
-            PieceType pieceToCreate = !useGoldMovement ? pieceEV.Piece.PieceType : PieceType.GOLD;
-
-            return pieceFactory.CreateIPieceData(pieceToCreate).Tiers[pieceEV.Tier.Tier - 1].Single;
         }
 
         private void AdjustRawDataWithPieceLocationAndDirection(
@@ -363,7 +410,7 @@ namespace Service.Board
                 {
                     if (threat.Tier.TopOfTower // Temporarily moved piece may have captured/stacked this enemy piece
                         && (threat.Location.Location == commander.Location.Location
-                        || CalcSingleDestinations(threat, allPieces, entitiesDB, false).Contains(commander.Location.Location)))
+                        || CalcDestinations(threat, allPieces, entitiesDB, false).Contains(commander.Location.Location)))
                     {
                         destinationsToRemove.Add(destination);
                         break;
@@ -455,7 +502,7 @@ namespace Service.Board
 
         private List<Vector2> CalcUnobstructedDestinationTiles(PieceEV piece, List<PieceEV> allPieces, IEntitiesDB entitiesDB)
         {
-            return CalcSingleDestinations(piece, allPieces, entitiesDB, false, false);
+            return CalcDestinations(piece, allPieces, entitiesDB, false, false);
         }
         #endregion
 
