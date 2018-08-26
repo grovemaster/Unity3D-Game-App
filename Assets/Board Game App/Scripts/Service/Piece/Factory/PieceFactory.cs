@@ -6,6 +6,7 @@ using Data.Piece.Back.Gold;
 using Data.Piece.Front.Bow;
 using Data.Piece.Front.Commander;
 using Data.Piece.Front.Pawn;
+using Data.Piece.Front.Spy;
 using System;
 
 namespace Service.Piece.Factory
@@ -21,6 +22,8 @@ namespace Service.Piece.Factory
                     return new CommanderData();
                 case PieceType.PAWN:
                     return new PawnData();
+                case PieceType.SPY:
+                    return new SpyData();
                 case PieceType.BOW:
                     return new BowData();
 
