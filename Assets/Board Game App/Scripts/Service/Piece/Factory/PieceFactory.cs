@@ -1,5 +1,6 @@
 ﻿using Data.Enum.Piece;
 using Data.Piece;
+using Data.Piece.Back.Arrow;
 using Data.Piece.Back.Bronze;
 using Data.Piece.Back.Gold;
 using Data.Piece.Front.Bow;
@@ -24,6 +25,8 @@ namespace Service.Piece.Factory
                     return new BowData();
 
                 // Back
+                case PieceType.ARROW:
+                    return new ArrowData();
                 case PieceType.BRONZE:
                     return new BronzeData();
                 case PieceType.GOLD:

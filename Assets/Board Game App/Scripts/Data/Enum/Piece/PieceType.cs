@@ -1,6 +1,6 @@
 ﻿namespace Data.Enum.Piece
 {
     public enum PieceType {
-        /* Front */ COMMANDER, PAWN, BOW,
-        /* Back  */ BRONZE, GOLD };
+        /* Front */ COMMANDER, BOW,     PAWN,
+        /* Back  */            ARROW,   BRONZE, GOLD };
 }
