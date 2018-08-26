@@ -9,7 +9,7 @@ namespace Data.Piece.Front.Catapult
         {
             get
             {
-                return null;
+                return DropAbility.TERRITORY_DROP;
             }
         }
 

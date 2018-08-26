@@ -9,7 +9,7 @@ namespace Data.Piece.Front.Pawn
         {
             get
             {
-                return DropAbility.DOUBLE_PAWN_DROP;
+                return DropAbility.DOUBLE_FILE_DROP;
             }
         }
 

@@ -82,7 +82,7 @@ namespace Service.Piece.Find
             List<PieceEV> piecesInHands = CommonService.FindAllEntities<PieceEV>(entitiesDB)
                 .Where(piece =>
                     piece.Location.Location == location
-                    && piece.Piece.PieceType == pieceType
+                    && (piece.Piece.Front == pieceType || piece.Piece.Back == pieceType)
                 ).ToList();
 
             if (piecesInHands.Count == 0)

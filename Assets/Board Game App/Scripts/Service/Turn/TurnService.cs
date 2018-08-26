@@ -33,6 +33,12 @@ namespace Service.Turn
                 (ref TurnEV turnToChange) => { turnToChange.Check.CommanderInCheck = inCheck; });
         }
 
+        public bool IsRankWithinTerritory(TurnEV currentTurn, float rank)
+        {
+            return (currentTurn.TurnPlayer.PlayerColor == PlayerColor.BLACK && rank < 3)
+                || (currentTurn.TurnPlayer.PlayerColor == PlayerColor.WHITE && rank > 5);
+        }
+
         private void SetTurnEV(TurnEV currentTurn, IEntitiesDB entitiesDB)
         {
             PlayerColor nextTurnPlayer =
