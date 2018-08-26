@@ -32,7 +32,7 @@ namespace Service.Drop
 
         private bool IsValidDrop(ref DropPrepStepState token, List<PieceEV> piecesAtLocation, PieceSide side, IEntitiesDB entitiesDB)
         {
-            return (IsEmptyTile(piecesAtLocation) || IsValidEarthLinkDrop(piecesAtLocation, side))
+            return (IsEmptyTile(piecesAtLocation) || IsValidEarthLinkDrop(piecesAtLocation, side) || IsValidEarthLinkDrop(piecesAtLocation, null))
                 && DoesNotViolateDoubleFileDrop(ref token, side, entitiesDB)
                 && DoesNotViolateTerritoryDrop(ref token, side, entitiesDB);
         }
@@ -64,8 +64,8 @@ namespace Service.Drop
         {
             // Since this is called after IsEmptyTile with an OR condition, we know there is at least one piece on the tile
             PieceEV topPiece = piecesAtLocation[piecesAtLocation.Count - 1];
-            DropAbility? topPieceDropAbility = pieceFactory.CreateIPieceData(topPiece.Piece.PieceType).Abilities.Drop;
-            bool hasEarthLinkAbility = topPieceDropAbility.HasValue && topPieceDropAbility.Value == GetEarthLinkAbilityType(side);
+            List<DropAbility> topPieceDropAbility = pieceFactory.CreateIPieceData(topPiece.Piece.PieceType).Abilities.Drop;
+            bool hasEarthLinkAbility = topPieceDropAbility.Contains(GetEarthLinkAbilityType(side));
 
             return topPiece.Tier.Tier < 3 && hasEarthLinkAbility;
         }
@@ -78,10 +78,8 @@ namespace Service.Drop
                     return DropAbility.EARTH_LINK_FRONT;
                 case PieceSide.BACK:
                     return DropAbility.EARTH_LINK_BACK;
-                case null:
-                    return DropAbility.EARTH_LINK_BACK;
                 default:
-                    throw new InvalidOperationException("Invalid or unsupported PieceSide");
+                    return DropAbility.EARTH_LINK;
             }
         }
         #endregion
@@ -99,9 +97,9 @@ namespace Service.Drop
         #region Utility
         private bool HasDropAbility(ref HandPieceEV handPiece, PieceSide side, DropAbility dropAbility)
         {
-            DropAbility? drop = pieceFactory.CreateIPieceData(GetPieceType(ref handPiece, side)).Abilities.Drop;
+            List<DropAbility> drop = pieceFactory.CreateIPieceData(GetPieceType(ref handPiece, side)).Abilities.Drop;
 
-            return drop.HasValue && drop.Value == dropAbility;
+            return drop.Contains(dropAbility);
         }
 
         private PieceType GetPieceType(ref HandPieceEV handPiece, PieceSide side)

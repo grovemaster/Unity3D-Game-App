@@ -1,15 +1,16 @@
 ﻿using Data.Enum.Piece.Drop;
 using Data.Enum.Piece.PostMove;
+using System.Collections.Generic;
 
 namespace Data.Piece.Front.Commander
 {
     class CommanderAbilities : IAbilities
     {
-        public DropAbility? Drop
+        public List<DropAbility> Drop
         {
             get
             {
-                return null;
+                return new List<DropAbility>();
             }
         }
 

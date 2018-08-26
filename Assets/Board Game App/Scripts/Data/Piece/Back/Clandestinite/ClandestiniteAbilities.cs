@@ -1,15 +1,16 @@
 ﻿using Data.Enum.Piece.Drop;
 using Data.Enum.Piece.PostMove;
+using System.Collections.Generic;
 
 namespace Data.Piece.Back.Clandestinite
 {
     class ClandestiniteAbilities : IAbilities
     {
-        public DropAbility? Drop
+        public List<DropAbility> Drop
         {
             get
             {
-                return DropAbility.EARTH_LINK_FRONT;
+                return new List<DropAbility>(new DropAbility[] { DropAbility.EARTH_LINK_FRONT });
             }
         }
 

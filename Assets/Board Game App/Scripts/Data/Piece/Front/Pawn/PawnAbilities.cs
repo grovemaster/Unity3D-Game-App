@@ -1,15 +1,16 @@
 ﻿using Data.Enum.Piece.Drop;
 using Data.Enum.Piece.PostMove;
+using System.Collections.Generic;
 
 namespace Data.Piece.Front.Pawn
 {
     class PawnAbilities : IAbilities
     {
-        public DropAbility? Drop
+        public List<DropAbility> Drop
         {
             get
             {
-                return DropAbility.DOUBLE_FILE_DROP;
+                return new List<DropAbility>(new DropAbility[] { DropAbility.DOUBLE_FILE_DROP });
             }
         }
 
