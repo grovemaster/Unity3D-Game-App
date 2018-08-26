@@ -1,4 +1,5 @@
 ﻿using Data.Enum.Piece;
+using Data.Enum.Piece.Side;
 using Data.Enum.Player;
 using ECS.EntityDescriptor.Piece;
 using ECS.Implementor;
@@ -26,7 +27,7 @@ namespace Service.Piece.Context
             PlayerColor playerOwner,
             PieceType front,
             PieceType back,
-            PieceType pieceType,
+            PieceSide side,
             int fileNum,
             int rankNum)
         {
@@ -38,7 +39,7 @@ namespace Service.Piece.Context
 
             pieceImpl.Front = front;
             pieceImpl.Back = back;
-            pieceImpl.PieceType = pieceType;
+            pieceImpl.PieceType = side == PieceSide.FRONT ? front : back;
             pieceImpl.Direction = DirectionService.CalcDirection(playerOwner);
             pieceHighlightOwnerImpl.PlayerColor = playerOwner;
 

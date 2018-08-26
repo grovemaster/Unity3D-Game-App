@@ -1,4 +1,5 @@
 ﻿using Data.Enum.Piece;
+using Data.Enum.Piece.Side;
 using Data.Enum.Player;
 using ECS.Context.EngineStep;
 using ECS.EntityDescriptor.Modal;
@@ -102,32 +103,35 @@ namespace ECS.Context
             //but the HealthEntityStruct does. Here I show the official method to do it
             //var initializer = entityFactory.BuildEntity<PieceED>(pawn.GetInstanceID(), pawn.GetComponents<IImplementor>());
             var pieceCreateService = new PieceCreateService(entityFactory);
-            pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.COMMANDER, PieceType.COMMANDER, PieceType.COMMANDER, 2, 4);
-            pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.COMMANDER, PieceType.COMMANDER, PieceType.COMMANDER, 6, 5);
+            pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.COMMANDER, PieceType.COMMANDER, PieceSide.FRONT, 2, 4);
+            pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.COMMANDER, PieceType.COMMANDER, PieceSide.FRONT, 6, 5);
 
-            pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.PAWN, PieceType.BRONZE, PieceType.PAWN, 0, 0);
-            pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.PAWN, PieceType.BRONZE, PieceType.PAWN, 0, 1);
-            pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.PAWN, PieceType.BRONZE, PieceType.PAWN, 0, 2);
-            pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.PAWN, PieceType.BRONZE, PieceType.PAWN, 0, 3);
-            pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.PAWN, PieceType.BRONZE, PieceType.PAWN, 1, 7);
-            pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.PAWN, PieceType.BRONZE, PieceType.PAWN, 2, 1);
-            pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.PAWN, PieceType.BRONZE, PieceType.PAWN, 2, 7);
-            pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.PAWN, PieceType.BRONZE, PieceType.PAWN, 4, 2);
+            pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.PAWN, PieceType.BRONZE, PieceSide.FRONT, 0, 0);
+            pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.PAWN, PieceType.BRONZE, PieceSide.FRONT, 0, 1);
+            pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.PAWN, PieceType.BRONZE, PieceSide.FRONT, 0, 2);
+            pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.PAWN, PieceType.BRONZE, PieceSide.FRONT, 0, 3);
+            pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.PAWN, PieceType.BRONZE, PieceSide.FRONT, 1, 7);
+            pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.PAWN, PieceType.BRONZE, PieceSide.FRONT, 2, 1);
+            pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.PAWN, PieceType.BRONZE, PieceSide.FRONT, 2, 7);
+            pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.PAWN, PieceType.BRONZE, PieceSide.FRONT, 4, 2);
 
-            pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.PAWN, PieceType.BRONZE, PieceType.PAWN, 0, 5);
-            pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.PAWN, PieceType.BRONZE, PieceType.PAWN, 0, 6);
-            pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.PAWN, PieceType.BRONZE, PieceType.PAWN, 0, 7);
-            pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.PAWN, PieceType.BRONZE, PieceType.PAWN, 0, 8);
-            pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.PAWN, PieceType.BRONZE, PieceType.PAWN, 1, 8);
-            pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.PAWN, PieceType.BRONZE, PieceType.PAWN, 3, 7);
-            pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.PAWN, PieceType.BRONZE, PieceType.PAWN, 4, 6);
-            pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.PAWN, PieceType.BRONZE, PieceType.PAWN, 4, 7);
+            pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.PAWN, PieceType.BRONZE, PieceSide.FRONT, 0, 5);
+            pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.PAWN, PieceType.BRONZE, PieceSide.FRONT, 0, 6);
+            pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.PAWN, PieceType.BRONZE, PieceSide.FRONT, 0, 7);
+            pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.PAWN, PieceType.BRONZE, PieceSide.FRONT, 0, 8);
+            pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.PAWN, PieceType.BRONZE, PieceSide.FRONT, 1, 8);
+            pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.PAWN, PieceType.BRONZE, PieceSide.FRONT, 3, 7);
+            pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.PAWN, PieceType.BRONZE, PieceSide.FRONT, 4, 6);
+            pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.PAWN, PieceType.BRONZE, PieceSide.FRONT, 4, 7);
 
-            pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.BOW, PieceType.ARROW, PieceType.BOW, 2, 0);
-            pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.BOW, PieceType.ARROW, PieceType.BOW, 2, 8);
+            pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.BOW, PieceType.ARROW, PieceSide.FRONT, 2, 0);
+            pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.BOW, PieceType.ARROW, PieceSide.FRONT, 2, 8);
 
-            pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.SPY, PieceType.CLANDESTINITE, PieceType.SPY, 3, 0);
-            pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.SPY, PieceType.CLANDESTINITE, PieceType.SPY, 3, 8);
+            pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.SPY, PieceType.CLANDESTINITE, PieceSide.FRONT, 3, 0);
+            pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.SPY, PieceType.CLANDESTINITE, PieceSide.FRONT, 3, 8);
+
+            pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.CATAPULT, PieceType.BRONZE, PieceSide.FRONT, 4, 1);
+            pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.CATAPULT, PieceType.BRONZE, PieceSide.FRONT, 5, 8);
         }
 
         private void BuildTileEntities()
@@ -152,12 +156,14 @@ namespace ECS.Context
             int index = 0;
             handPieceCreateService.CreateHandPiece(PlayerColor.BLACK, PieceType.PAWN, PieceType.BRONZE, index++);
             handPieceCreateService.CreateHandPiece(PlayerColor.BLACK, PieceType.SPY, PieceType.CLANDESTINITE, index++);
+            handPieceCreateService.CreateHandPiece(PlayerColor.BLACK, PieceType.CATAPULT, PieceType.BRONZE, index++);
             handPieceCreateService.CreateHandPiece(PlayerColor.BLACK, PieceType.BOW, PieceType.ARROW, index++);
             handPieceCreateService.CreateHandPiece(PlayerColor.BLACK, PieceType.COMMANDER, PieceType.COMMANDER, index++);
 
             index = 0;
             handPieceCreateService.CreateHandPiece(PlayerColor.WHITE, PieceType.PAWN, PieceType.BRONZE, index++);
             handPieceCreateService.CreateHandPiece(PlayerColor.WHITE, PieceType.SPY, PieceType.CLANDESTINITE, index++);
+            handPieceCreateService.CreateHandPiece(PlayerColor.WHITE, PieceType.CATAPULT, PieceType.BRONZE, index++);
             handPieceCreateService.CreateHandPiece(PlayerColor.WHITE, PieceType.BOW, PieceType.ARROW, index++);
             handPieceCreateService.CreateHandPiece(PlayerColor.WHITE, PieceType.COMMANDER, PieceType.COMMANDER, index++);
         }
