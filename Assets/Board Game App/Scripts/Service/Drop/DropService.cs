@@ -2,14 +2,17 @@
 using Data.Enum.Player;
 using ECS.EntityView.Board.Tile;
 using ECS.EntityView.Piece;
+using Service.Piece.Find;
 using Service.Piece.Set;
 using Svelto.ECS;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Service.Drop
 {
     public class DropService
     {
+        private PieceFindService pieceFindService = new PieceFindService();
         private PieceSetService pieceSetService = new PieceSetService();
 
         public void DropPiece(
@@ -21,7 +24,14 @@ namespace Service.Drop
         {
             Vector2 location = destinationTile.Location.Location;
 
-            pieceSetService.SetPieceLocationAndTier(pieceToDrop, location, 1, entitiesDB);
+            List<PieceEV> piecesAtLocation = pieceFindService.FindPiecesByLocation(location, entitiesDB);
+
+            if (piecesAtLocation.Count > 0)
+            {
+                pieceSetService.SetTopOfTowerToFalse(piecesAtLocation[piecesAtLocation.Count - 1], entitiesDB);
+            }
+
+            pieceSetService.SetPieceLocationAndTier(pieceToDrop, location, piecesAtLocation.Count + 1, entitiesDB);
             pieceSetService.SetPiecePlayerOwner(pieceToDrop, playerOwner, entitiesDB);
             pieceSetService.SetPieceSide(pieceToDrop, side, entitiesDB);
             pieceToDrop.MovePiece.NewLocation = location;

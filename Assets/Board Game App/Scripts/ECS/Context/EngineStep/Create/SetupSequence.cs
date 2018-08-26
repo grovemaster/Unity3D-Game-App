@@ -76,7 +76,7 @@ namespace ECS.Context.EngineStep.Create
                             // Move piece or capture piece
                             { (int)BoardPress.MOVE_PIECE, steps["determineMoveType"] },
                             // Drop piece
-                            { (int)BoardPress.DROP, steps["dropCheckStatus"] }
+                            { (int)BoardPress.DROP, steps["preDropAbilities"] }
                         }
                     },
                     {
@@ -115,16 +115,16 @@ namespace ECS.Context.EngineStep.Create
                         engines["dropCheckStatus"],
                         new To
                         {
-                            steps["preDropAbilities"]
+                            { (int)StepAB.A, steps["dropModal"] },
+                            { (int)StepAB.B, steps["drop"] }
                         }
                     },
                     {
                         engines["preDropAbilities"],
                         new To
                         {
-
-                            { (int)StepAB.A, steps["dropModal"] },
-                            { (int)StepAB.B, steps["drop"] }
+                            { (int)StepAB.A, steps["dropCheckStatusPrep"] },
+                            { (int)StepAB.B, steps["dropCheckStatus"] }
                         }
                     },
                     {

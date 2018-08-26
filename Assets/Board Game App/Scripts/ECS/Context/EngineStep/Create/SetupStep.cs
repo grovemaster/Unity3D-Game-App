@@ -111,9 +111,14 @@ namespace ECS.Context.EngineStep.Create
                 (IStep<DropStepState>)engines["drop"]
             });
 
-            steps.Add("dropCheckStatus", new IStep<DropPrepStepState>[]
+            steps.Add("dropCheckStatusPrep", new IStep<DropPrepStepState>[]
             {
                 (IStep<DropPrepStepState>)engines["dropCheckStatus"]
+            });
+
+            steps.Add("dropCheckStatus", new IStep<DropStepState>[]
+            {
+                (IStep<DropStepState>)engines["dropCheckStatus"]
             });
             #endregion
 

@@ -14,10 +14,8 @@ namespace Service.Board
             int tilePieceId = tileEV.Tile.PieceRefEntityId.GetValueOrDefault();
             // TODO Scenario: Clicked highlighted tile containing opponent piece to initiate mobile capture
 
-            // If hand piece highlighted and user clicks on empty tile
-            // Note: (Future) validation of that tile is done in later engine
-            if (stateInfo.handPiece.HasValue
-                && !stateInfo.pieceAtDestination.HasValue)
+            // If hand piece highlighted, it's an attempted drop
+            if (stateInfo.handPiece.HasValue)
             {
                 returnValue = BoardPress.DROP;
             }

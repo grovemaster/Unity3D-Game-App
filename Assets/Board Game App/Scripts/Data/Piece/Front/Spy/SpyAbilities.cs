@@ -9,7 +9,7 @@ namespace Data.Piece.Front.Spy
         {
             get
             {
-                return null;
+                return DropAbility.EARTH_LINK_BACK;
             }
         }
 

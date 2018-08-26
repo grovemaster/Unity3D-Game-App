@@ -1,4 +1,5 @@
-﻿using Data.Enum.Player;
+﻿using Data.Enum.Piece.Side;
+using Data.Enum.Player;
 using ECS.EntityView.Piece;
 using ECS.EntityView.Turn;
 using Service.Board;
@@ -6,8 +7,6 @@ using Service.Piece.Find;
 using Service.Piece.Set;
 using Svelto.ECS;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 namespace Service.Check
@@ -28,12 +27,19 @@ namespace Service.Check
             return destinationTileService.CalcNumCommanderThreats(turnPlayer, entitiesDB) > 0;
         }
 
-        public bool DropReleasesCheck(PieceEV pieceToDrop, Vector2 location, TurnEV turn, IEntitiesDB entitiesDB)
+        public bool DropReleasesCheck(
+            PieceEV pieceToDrop,
+            Vector2 location,
+            TurnEV turn,
+            PieceSide side,
+            IEntitiesDB entitiesDB)
         {
             bool returnValue = false;
 
-            pieceSetService.SetPieceLocationAndTier(pieceToDrop, location, 1, entitiesDB);
+            int tier = pieceFindService.FindPiecesByLocation(location, entitiesDB).Count;
+            pieceSetService.SetPieceLocationAndTier(pieceToDrop, location, tier, entitiesDB);
             pieceSetService.SetPiecePlayerOwner(pieceToDrop, turn.TurnPlayer.PlayerColor, entitiesDB);
+            pieceSetService.SetPieceSide(pieceToDrop, side, entitiesDB);
 
             returnValue = !IsCommanderInCheck(turn.TurnPlayer.PlayerColor, entitiesDB);
 
