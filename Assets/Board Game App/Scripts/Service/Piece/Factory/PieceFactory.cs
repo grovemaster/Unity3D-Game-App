@@ -2,6 +2,7 @@
 using Data.Piece;
 using Data.Piece.Back.Arrow;
 using Data.Piece.Back.Bronze;
+using Data.Piece.Back.Clandestinite;
 using Data.Piece.Back.Gold;
 using Data.Piece.Front.Bow;
 using Data.Piece.Front.Commander;
@@ -30,6 +31,8 @@ namespace Service.Piece.Factory
                 // Back
                 case PieceType.ARROW:
                     return new ArrowData();
+                case PieceType.CLANDESTINITE:
+                    return new ClandestiniteData();
                 case PieceType.BRONZE:
                     return new BronzeData();
                 case PieceType.GOLD:
