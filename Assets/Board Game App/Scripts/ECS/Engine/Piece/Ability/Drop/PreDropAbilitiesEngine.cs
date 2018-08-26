@@ -46,7 +46,7 @@ namespace ECS.Engine.Piece.Ability.Drop
 
         private bool IsValidFrontDrop(ref DropPrepStepState token)
         {
-            return IsEmptyTile(ref token) && DoesNotViolateDoublePawnDrop(ref token);
+            return (IsEmptyTile(ref token) || IsValidEarthLinkFrontDrop(ref token)) && DoesNotViolateDoublePawnDrop(ref token);
         }
 
         private bool IsValidBackDrop(ref DropPrepStepState token)
@@ -83,6 +83,11 @@ namespace ECS.Engine.Piece.Ability.Drop
         #endregion
 
         #region Earth-Link
+        private bool IsValidEarthLinkFrontDrop(ref DropPrepStepState token)
+        {
+            return IsValidEarthLinkDrop(ref token, PieceSide.FRONT);
+        }
+
         private bool IsValidEarthLinBackDrop(ref DropPrepStepState token)
         {
             return IsValidEarthLinkDrop(ref token, PieceSide.BACK);
@@ -104,7 +109,7 @@ namespace ECS.Engine.Piece.Ability.Drop
             switch (side)
             {
                 case PieceSide.FRONT:
-                    return DropAbility.EARTH_LINK_BACK;
+                    return DropAbility.EARTH_LINK_FRONT;
                 case PieceSide.BACK:
                     return DropAbility.EARTH_LINK_BACK;
                 case null:

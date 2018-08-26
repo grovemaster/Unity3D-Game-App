@@ -9,7 +9,7 @@ namespace Data.Piece.Back.Clandestinite
         {
             get
             {
-                return null;
+                return DropAbility.EARTH_LINK_FRONT;
             }
         }
 
