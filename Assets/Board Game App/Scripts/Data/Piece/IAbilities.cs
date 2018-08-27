@@ -7,6 +7,6 @@ namespace Data.Piece
     public interface IAbilities
     {
         List<DropAbility> Drop { get; } // Piece has maximum of one drop ability
-        PostMoveAbility? PostMove { get; } // Piece has maximum of one post-move ability
+        List<PostMoveAbility> PostMove { get; } // Piece has maximum of one post-move ability
     }
 }

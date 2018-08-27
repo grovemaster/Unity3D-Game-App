@@ -1,4 +1,4 @@
 ﻿namespace Data.Enum.Piece.PostMove
 {
-    public enum PostMoveAbility { FORCED_RECOVERY }
+    public enum PostMoveAbility { FORCED_RECOVERY, FORCED_REARRANGEMENT }
 }

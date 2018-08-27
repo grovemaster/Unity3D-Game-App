@@ -14,11 +14,11 @@ namespace Data.Piece.Front.Pawn
             }
         }
 
-        public PostMoveAbility? PostMove
+        public List<PostMoveAbility> PostMove
         {
             get
             {
-                return PostMoveAbility.FORCED_RECOVERY;
+                return new List<PostMoveAbility>(new PostMoveAbility[] { PostMoveAbility.FORCED_RECOVERY });
             }
         }
     }

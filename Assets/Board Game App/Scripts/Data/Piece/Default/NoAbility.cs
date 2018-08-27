@@ -14,11 +14,11 @@ namespace Data.Piece.Default
             }
         }
 
-        public PostMoveAbility? PostMove
+        public List<PostMoveAbility> PostMove
         {
             get
             {
-                return null;
+                return new List<PostMoveAbility>();
             }
         }
     }
