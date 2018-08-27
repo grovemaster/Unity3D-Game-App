@@ -130,8 +130,8 @@ namespace ECS.Context
             pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.SPY, PieceType.CLANDESTINITE, PieceSide.FRONT, 3, 0);
             pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.SPY, PieceType.CLANDESTINITE, PieceSide.FRONT, 3, 8);
 
-            pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.CATAPULT, PieceType.BRONZE, PieceSide.FRONT, 4, 1);
-            pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.CATAPULT, PieceType.BRONZE, PieceSide.FRONT, 5, 8);
+            pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.CATAPULT, PieceType.LANCE, PieceSide.FRONT, 4, 1);
+            pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.CATAPULT, PieceType.LANCE, PieceSide.FRONT, 5, 8);
         }
 
         private void BuildTileEntities()
@@ -156,14 +156,14 @@ namespace ECS.Context
             int index = 0;
             handPieceCreateService.CreateHandPiece(PlayerColor.BLACK, PieceType.PAWN, PieceType.BRONZE, index++);
             handPieceCreateService.CreateHandPiece(PlayerColor.BLACK, PieceType.SPY, PieceType.CLANDESTINITE, index++);
-            handPieceCreateService.CreateHandPiece(PlayerColor.BLACK, PieceType.CATAPULT, PieceType.BRONZE, index++);
+            handPieceCreateService.CreateHandPiece(PlayerColor.BLACK, PieceType.CATAPULT, PieceType.LANCE, index++);
             handPieceCreateService.CreateHandPiece(PlayerColor.BLACK, PieceType.BOW, PieceType.ARROW, index++);
             handPieceCreateService.CreateHandPiece(PlayerColor.BLACK, PieceType.COMMANDER, PieceType.COMMANDER, index++);
 
             index = 0;
             handPieceCreateService.CreateHandPiece(PlayerColor.WHITE, PieceType.PAWN, PieceType.BRONZE, index++);
             handPieceCreateService.CreateHandPiece(PlayerColor.WHITE, PieceType.SPY, PieceType.CLANDESTINITE, index++);
-            handPieceCreateService.CreateHandPiece(PlayerColor.WHITE, PieceType.CATAPULT, PieceType.BRONZE, index++);
+            handPieceCreateService.CreateHandPiece(PlayerColor.WHITE, PieceType.CATAPULT, PieceType.LANCE, index++);
             handPieceCreateService.CreateHandPiece(PlayerColor.WHITE, PieceType.BOW, PieceType.ARROW, index++);
             handPieceCreateService.CreateHandPiece(PlayerColor.WHITE, PieceType.COMMANDER, PieceType.COMMANDER, index++);
         }
