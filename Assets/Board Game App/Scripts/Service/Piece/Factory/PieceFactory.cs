@@ -4,6 +4,7 @@ using Data.Piece.Back.Arrow;
 using Data.Piece.Back.Bronze;
 using Data.Piece.Back.Clandestinite;
 using Data.Piece.Back.Gold;
+using Data.Piece.Back.Lance;
 using Data.Piece.Front.Bow;
 using Data.Piece.Front.Catapult;
 using Data.Piece.Front.Commander;
@@ -30,6 +31,8 @@ namespace Service.Piece.Factory
 
                 case PieceType.CATAPULT:
                     return new CatapultData();
+                case PieceType.LANCE:
+                    return new LanceData();
 
                 case PieceType.BOW:
                     return new BowData();

@@ -132,6 +132,12 @@ namespace Service.Board
                 allPieces
                 ));
 
+            returnValue.AddRange(AdjustAndExcludeLineDestinations(
+                pieceData,
+                pieceEV,
+                allPieces,
+                excludeObstructedDestinations));
+
             if (excludeCheckViolations) // Should only happen for turn player
             {
                 ExcludeCheckViolations(pieceEV, returnValue, allPieces, entitiesDB);
@@ -177,6 +183,32 @@ namespace Service.Board
             return returnValue;
         }
 
+        private IEnumerable<Vector2> AdjustAndExcludeLineDestinations(
+            IPieceData pieceData,
+            PieceEV pieceEV,
+            List<PieceEV> allPieces,
+            bool excludeObstructedDestinations)
+        {
+            List<Vector2> vectors = pieceData.Tiers[pieceEV.Tier.Tier - 1].Line;
+            List<Vector2> returnValue = new List<Vector2>();
+
+            foreach (Vector2 vector in vectors)
+            {
+                List<Vector2> line = ExpandLineVector(vector);
+                AdjustRawDataWithPieceLocationAndDirection(pieceEV, line);
+                ExcludeOutOfBoard(line);
+
+                if (excludeObstructedDestinations) // Do NOT allow destinations other pieces in the way
+                {
+                    ExcludeDestinationsWithObstructingPieces(pieceEV, line, allPieces);
+                }
+
+                returnValue.AddRange(line);
+            }
+
+            return returnValue;
+        }
+
         private void AdjustDestinations(
             List<Vector2> destinations,
             PieceEV pieceEV,
@@ -186,6 +218,24 @@ namespace Service.Board
             ExcludeOutOfBoard(destinations);
             ExcludeDestinationsWithFriendlyTier3Tower(pieceEV, destinations, allPieces);
         }
+
+        #region Line
+        private List<Vector2> ExpandLineVector(Vector2 vector)
+        {
+            List<Vector2> returnValue = new List<Vector2>();
+            returnValue.Add(new Vector2(vector.x, vector.y));
+
+            for (int i = 1; i < BoardConst.NUM_FILES_RANKS; ++i)
+            {
+                returnValue.Add(new Vector2(
+                    returnValue[returnValue.Count - 1].x + vector.x,
+                    returnValue[returnValue.Count - 1].y + vector.y
+                    ));
+            }
+
+            return returnValue;
+        }
+        #endregion
         #endregion
 
         #region Excludes

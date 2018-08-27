@@ -14,5 +14,6 @@ namespace Data.Piece
     {
         List<Vector2> Single { get; }
         List<Vector2> Jump { get; }
+        List<Vector2> Line { get; }
     }
 }

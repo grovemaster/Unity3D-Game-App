@@ -16,6 +16,8 @@ namespace Data.Piece.Back.Clandestinite
             new Vector2(-1, 2)
         });
 
+        private static readonly List<Vector2> line = new List<Vector2>();
+
         public List<Vector2> Single
         {
             get
@@ -29,6 +31,14 @@ namespace Data.Piece.Back.Clandestinite
             get
             {
                 return jump.ConvertAll(vec => new Vector2(vec.x, vec.y)); ;
+            }
+        }
+
+        public List<Vector2> Line
+        {
+            get
+            {
+                return line.ConvertAll(vec => new Vector2(vec.x, vec.y)); ;
             }
         }
     }
@@ -52,6 +62,8 @@ namespace Data.Piece.Back.Clandestinite
             new Vector2(-1, 2)
         });
 
+        private static readonly List<Vector2> line = new List<Vector2>();
+
         public List<Vector2> Single
         {
             get
@@ -65,6 +77,14 @@ namespace Data.Piece.Back.Clandestinite
             get
             {
                 return jump.ConvertAll(vec => new Vector2(vec.x, vec.y)); ;
+            }
+        }
+
+        public List<Vector2> Line
+        {
+            get
+            {
+                return line.ConvertAll(vec => new Vector2(vec.x, vec.y)); ;
             }
         }
     }
@@ -84,6 +104,8 @@ namespace Data.Piece.Back.Clandestinite
             new Vector2(-1, 2)
         });
 
+        private static readonly List<Vector2> line = new List<Vector2>();
+
         public List<Vector2> Single
         {
             get
@@ -97,6 +119,14 @@ namespace Data.Piece.Back.Clandestinite
             get
             {
                 return jump.ConvertAll(vec => new Vector2(vec.x, vec.y)); ;
+            }
+        }
+
+        public List<Vector2> Line
+        {
+            get
+            {
+                return line.ConvertAll(vec => new Vector2(vec.x, vec.y)); ;
             }
         }
     }

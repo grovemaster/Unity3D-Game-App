@@ -5,6 +5,6 @@
         COMMANDER,
         BOW,        ARROW,
         SPY,        CLANDESTINITE,
-        CATAPULT,
+        CATAPULT,   LANCE,
         PAWN,       BRONZE, GOLD };
 }

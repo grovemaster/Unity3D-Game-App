@@ -7,6 +7,7 @@ namespace Data.Piece.Front.Pawn
     {
         private static readonly List<Vector2> single = new List<Vector2>(new Vector2[] { new Vector2(0, 1) });
         private static readonly List<Vector2> jump = new List<Vector2>();
+        private static readonly List<Vector2> line = new List<Vector2>();
 
         public List<Vector2> Single
         {
@@ -21,6 +22,14 @@ namespace Data.Piece.Front.Pawn
             get
             {
                 return jump.ConvertAll(vec => new Vector2(vec.x, vec.y)); ;
+            }
+        }
+
+        public List<Vector2> Line
+        {
+            get
+            {
+                return line.ConvertAll(vec => new Vector2(vec.x, vec.y)); ;
             }
         }
     }
@@ -35,6 +44,7 @@ namespace Data.Piece.Front.Pawn
         });
 
         private static readonly List<Vector2> jump = new List<Vector2>();
+        private static readonly List<Vector2> line = new List<Vector2>();
 
         public List<Vector2> Single
         {
@@ -49,6 +59,14 @@ namespace Data.Piece.Front.Pawn
             get
             {
                 return jump.ConvertAll(vec => new Vector2(vec.x, vec.y)); ;
+            }
+        }
+
+        public List<Vector2> Line
+        {
+            get
+            {
+                return line.ConvertAll(vec => new Vector2(vec.x, vec.y)); ;
             }
         }
     }
@@ -64,6 +82,7 @@ namespace Data.Piece.Front.Pawn
         });
 
         private static readonly List<Vector2> jump = new List<Vector2>();
+        private static readonly List<Vector2> line = new List<Vector2>();
 
         public List<Vector2> Single
         {
@@ -78,6 +97,14 @@ namespace Data.Piece.Front.Pawn
             get
             {
                 return jump.ConvertAll(vec => new Vector2(vec.x, vec.y)); ;
+            }
+        }
+
+        public List<Vector2> Line
+        {
+            get
+            {
+                return line.ConvertAll(vec => new Vector2(vec.x, vec.y)); ;
             }
         }
     }

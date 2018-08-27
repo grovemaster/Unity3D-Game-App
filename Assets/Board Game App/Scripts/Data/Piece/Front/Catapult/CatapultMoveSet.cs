@@ -7,6 +7,7 @@ namespace Data.Piece.Front.Catapult
     {
         private static readonly List<Vector2> single = new List<Vector2>();
         private static readonly List<Vector2> jump = new List<Vector2>();
+        private static readonly List<Vector2> line = new List<Vector2>();
 
         public List<Vector2> Single
         {
@@ -21,6 +22,14 @@ namespace Data.Piece.Front.Catapult
             get
             {
                 return jump.ConvertAll(vec => new Vector2(vec.x, vec.y)); ;
+            }
+        }
+
+        public List<Vector2> Line
+        {
+            get
+            {
+                return line.ConvertAll(vec => new Vector2(vec.x, vec.y)); ;
             }
         }
     }
@@ -29,6 +38,7 @@ namespace Data.Piece.Front.Catapult
     {
         private static readonly List<Vector2> single = new List<Vector2>();
         private static readonly List<Vector2> jump = new List<Vector2>();
+        private static readonly List<Vector2> line = new List<Vector2>();
 
         public List<Vector2> Single
         {
@@ -43,6 +53,14 @@ namespace Data.Piece.Front.Catapult
             get
             {
                 return jump.ConvertAll(vec => new Vector2(vec.x, vec.y)); ;
+            }
+        }
+
+        public List<Vector2> Line
+        {
+            get
+            {
+                return line.ConvertAll(vec => new Vector2(vec.x, vec.y)); ;
             }
         }
     }
@@ -51,6 +69,7 @@ namespace Data.Piece.Front.Catapult
     {
         private static readonly List<Vector2> single = new List<Vector2>();
         private static readonly List<Vector2> jump = new List<Vector2>();
+        private static readonly List<Vector2> line = new List<Vector2>();
 
         public List<Vector2> Single
         {
@@ -65,6 +84,14 @@ namespace Data.Piece.Front.Catapult
             get
             {
                 return jump.ConvertAll(vec => new Vector2(vec.x, vec.y)); ;
+            }
+        }
+
+        public List<Vector2> Line
+        {
+            get
+            {
+                return line.ConvertAll(vec => new Vector2(vec.x, vec.y)); ;
             }
         }
     }
