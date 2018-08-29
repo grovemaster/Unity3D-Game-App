@@ -34,13 +34,23 @@ namespace Service.Drop
         {
             return (IsEmptyTile(piecesAtLocation) || IsValidEarthLinkDrop(piecesAtLocation, side) || IsValidEarthLinkDrop(piecesAtLocation, null))
                 && DoesNotViolateDoubleFileDrop(ref token, side, entitiesDB)
-                && DoesNotViolateTerritoryDrop(ref token, side, entitiesDB);
+                && DoesNotViolateTerritoryDrop(ref token, side, entitiesDB)
+                && DoesNotViolateForcedRearrangementFrontDrop(ref token, side, entitiesDB);
         }
 
         private bool IsEmptyTile(List<PieceEV> piecesAtLocation)
         {
             return piecesAtLocation.Count == 0;
         }
+
+        #region Forced Rearrangement
+        private bool DoesNotViolateForcedRearrangementFrontDrop(ref DropPrepStepState token, PieceSide side, IEntitiesDB entitiesDB)
+        {
+            TurnEV currentTurn = turnService.GetCurrentTurnEV(entitiesDB);
+
+            return currentTurn.ForcedRearrangementStatus.ForcedRearrangmentActive && side == PieceSide.BACK ? false : true;
+        }
+        #endregion
 
         #region Double File Drop (Pawn & Bronze)
         private bool DoesNotViolateDoubleFileDrop(ref DropPrepStepState token, PieceSide side, IEntitiesDB entitiesDB)
