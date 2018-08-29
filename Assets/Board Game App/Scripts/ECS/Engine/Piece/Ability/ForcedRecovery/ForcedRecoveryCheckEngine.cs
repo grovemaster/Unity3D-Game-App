@@ -55,11 +55,5 @@ namespace ECS.Engine.Piece.Ability.ForcedRecovery
         {
             forcedRecoverySequence.Next(this, ref token, (int)(forcedRecoveryPossible ? StepAB.A : StepAB.B));
         }
-
-        private void NextActionTurnEnd()
-        {
-            var turnEndToken = new TurnEndStepState();
-            forcedRecoverySequence.Next(this, ref turnEndToken);
-        }
     }
 }

@@ -9,5 +9,6 @@ namespace ECS.EntityView.Turn
 
         public IPlayerComponent TurnPlayer;
         public ICheckComponent Check;
+        public IForcedRearrangementComponent ForcedRearrangementStatus;
     }
 }

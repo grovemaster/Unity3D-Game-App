@@ -1,6 +1,6 @@
 ﻿namespace ECS.Component.Player
 {
-    public interface ICheckComponent
+    public interface ICheckComponent : IComponent
     {
         bool CommanderInCheck { get; set; }
     }

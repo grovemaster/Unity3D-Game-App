@@ -46,7 +46,8 @@ namespace ECS.Engine.Hand
             TurnEV currentTurn = turnService.GetCurrentTurnEV(entitiesDB);
 
             if (handPiece.PlayerOwner.PlayerColor != currentTurn.TurnPlayer.PlayerColor
-                || handPiece.HandPiece.NumPieces.value <= 0)
+                || handPiece.HandPiece.NumPieces.value <= 0
+                || currentTurn.ForcedRearrangementStatus.ForcedRearrangmentActive)
             {
                 handPiece.Highlight.IsPressed.value = false; // Will trigger a HandPiecePressEngine, but IsPressed check will stop it
                 return;

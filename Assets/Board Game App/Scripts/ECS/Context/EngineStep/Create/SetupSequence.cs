@@ -131,7 +131,17 @@ namespace ECS.Context.EngineStep.Create
                         engines["movePiece"],
                         new To
                         {
-                            steps["forcedRecoveryCheck"]
+                            steps["determinePostMoveAction"]
+                        }
+                    },
+                    {
+                        engines["determinePostMoveAction"],
+                        new To
+                        {
+                            // TODO Instead of generic enum, use a specifically-name enum { for rec, for rea, tur end }
+                            { (int)StepABC.A, steps["forcedRecoveryCheck"] },
+                            { (int)StepABC.B, steps["forcedRearrangementCheck"] },
+                            { (int)StepABC.C, steps["turnEnd"] }
                         }
                     },
                     {
@@ -161,6 +171,21 @@ namespace ECS.Context.EngineStep.Create
                         new To
                         {
                             steps["forcedRecoveryCheck"]
+                        }
+                    },
+                    {
+                        engines["gotoForcedRearrangement"],
+                        new To
+                        {
+                            steps["forcedRearrangementCheck"]
+                        }
+                    },
+                    {
+                        engines["forcedRearrangementCheck"],
+                        new To
+                        {
+                            { (int)StepAB.A, steps["forcedRearrangementAbility"] },
+                            { (int)StepAB.B, steps["gotoTurnEndForcedRearrangementStepState"] }
                         }
                     }
                 });
@@ -247,7 +272,7 @@ namespace ECS.Context.EngineStep.Create
                         new To
                         {
                             { (int)StepAB.A, steps["forcedRecoveryAbility"] },
-                            { (int)StepAB.B, steps["gotoTurnEndForcedRecoveryStepState"] }
+                            { (int)StepAB.B, steps["gotoForcedRearrangement"] }
                         }
                     }
                 });

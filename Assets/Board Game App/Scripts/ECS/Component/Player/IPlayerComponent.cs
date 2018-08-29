@@ -2,7 +2,7 @@
 
 namespace ECS.Component.Player
 {
-    public interface IPlayerComponent
+    public interface IPlayerComponent : IComponent
     {
         PlayerColor PlayerColor { get; set; }
     }

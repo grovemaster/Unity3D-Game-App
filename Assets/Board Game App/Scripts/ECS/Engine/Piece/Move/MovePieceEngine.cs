@@ -1,4 +1,5 @@
-﻿using Data.Step.Piece.Move;
+﻿using Data.Step.Piece.Ability;
+using Data.Step.Piece.Move;
 using ECS.EntityView.Piece;
 using Service.Piece.Find;
 using Service.Piece.Set;
@@ -53,12 +54,12 @@ namespace ECS.Engine.Piece.Move
                     piecesPreviousLocation[piecesPreviousLocation.Count - 1], entitiesDB);
             }
 
-            var forcedRecoveryToken = new ForcedRecoveryStepState
+            var determinePostMoveToken = new DeterminePostMoveStepState
             {
                 PieceMoved = token.PieceToMove,
                 PieceCaptured = token.PieceToCapture
             };
-            moveSequence.Next(this, ref forcedRecoveryToken);
+            moveSequence.Next(this, ref determinePostMoveToken);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Data.Step.Modal;
+using Data.Step.Piece.Ability.ForcedRearrangement;
 using Data.Step.Piece.Capture;
 using Data.Step.Piece.Move;
 using Data.Step.Turn;
@@ -9,6 +10,7 @@ namespace ECS.Engine.Piece.Capture
     class GotoTurnEndEngine :
         IStep<ImmobileCapturePieceStepState>,
         IStep<ForcedRecoveryStepState>,
+        IStep<ForcedRearrangementStepState>,
         IStep<CancelModalStepState>,
         IQueryingEntitiesEngine
     {
@@ -30,6 +32,11 @@ namespace ECS.Engine.Piece.Capture
         }
 
         public void Step(ref ForcedRecoveryStepState token, int condition)
+        {
+            NextActionTurnEnd();
+        }
+
+        public void Step(ref ForcedRearrangementStepState token, int condition)
         {
             NextActionTurnEnd();
         }

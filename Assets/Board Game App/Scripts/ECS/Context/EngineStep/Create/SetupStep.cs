@@ -3,6 +3,8 @@ using Data.Step.Board;
 using Data.Step.Drop;
 using Data.Step.Hand;
 using Data.Step.Modal;
+using Data.Step.Piece.Ability;
+using Data.Step.Piece.Ability.ForcedRearrangement;
 using Data.Step.Piece.Capture;
 using Data.Step.Piece.Click;
 using Data.Step.Piece.Move;
@@ -122,6 +124,13 @@ namespace ECS.Context.EngineStep.Create
             });
             #endregion
 
+            #region Determine Post Move Action
+            steps.Add("determinePostMoveAction", new IStep<DeterminePostMoveStepState>[]
+            {
+                (IStep<DeterminePostMoveStepState>)engines["determinePostMoveAction"]
+            });
+            #endregion
+
             #region Forced Recovery
             steps.Add("forcedRecoveryCheck", new IStep<ForcedRecoveryStepState>[]
             {
@@ -131,6 +140,23 @@ namespace ECS.Context.EngineStep.Create
             steps.Add("forcedRecoveryAbility", new IStep<ForcedRecoveryStepState>[]
             {
                 (IStep<ForcedRecoveryStepState>)engines["forcedRecoveryAbility"]
+            });
+            #endregion
+
+            #region Forced Rearrangement
+            steps.Add("forcedRearrangementCheck", new IStep<ForcedRearrangementStepState>[]
+            {
+                (IStep<ForcedRearrangementStepState>)engines["forcedRearrangementCheck"]
+            });
+
+            steps.Add("forcedRearrangementAbility", new IStep<ForcedRearrangementStepState>[]
+            {
+                (IStep<ForcedRearrangementStepState>)engines["forcedRearrangementAbility"]
+            });
+
+            steps.Add("gotoForcedRearrangement", new IStep<ForcedRecoveryStepState>[]
+            {
+                (IStep<ForcedRecoveryStepState>)engines["gotoForcedRearrangement"]
             });
             #endregion
 
@@ -172,6 +198,11 @@ namespace ECS.Context.EngineStep.Create
             #endregion
 
             #region Goto Turn End
+            steps.Add("gotoTurnEndForcedRearrangementStepState", new IStep<ForcedRearrangementStepState>[]
+            {
+                (IStep<ForcedRearrangementStepState>)engines["gotoTurnEnd"]
+            });
+            
             steps.Add("gotoTurnEndForcedRecoveryStepState", new IStep<ForcedRecoveryStepState>[]
             {
                 (IStep<ForcedRecoveryStepState>)engines["gotoTurnEnd"]

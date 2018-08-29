@@ -1,8 +1,6 @@
-﻿using Data.Enum;
-using Data.Step.Hand;
+﻿using Data.Step.Hand;
 using ECS.EntityView.Hand;
 using Service.Hand;
-using Service.Highlight;
 using Svelto.ECS;
 
 namespace ECS.Engine.Hand.Highlight
@@ -23,25 +21,7 @@ namespace ECS.Engine.Hand.Highlight
         {
             HandPieceEV handPiece = handService.FindHandPiece(token.HandPieceEntityId, entitiesDB);
             bool isClicked = !handPiece.Highlight.IsHighlighted;
-            HighlightState colorToChange = HighlightService.CalcClickHighlightState(handPiece.PlayerOwner.PlayerColor);
-
-            entitiesDB.ExecuteOnEntity(
-                handPiece.ID,
-                (ref HandPieceEV handPieceToChange) =>
-                {
-                    handPieceToChange.Highlight.IsHighlighted = isClicked;
-
-                    if (isClicked)
-                    {
-                        handPieceToChange.Highlight.CurrentColorStates.Add(colorToChange);
-                    }
-                    else
-                    {
-                        handPieceToChange.Highlight.CurrentColorStates.Clear();
-                    }
-                });
-
-            handPiece.ChangeColorTrigger.PlayChangeColor = true;
+            handService.HighlightHandPiece(ref handPiece, isClicked, entitiesDB);
         }
     }
 }

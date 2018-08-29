@@ -1,4 +1,5 @@
 ﻿using Data.Enum.AB;
+using Data.Step.Piece.Ability.ForcedRearrangement;
 using Data.Step.Piece.Move;
 using ECS.EntityView.Modal;
 using Service.Modal;
@@ -35,6 +36,7 @@ namespace ECS.Engine.Modal.Confirm
         {
             ModalEV modal = modalService.FindModalEV(entitiesDB);
             modal.Visibility.IsVisible.value = false; // Forcibly close confirm modal
+
             NextAction(modal, answer);
         }
 
@@ -46,7 +48,7 @@ namespace ECS.Engine.Modal.Confirm
                 PieceCaptured = modal.Confirm.PieceCaptured
             };
 
-            confirmModalConfirmSequence.Next(this, ref forcedRecoveryToken, (int)(answer ? StepAB.A : StepAB.B));
+            confirmModalConfirmSequence.Next(this, ref forcedRecoveryToken, answer ? (int)StepAB.A : (int)StepAB.B);
         }
     }
 }

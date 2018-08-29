@@ -33,6 +33,13 @@ namespace Service.Turn
                 (ref TurnEV turnToChange) => { turnToChange.Check.CommanderInCheck = inCheck; });
         }
 
+        public void SetForcedRearrangementStatus(TurnEV currentTurn, bool forcedRearrangementStatus, IEntitiesDB entitiesDB)
+        {
+            entitiesDB.ExecuteOnEntity(
+                currentTurn.ID,
+                (ref TurnEV turnToChange) => { turnToChange.ForcedRearrangementStatus.ForcedRearrangmentActive = forcedRearrangementStatus; });
+        }
+
         public bool IsRankWithinTerritory(TurnEV currentTurn, float rank)
         {
             return (currentTurn.TurnPlayer.PlayerColor == PlayerColor.BLACK && rank < 3)
@@ -47,7 +54,11 @@ namespace Service.Turn
 
             entitiesDB.ExecuteOnEntity(
                 currentTurn.ID,
-                (ref TurnEV turnToChange) => { turnToChange.TurnPlayer.PlayerColor = nextTurnPlayer; });
+                (ref TurnEV turnToChange) =>
+                {
+                    turnToChange.TurnPlayer.PlayerColor = nextTurnPlayer;
+                    turnToChange.ForcedRearrangementStatus.ForcedRearrangmentActive = false;
+                });
         }
     }
 }

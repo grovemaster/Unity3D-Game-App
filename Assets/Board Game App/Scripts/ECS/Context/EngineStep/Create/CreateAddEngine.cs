@@ -12,13 +12,16 @@ using ECS.Engine.Modal.Drop;
 using ECS.Engine.Modal.ImmobileCapture;
 using ECS.Engine.Move;
 using ECS.Engine.Piece;
+using ECS.Engine.Piece.Ability.Determine;
 using ECS.Engine.Piece.Ability.Drop;
+using ECS.Engine.Piece.Ability.ForcedRearrangement;
 using ECS.Engine.Piece.Ability.ForcedRecovery;
 using ECS.Engine.Piece.Capture;
 using ECS.Engine.Piece.Click;
 using ECS.Engine.Piece.Move;
 using ECS.Engine.Turn;
 using Engine.Check.Drop;
+using Engine.Piece.Ability.ForcedRearrangement.Goto;
 using Svelto.ECS;
 using System.Collections.Generic;
 
@@ -71,8 +74,14 @@ namespace ECS.Context.EngineStep.Create
             engines.Add("preDropAbilities", new PreDropAbilitiesEngine(sequences["boardPress"]));
             engines.Add("drop", new DropEngine(sequences["boardPress"]));
 
+            engines.Add("determinePostMoveAction", new DeterminePostMoveActionEngine(sequences["boardPress"]));
+
             engines.Add("forcedRecoveryCheck", new ForcedRecoveryCheckEngine(sequences["boardPress"]));
             engines.Add("forcedRecoveryAbility", new ForcedRecoveryAbilityEngine(sequences["boardPress"]));
+
+            engines.Add("forcedRearrangementCheck", new ForcedRearrangementCheckEngine(sequences["boardPress"]));
+            engines.Add("forcedRearrangementAbility", new ForcedRearrangementAbilityEngine(sequences["boardPress"]));
+            engines.Add("gotoForcedRearrangement", new GotoForcedRearrangementEngine(sequences["boardPress"]));
 
             engines.Add("determineClickType", new DetermineClickTypeEngine(sequences["boardPress"]));
             engines.Add("towerModal", new TowerModalEngine());
@@ -122,8 +131,14 @@ namespace ECS.Context.EngineStep.Create
             enginesRoot.AddEngine(engines["preDropAbilities"]);
             enginesRoot.AddEngine(engines["drop"]);
 
+            enginesRoot.AddEngine(engines["determinePostMoveAction"]);
+
             enginesRoot.AddEngine(engines["forcedRecoveryCheck"]);
             enginesRoot.AddEngine(engines["forcedRecoveryAbility"]);
+
+            enginesRoot.AddEngine(engines["forcedRearrangementCheck"]);
+            enginesRoot.AddEngine(engines["forcedRearrangementAbility"]);
+            enginesRoot.AddEngine(engines["gotoForcedRearrangement"]);
 
             enginesRoot.AddEngine(engines["determineClickType"]);
             enginesRoot.AddEngine(engines["towerModal"]);

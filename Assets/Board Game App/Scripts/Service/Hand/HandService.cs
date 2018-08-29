@@ -1,8 +1,10 @@
-﻿using Data.Enum.Piece;
+﻿using Data.Enum;
+using Data.Enum.Piece;
 using Data.Enum.Player;
 using ECS.EntityView.Hand;
 using ECS.EntityView.Piece;
 using Service.Common;
+using Service.Highlight;
 using Service.Turn;
 using Svelto.ECS;
 using System;
@@ -96,6 +98,29 @@ namespace Service.Hand
         public void DecrementHandPiece(ref HandPieceEV handPiece)
         {
             handPiece.HandPiece.NumPieces.value--;
+        }
+
+        public void HighlightHandPiece(ref HandPieceEV handPiece, bool isClicked, IEntitiesDB entitiesDB)
+        {
+            HighlightState colorToChange = HighlightService.CalcClickHighlightState(handPiece.PlayerOwner.PlayerColor);
+
+            entitiesDB.ExecuteOnEntity(
+                handPiece.ID,
+                (ref HandPieceEV handPieceToChange) =>
+                {
+                    handPieceToChange.Highlight.IsHighlighted = isClicked;
+
+                    if (isClicked)
+                    {
+                        handPieceToChange.Highlight.CurrentColorStates.Add(colorToChange);
+                    }
+                    else
+                    {
+                        handPieceToChange.Highlight.CurrentColorStates.Clear();
+                    }
+                });
+
+            handPiece.ChangeColorTrigger.PlayChangeColor = true;
         }
 
         private void DeHighlightHandPiece(HandPieceEV handPiece, IEntitiesDB entitiesDB)
