@@ -9,7 +9,6 @@ using Service.Piece.Factory;
 using Service.Piece.Find;
 using Service.Turn;
 using Svelto.ECS;
-using System;
 using System.Collections.Generic;
 
 namespace Service.Drop
@@ -20,6 +19,7 @@ namespace Service.Drop
         private PieceFindService pieceFindService = new PieceFindService();
         private TurnService turnService = new TurnService();
 
+        // TODO Should not care about all pieces at location, just top piece at location, fix that
         public bool IsValidFrontDrop(ref DropPrepStepState token, List<PieceEV> piecesAtLocation, IEntitiesDB entitiesDB)
         {
             return IsValidDrop(ref token, piecesAtLocation, PieceSide.FRONT, entitiesDB);
@@ -28,6 +28,12 @@ namespace Service.Drop
         public bool IsValidBackDrop(ref DropPrepStepState token, List<PieceEV> piecesAtLocation, IEntitiesDB entitiesDB)
         {
             return IsValidDrop(ref token, piecesAtLocation, PieceSide.BACK, entitiesDB);
+        }
+
+        public bool IsValidForcedRearrangementDrop(List<PieceEV> piecesAtLocation, IEntitiesDB entitiesDB)
+        {
+            // TODO Rearrange service logic later to make this a more robust function
+            return IsEmptyTile(piecesAtLocation) || IsValidEarthLinkDrop(piecesAtLocation, PieceSide.FRONT) || IsValidEarthLinkDrop(piecesAtLocation, null);
         }
 
         private bool IsValidDrop(ref DropPrepStepState token, List<PieceEV> piecesAtLocation, PieceSide side, IEntitiesDB entitiesDB)

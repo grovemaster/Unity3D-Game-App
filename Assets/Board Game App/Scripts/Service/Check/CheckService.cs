@@ -36,7 +36,10 @@ namespace Service.Check
         {
             bool returnValue = false;
 
-            int tier = pieceFindService.FindPiecesByLocation(location, entitiesDB).Count;
+            PieceEV? topPieceAtLocation = pieceFindService.FindTopPieceByLocation(location, entitiesDB);
+            pieceSetService.SetTopOfTowerToFalse(topPieceAtLocation, entitiesDB);
+
+            int tier = topPieceAtLocation.HasValue ? topPieceAtLocation.Value.Tier.Tier + 1 : 1;
             pieceSetService.SetPieceLocationAndTier(pieceToDrop, location, tier, entitiesDB);
             pieceSetService.SetPiecePlayerOwner(pieceToDrop, turn.TurnPlayer.PlayerColor, entitiesDB);
             pieceSetService.SetPieceSide(pieceToDrop, side, entitiesDB);
@@ -44,6 +47,11 @@ namespace Service.Check
             returnValue = !IsCommanderInCheck(turn.TurnPlayer.PlayerColor, entitiesDB);
 
             pieceSetService.SetPieceLocationToHandLocation(pieceToDrop, entitiesDB);
+
+            if (topPieceAtLocation.HasValue)
+            {
+                pieceSetService.SetTopOfTower(topPieceAtLocation.Value, entitiesDB);
+            }
 
             return returnValue;
         }

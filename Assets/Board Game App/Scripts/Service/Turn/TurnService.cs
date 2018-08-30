@@ -1,4 +1,5 @@
-﻿using Data.Enum.Player;
+﻿using Data.Constants.Board;
+using Data.Enum.Player;
 using ECS.EntityView.Turn;
 using Service.Common;
 using Svelto.ECS;
@@ -44,6 +45,16 @@ namespace Service.Turn
         {
             return (currentTurn.TurnPlayer.PlayerColor == PlayerColor.BLACK && rank < 3)
                 || (currentTurn.TurnPlayer.PlayerColor == PlayerColor.WHITE && rank > 5);
+        }
+
+        public int GetMinRankWithinTerritory(PlayerColor playerColor)
+        {
+            return playerColor == PlayerColor.BLACK ? 0 : BoardConst.NUM_FILES_RANKS - 3;
+        }
+
+        public int GetMaxRankWithinTerritory(PlayerColor playerColor)
+        {
+            return playerColor == PlayerColor.BLACK ? 2 : BoardConst.NUM_FILES_RANKS - 1;
         }
 
         private void SetTurnEV(TurnEV currentTurn, IEntitiesDB entitiesDB)

@@ -4,8 +4,10 @@ using Data.Enum.Piece;
 using Data.Enum.Player;
 using Data.Piece;
 using ECS.EntityView.Piece;
+using Service.Drop;
 using Service.Piece.Factory;
 using Service.Piece.Find;
+using Service.Turn;
 using Svelto.ECS;
 using System;
 using System.Collections.Generic;
@@ -18,6 +20,8 @@ namespace Service.Board
     {
         private PieceFactory pieceFactory = new PieceFactory();
         private PieceFindService pieceFindService = new PieceFindService();
+        private PreDropService preDropService = new PreDropService();
+        private TurnService turnService = new TurnService();
 
         #region Public API
         /**
@@ -456,14 +460,20 @@ namespace Service.Board
                     continue;
                 }
 
-                foreach (PieceEV threat in enemyThreats)
+                List<PieceEV> actualThreats = FindActualEnemyThreats(commander, enemyThreats, allPieces, entitiesDB);
+
+                if (actualThreats.Count > 0)
                 {
-                    if (threat.Tier.TopOfTower // Temporarily moved piece may have captured/stacked this enemy piece
-                        && (threat.Location.Location == commander.Location.Location
-                        || CalcDestinations(threat, allPieces, entitiesDB, false).Contains(commander.Location.Location)))
+                    // Special scenario: Capture enemy lance to initiate Forced Rearrangement, then drop Catapult/Fortress to resolve check
+                    if (HaveCapturedEnemyLance(previousMoveState)
+                        && ForcedRearrangementCanResolveThreats(commander, previousMoveState.pieceCaptured.Value.Piece, actualThreats, allPieces, entitiesDB))
+                    {
+                        RestorePreviousState(previousMoveState);
+                        continue;
+                    }
+                    else
                     {
                         destinationsToRemove.Add(destination);
-                        break;
                     }
                 }
 
@@ -554,6 +564,24 @@ namespace Service.Board
         {
             return CalcDestinations(piece, allPieces, entitiesDB, false, false);
         }
+
+        private List<PieceEV> FindActualEnemyThreats(
+            PieceEV commander, List<PieceEV> enemyThreats, List<PieceEV> allPieces, IEntitiesDB entitiesDB)
+        {
+            List<PieceEV> returnValue = new List<PieceEV>();
+
+            foreach (PieceEV threat in enemyThreats)
+            {
+                if (threat.Tier.TopOfTower // Temporarily moved piece may have captured/stacked this enemy piece
+                    && (threat.Location.Location == commander.Location.Location
+                    || CalcDestinations(threat, allPieces, entitiesDB, false).Contains(commander.Location.Location)))
+                {
+                    returnValue.Add(threat);
+                }
+            }
+
+            return returnValue;
+        }
         #endregion
 
         #region Previous Move State
@@ -571,6 +599,8 @@ namespace Service.Board
                 pieceToMove = new PreviousPieceState
                 {
                     Piece = pieceToMove,
+                    PlayerColor = pieceToMove.PlayerOwner.PlayerColor,
+                    PieceType = pieceToMove.Piece.PieceType,
                     Location = new Vector2(pieceToMove.Location.Location.x, pieceToMove.Location.Location.y),
                     Tier = pieceToMove.Tier.Tier,
                     TopOfTower = pieceToMove.Tier.TopOfTower
@@ -579,6 +609,8 @@ namespace Service.Board
                 pieceBelow = piecesAtCurrentLocation.Count == 1 ? null : (PreviousPieceState?)new PreviousPieceState
                 {
                     Piece = piecesAtCurrentLocation[pieceToMove.Tier.Tier - 2],
+                    PlayerColor = piecesAtCurrentLocation[pieceToMove.Tier.Tier - 2].PlayerOwner.PlayerColor,
+                    PieceType = piecesAtCurrentLocation[pieceToMove.Tier.Tier - 2].Piece.PieceType,
                     Location = new Vector2(
                         piecesAtCurrentLocation[pieceToMove.Tier.Tier - 2].Location.Location.x,
                         piecesAtCurrentLocation[pieceToMove.Tier.Tier - 2].Location.Location.y),
@@ -587,12 +619,14 @@ namespace Service.Board
                 },
 
                 pieceCaptured = topPieceAtDestination.Count == 0 ? null : (PreviousPieceState?)new PreviousPieceState
-                    {
-                        Piece = topPieceAtDestination[0],
-                        Location = new Vector2(topPieceAtDestination[0].Location.Location.x, topPieceAtDestination[0].Location.Location.y),
-                        Tier = topPieceAtDestination[0].Tier.Tier,
-                        TopOfTower = topPieceAtDestination[0].Tier.TopOfTower
-                    }
+                {
+                    Piece = topPieceAtDestination[0],
+                    PlayerColor = topPieceAtDestination[0].PlayerOwner.PlayerColor,
+                    PieceType = topPieceAtDestination[0].Piece.PieceType,
+                    Location = new Vector2(topPieceAtDestination[0].Location.Location.x, topPieceAtDestination[0].Location.Location.y),
+                    Tier = topPieceAtDestination[0].Tier.Tier,
+                    TopOfTower = topPieceAtDestination[0].Tier.TopOfTower
+                }
             };
 
             return returnValue;
@@ -625,7 +659,7 @@ namespace Service.Board
                 else
                 {
                     pieceToMove.Tier.Tier = topPieceAtDestination[0].Tier.Tier;
-                    topPieceAtDestination[0].Location.Location = new Vector2(-1, -1);
+                    topPieceAtDestination[0].Location.Location = BoardConst.HAND_LOCATION;
                 }
             }
         }
@@ -633,6 +667,8 @@ namespace Service.Board
         private void RestorePreviousState(PreviousMoveState previousState)
         {
             PieceEV pieceMoved = previousState.pieceToMove.Piece;
+            pieceMoved.PlayerOwner.PlayerColor = previousState.pieceToMove.PlayerColor;
+            pieceMoved.Piece.PieceType = previousState.pieceToMove.PieceType;
             pieceMoved.Location.Location = previousState.pieceToMove.Location;
             pieceMoved.Tier.Tier = previousState.pieceToMove.Tier;
             pieceMoved.Tier.TopOfTower = previousState.pieceToMove.TopOfTower;
@@ -640,6 +676,8 @@ namespace Service.Board
             if (previousState.pieceBelow.HasValue)
             {
                 PieceEV pieceBelow = previousState.pieceBelow.Value.Piece;
+                pieceBelow.PlayerOwner.PlayerColor = previousState.pieceBelow.Value.PlayerColor;
+                pieceBelow.Piece.PieceType = previousState.pieceBelow.Value.PieceType;
                 pieceBelow.Location.Location = previousState.pieceBelow.Value.Location;
                 pieceBelow.Tier.Tier = previousState.pieceBelow.Value.Tier;
                 pieceBelow.Tier.TopOfTower = previousState.pieceBelow.Value.TopOfTower;
@@ -648,10 +686,91 @@ namespace Service.Board
             if (previousState.pieceCaptured.HasValue)
             {
                 PieceEV pieceCaptured = previousState.pieceCaptured.Value.Piece;
+                pieceCaptured.PlayerOwner.PlayerColor = previousState.pieceCaptured.Value.PlayerColor;
+                pieceCaptured.Piece.PieceType = previousState.pieceCaptured.Value.PieceType;
                 pieceCaptured.Location.Location = previousState.pieceCaptured.Value.Location;
                 pieceCaptured.Tier.Tier = previousState.pieceCaptured.Value.Tier;
                 pieceCaptured.Tier.TopOfTower = previousState.pieceCaptured.Value.TopOfTower;
             }
+        }
+        #endregion
+
+        #region Forced Rearrangement
+        private bool HaveCapturedEnemyLance(PreviousMoveState previousMoveState)
+        {
+            // TODO Use AbilityMap described in MRE ticket
+            return previousMoveState.pieceCaptured.HasValue
+                && previousMoveState.pieceCaptured.Value.Piece.Piece.PieceType == PieceType.LANCE;
+        }
+
+        private bool ForcedRearrangementCanResolveThreats(
+            PieceEV commander, PieceEV pieceToDrop, List<PieceEV> actualThreats, List<PieceEV> allPieces, IEntitiesDB entitiesDB)
+        {
+            bool returnValue = false;
+
+            // Test drop each valid location to see if threats resolved
+            for (int rank = turnService.GetMinRankWithinTerritory(commander.PlayerOwner.PlayerColor); rank <= turnService.GetMaxRankWithinTerritory(commander.PlayerOwner.PlayerColor); ++rank)
+            {
+                for (int file = 0; file < BoardConst.NUM_FILES_RANKS; ++file)
+                {
+                    Vector2 location = new Vector2(file, rank);
+                    List<PieceEV> piecesAtLocation = pieceFindService.FindPiecesByLocation(location, entitiesDB);
+
+                    if (IsValidDrop(piecesAtLocation, entitiesDB)
+                        && DoesDropResolveCheck(
+                            commander, pieceToDrop, location, piecesAtLocation, actualThreats, allPieces, entitiesDB))
+                    {
+                        returnValue = true;
+                        break;
+                    }
+                }
+            }
+
+            return returnValue;
+        }
+
+        private bool IsValidDrop(List<PieceEV> piecesAtLocation, IEntitiesDB entitiesDB)
+        {
+            return preDropService.IsValidForcedRearrangementDrop(piecesAtLocation, entitiesDB);
+        }
+
+        private bool DoesDropResolveCheck(
+            PieceEV commander,
+            PieceEV pieceToDrop,
+            Vector2 location,
+            List<PieceEV> piecesAtLocation,
+            List<PieceEV> actualThreats,
+            List<PieceEV> allPieces,
+            IEntitiesDB entitiesDB)
+        {
+            bool returnValue;
+            PlayerColor originalPlayerColor = pieceToDrop.PlayerOwner.PlayerColor;
+            PieceEV? topPieceAtDestination = null;
+
+            if (piecesAtLocation.Count > 0)
+            {
+                topPieceAtDestination = piecesAtLocation[piecesAtLocation.Count - 1];
+                topPieceAtDestination.Value.Tier.TopOfTower = false;
+            }
+
+            pieceToDrop.PlayerOwner.PlayerColor = commander.PlayerOwner.PlayerColor;
+            pieceToDrop.Tier.TopOfTower = true;
+            pieceToDrop.Tier.Tier = topPieceAtDestination.HasValue ? topPieceAtDestination.Value.Tier.Tier + 1 : 1;
+
+            List<PieceEV> newActualThreats = FindActualEnemyThreats(commander, actualThreats, allPieces, entitiesDB);
+            returnValue = newActualThreats.Count == 0;
+
+            pieceToDrop.PlayerOwner.PlayerColor = originalPlayerColor;
+            pieceToDrop.Tier.TopOfTower = false;
+            pieceToDrop.Tier.Tier = 0;
+            pieceToDrop.Location.Location = BoardConst.HAND_LOCATION;
+
+            if (topPieceAtDestination.HasValue)
+            {
+                topPieceAtDestination.Value.Tier.TopOfTower = true;
+            }
+
+            return returnValue;
         }
         #endregion
         #endregion
