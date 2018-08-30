@@ -30,7 +30,7 @@ namespace ECS.Engine.Turn
             SwitchTurnPlayer();
 
             var turnStartStepState = new TurnStartStepState();
-            turnStartSequencer.Next<TurnStartStepState>(this, ref turnStartStepState);
+            turnStartSequencer.Next(this, ref turnStartStepState);
         }
 
         private void SwitchTurnPlayer()

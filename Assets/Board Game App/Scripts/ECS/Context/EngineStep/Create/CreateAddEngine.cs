@@ -96,7 +96,7 @@ namespace ECS.Context.EngineStep.Create
             engines.Add("captureStackModalAnswer", new CaptureStackModalAnswerEngine(sequences["captureStackModalAnswer"]));
 
             engines.Add("designateImmobileCapture", new DesignateImmobileCaptureEngine());
-            engines.Add("immobileCapture", new ImmobileCaptureEngine());
+            engines.Add("immobileCapture", new ImmobileCaptureEngine(sequences["boardPress"]));
             engines.Add("gotoTurnEnd", new GotoTurnEndEngine(sequences["towerModalAnswer"]));
         }
 

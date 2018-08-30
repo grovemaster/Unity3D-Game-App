@@ -156,7 +156,7 @@ namespace ECS.Context.EngineStep.Create
                         new To
                         {
                             { (int)StepAB.A, steps["confirmModal"] },
-                            { (int)StepAB.B, steps["gotoTurnEndForcedRecoveryStepState"] }
+                            { (int)StepAB.B, steps["gotoForcedRearrangement"] }
                         }
                     },
                     {
@@ -170,7 +170,7 @@ namespace ECS.Context.EngineStep.Create
                         engines["immobileCapture"],
                         new To
                         {
-                            steps["forcedRecoveryCheck"]
+                            steps["forcedRearrangementCheck"]
                         }
                     },
                     {

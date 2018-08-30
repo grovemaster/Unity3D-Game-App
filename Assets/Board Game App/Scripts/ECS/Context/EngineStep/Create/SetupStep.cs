@@ -192,8 +192,7 @@ namespace ECS.Context.EngineStep.Create
             steps.Add("immobileCapture", new IStep<ImmobileCapturePieceStepState>[]
             {
                 (IStep<ImmobileCapturePieceStepState>)engines["immobileCapture"],
-                (IStep<ImmobileCapturePieceStepState>)engines["addPieceToHand"],
-                (IStep<ImmobileCapturePieceStepState>)engines["gotoTurnEnd"]
+                (IStep<ImmobileCapturePieceStepState>)engines["addPieceToHand"]
             });
             #endregion
 
