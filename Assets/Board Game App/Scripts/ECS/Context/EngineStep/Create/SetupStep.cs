@@ -4,6 +4,7 @@ using Data.Step.Drop;
 using Data.Step.Hand;
 using Data.Step.Modal;
 using Data.Step.Piece.Ability;
+using Data.Step.Piece.Ability.Betrayal;
 using Data.Step.Piece.Ability.ForcedRearrangement;
 using Data.Step.Piece.Capture;
 using Data.Step.Piece.Click;
@@ -157,6 +158,13 @@ namespace ECS.Context.EngineStep.Create
             steps.Add("gotoForcedRearrangement", new IStep<ForcedRecoveryStepState>[]
             {
                 (IStep<ForcedRecoveryStepState>)engines["gotoForcedRearrangement"]
+            });
+            #endregion
+
+            #region Betrayal
+            steps.Add("betrayal", new IStep<BetrayalStepState>[]
+            {
+                (IStep<BetrayalStepState>)engines["betrayal"]
             });
             #endregion
 

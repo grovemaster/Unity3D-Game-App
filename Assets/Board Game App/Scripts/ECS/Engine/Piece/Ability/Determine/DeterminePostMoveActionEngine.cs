@@ -1,8 +1,8 @@
-﻿using Data.Enums.AB;
-using Data.Enums.Piece;
+﻿using Data.Enums.Piece;
 using Data.Enums.Piece.PostMove;
-using Data.Piece;
+using Data.Piece.Map;
 using Data.Step.Piece.Ability;
+using Data.Step.Piece.Ability.Betrayal;
 using Data.Step.Piece.Ability.ForcedRearrangement;
 using Data.Step.Piece.Move;
 using Data.Step.Turn;
@@ -29,6 +29,10 @@ namespace ECS.Engine.Piece.Ability.Determine
 
         public void Step(ref DeterminePostMoveStepState token, int condition)
         {
+            if (BetrayalInEffect(ref token))
+            {
+                NextActionBetrayal(ref token);
+            }
             // Want current side of piece, not any side for determining Forced Rearrangement
             if (HasForcedRecoveryAbility(token.PieceMoved.Piece.PieceType))
             {
@@ -44,18 +48,32 @@ namespace ECS.Engine.Piece.Ability.Determine
             }
         }
 
+        private bool BetrayalInEffect(ref DeterminePostMoveStepState token)
+        {
+            return token.PieceMoved.Tier.TopOfTower
+                && token.PieceCaptured.HasValue
+                && AbilityToPiece.HasAbility(PostMoveAbility.BETRAYAL, token.PieceMoved.Piece.PieceType);
+        }
+
         private bool HasForcedRecoveryAbility(PieceType pieceType)
         {
-            IPieceData pieceData = pieceFactory.CreateIPieceData(pieceType);
-
-            return pieceData.Abilities.PostMove.Contains(PostMoveAbility.FORCED_RECOVERY);
+            return AbilityToPiece.HasAbility(PostMoveAbility.FORCED_RECOVERY, pieceType);
         }
 
         private bool HasForcedRearrangementAbility(PieceType pieceType)
         {
-            IPieceData pieceData = pieceFactory.CreateIPieceData(pieceType);
+            return AbilityToPiece.HasAbility(PostMoveAbility.FORCED_REARRANGEMENT, pieceType);
+        }
 
-            return pieceData.Abilities.PostMove.Contains(PostMoveAbility.FORCED_REARRANGEMENT);
+        private void NextActionBetrayal(ref DeterminePostMoveStepState token)
+        {
+            BetrayalStepState betrayalToken = new BetrayalStepState
+            {
+                PieceMoved = token.PieceMoved,
+                PieceCaptured = token.PieceCaptured
+            };
+
+            determinePostMoveSequence.Next(this, ref betrayalToken, (int)PostMoveState.BETRAYAL);
         }
 
         private void NextActionForcedRecovery(ref DeterminePostMoveStepState token)
@@ -66,7 +84,7 @@ namespace ECS.Engine.Piece.Ability.Determine
                 PieceCaptured = token.PieceCaptured
             };
 
-            determinePostMoveSequence.Next(this, ref forcedRecoveryToken, (int)StepABC.A);
+            determinePostMoveSequence.Next(this, ref forcedRecoveryToken, (int)PostMoveState.FORCED_RECOVERY);
         }
 
         private void NextActionForcedRearrangement(ref DeterminePostMoveStepState token)
@@ -76,13 +94,13 @@ namespace ECS.Engine.Piece.Ability.Determine
                 PieceToRearrange = token.PieceCaptured
             };
 
-            determinePostMoveSequence.Next(this, ref forcedRearrangementToken, (int)StepABC.B);
+            determinePostMoveSequence.Next(this, ref forcedRearrangementToken, (int)PostMoveState.FORCED_REARRANGEMENT);
         }
 
         private void NextActionTurnEnd()
         {
             var turnEndToken = new TurnEndStepState();
-            determinePostMoveSequence.Next(this, ref turnEndToken, (int)StepABC.C);
+            determinePostMoveSequence.Next(this, ref turnEndToken, (int)PostMoveState.TURN_END);
         }
     }
 }

@@ -3,6 +3,7 @@ using Data.Enums.AB;
 using Data.Enums.Click;
 using Data.Enums.Modal;
 using Data.Enums.Move;
+using Data.Enums.Piece.PostMove;
 using Svelto.ECS;
 using System.Collections.Generic;
 
@@ -138,9 +139,10 @@ namespace ECS.Context.EngineStep.Create
                         new To
                         {
                             // TODO Instead of generic enum, use a specifically-name enum { for rec, for rea, tur end }
-                            { (int)StepABC.A, steps["forcedRecoveryCheck"] },
-                            { (int)StepABC.B, steps["forcedRearrangementCheck"] },
-                            { (int)StepABC.C, steps["turnEnd"] }
+                            { (int)PostMoveState.BETRAYAL, steps["betrayal"] },
+                            { (int)PostMoveState.FORCED_RECOVERY, steps["forcedRecoveryCheck"] },
+                            { (int)PostMoveState.FORCED_REARRANGEMENT, steps["forcedRearrangementCheck"] },
+                            { (int)PostMoveState.TURN_END, steps["turnEnd"] }
                         }
                     },
                     {
@@ -169,7 +171,8 @@ namespace ECS.Context.EngineStep.Create
                         engines["addPieceToHand"],
                         new To
                         {
-                            steps["forcedRearrangementCheck"]
+                            { (int)PostMoveState.BETRAYAL, steps["betrayal"] },
+                            { (int)PostMoveState.FORCED_REARRANGEMENT, steps["forcedRearrangementCheck"] }
                         }
                     },
                     {
@@ -185,6 +188,13 @@ namespace ECS.Context.EngineStep.Create
                         {
                             { (int)StepAB.A, steps["forcedRearrangementAbility"] },
                             { (int)StepAB.B, steps["gotoTurnEndForcedRearrangementStepState"] }
+                        }
+                    },
+                    {
+                        engines["betrayal"],
+                        new To
+                        {
+                            steps["forcedRearrangementCheck"]
                         }
                     }
                 });

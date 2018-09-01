@@ -1,5 +1,4 @@
 ﻿using Data.Enums.Piece;
-using Data.Piece.Default;
 using System.Collections.Generic;
 
 namespace Data.Piece.Back.Bronze
@@ -11,7 +10,7 @@ namespace Data.Piece.Back.Bronze
 
         static BronzeData()
         {
-            abilities = new NoAbility();
+            abilities = new BronzeAbilities();
             tiers = new List<IMoveSet>(new IMoveSet[]
             { new BronzeMoveSetTier1st(), new BronzeMoveSetTier2nd(), new BronzeMoveSetTier3rd() });
         }

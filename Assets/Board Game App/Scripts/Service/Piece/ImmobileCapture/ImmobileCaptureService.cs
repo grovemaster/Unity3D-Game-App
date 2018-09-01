@@ -98,9 +98,9 @@ namespace Service.Piece.ImmobileCapture
         #endregion
 
         #region Save And Restore Previous Move State
-        private PreviousImmobileCaptureState CreatePreviousState(List<PieceEV> towerPieces)
+        private PreviousTowerState CreatePreviousState(List<PieceEV> towerPieces)
         {
-            PreviousImmobileCaptureState returnValue = new PreviousImmobileCaptureState
+            PreviousTowerState returnValue = new PreviousTowerState
             {
                 pieces = new List<PreviousPieceState>()
             };
@@ -121,7 +121,7 @@ namespace Service.Piece.ImmobileCapture
             return returnValue;
         }
 
-        private void RestorePreviousState(PreviousImmobileCaptureState previousState, IEntitiesDB entitiesDB)
+        private void RestorePreviousState(PreviousTowerState previousState, IEntitiesDB entitiesDB)
         {
             foreach (PreviousPieceState state in previousState.pieces)
             {
@@ -142,7 +142,7 @@ namespace Service.Piece.ImmobileCapture
         private bool DoesImmobileCaptureResolveOrPreventCheck(List<PieceEV> towerPieces, int tierIndex, IEntitiesDB entitiesDB)
         {
             bool returnValue = false;
-            PreviousImmobileCaptureState previousState = CreatePreviousState(towerPieces);
+            PreviousTowerState previousState = CreatePreviousState(towerPieces);
             TurnEV currentTurn = turnService.GetCurrentTurnEV(entitiesDB);
             PieceEV commander = pieceFindService.FindCommander(currentTurn.TurnPlayer.PlayerColor, entitiesDB);
 

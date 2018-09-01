@@ -12,6 +12,7 @@ using ECS.Engine.Modal.Drop;
 using ECS.Engine.Modal.ImmobileCapture;
 using ECS.Engine.Move;
 using ECS.Engine.Piece;
+using ECS.Engine.Piece.Ability.Betrayal;
 using ECS.Engine.Piece.Ability.Determine;
 using ECS.Engine.Piece.Ability.Drop;
 using ECS.Engine.Piece.Ability.ForcedRearrangement;
@@ -83,6 +84,8 @@ namespace ECS.Context.EngineStep.Create
             engines.Add("forcedRearrangementAbility", new ForcedRearrangementAbilityEngine(sequences["boardPress"]));
             engines.Add("gotoForcedRearrangement", new GotoForcedRearrangementEngine(sequences["boardPress"]));
 
+            engines.Add("betrayal", new BetrayalEngine(sequences["boardPress"]));
+
             engines.Add("determineClickType", new DetermineClickTypeEngine(sequences["boardPress"]));
             engines.Add("towerModal", new TowerModalEngine());
             engines.Add("cancelModal", new CancelModalEngine(sequences["cancelModal"]));
@@ -139,6 +142,8 @@ namespace ECS.Context.EngineStep.Create
             enginesRoot.AddEngine(engines["forcedRearrangementCheck"]);
             enginesRoot.AddEngine(engines["forcedRearrangementAbility"]);
             enginesRoot.AddEngine(engines["gotoForcedRearrangement"]);
+
+            enginesRoot.AddEngine(engines["betrayal"]);
 
             enginesRoot.AddEngine(engines["determineClickType"]);
             enginesRoot.AddEngine(engines["towerModal"]);

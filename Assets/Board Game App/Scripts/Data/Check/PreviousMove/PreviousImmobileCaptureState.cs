@@ -2,7 +2,7 @@
 
 namespace Data.Check.PreviousMove
 {
-    public struct PreviousImmobileCaptureState
+    public struct PreviousTowerState
     {
         public List<PreviousPieceState> pieces;
     }
