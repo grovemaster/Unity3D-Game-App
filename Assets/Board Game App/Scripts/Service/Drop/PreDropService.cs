@@ -1,6 +1,7 @@
 ﻿using Data.Enums.Piece;
 using Data.Enums.Piece.Drop;
 using Data.Enums.Piece.Side;
+using Data.Enums.Player;
 using Data.Piece.Map;
 using Data.Step.Drop;
 using ECS.EntityView.Hand;
@@ -11,6 +12,7 @@ using Service.Piece.Find;
 using Service.Turn;
 using Svelto.ECS;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Service.Drop
 {
@@ -68,11 +70,14 @@ namespace Service.Drop
 
         private bool NoOtherSameTypesInFile(ref DropPrepStepState token, PieceSide side, IEntitiesDB entitiesDB)
         {
+            PlayerColor playerColor = token.HandPiece.PlayerOwner.PlayerColor;
+
             return pieceFindService.FindPiecesByTypeAndFile(
                 GetPieceType(ref token.HandPiece, side),
                 token.DestinationTile.Location.Location.x,
                 entitiesDB
-                ).Count == 0;
+                ).Where(piece => piece.PlayerOwner.PlayerColor == playerColor).ToList()
+                .Count == 0;
         }
         #endregion
 
