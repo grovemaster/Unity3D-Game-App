@@ -51,7 +51,11 @@ namespace ECS.Engine.Modal
         private string CalcButtonText(PieceEV piece)
         {
             // For now, every back piece is Bronze (B)
-            string returnValue = "(" + piece.PlayerOwner.PlayerColor.ToString() + ") " + piece.Piece.PieceType.ToString() + "(B)";
+            string returnValue = "("
+                + piece.PlayerOwner.PlayerColor.ToString() + ") "
+                + piece.Piece.PieceType.ToString() + "("
+                + (piece.Piece.PieceType == piece.Piece.Front ? piece.Piece.Back.ToString() : piece.Piece.Front.ToString())
+                + ")";
 
             return returnValue;
         }

@@ -11,7 +11,7 @@ namespace Data.Piece.Front.Commander
         {
             get
             {
-                return new List<PreMoveAbility>();
+                return new List<PreMoveAbility>(new PreMoveAbility[] { PreMoveAbility.CANNOT_MOBILE_RANGE_EXPANSION });
             }
         }
 
