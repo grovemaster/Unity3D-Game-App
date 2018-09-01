@@ -133,6 +133,9 @@ namespace ECS.Context
             pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.CATAPULT, PieceType.LANCE, PieceSide.BACK, 5, 1);
             pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.CATAPULT, PieceType.LANCE, PieceSide.BACK, 5, 8);
 
+            pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.FORTRESS, PieceType.LANCE, PieceSide.FRONT, 1, 0);
+            pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.FORTRESS, PieceType.LANCE, PieceSide.FRONT, 3, 8);
+
             pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.PAWN, PieceType.BRONZE, PieceSide.BACK, 7, 8);
             pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.CATAPULT, PieceType.LANCE, PieceSide.BACK, 6, 8);
         }
@@ -156,19 +159,8 @@ namespace ECS.Context
         private void BuildHandPieceEntities()
         {
             var handPieceCreateService = new HandPieceCreateService(entityFactory);
-            int index = 0;
-            handPieceCreateService.CreateHandPiece(PlayerColor.BLACK, PieceType.PAWN, PieceType.BRONZE, index++);
-            handPieceCreateService.CreateHandPiece(PlayerColor.BLACK, PieceType.SPY, PieceType.CLANDESTINITE, index++);
-            handPieceCreateService.CreateHandPiece(PlayerColor.BLACK, PieceType.CATAPULT, PieceType.LANCE, index++);
-            handPieceCreateService.CreateHandPiece(PlayerColor.BLACK, PieceType.BOW, PieceType.ARROW, index++);
-            handPieceCreateService.CreateHandPiece(PlayerColor.BLACK, PieceType.COMMANDER, PieceType.COMMANDER, index++);
-
-            index = 0;
-            handPieceCreateService.CreateHandPiece(PlayerColor.WHITE, PieceType.PAWN, PieceType.BRONZE, index++);
-            handPieceCreateService.CreateHandPiece(PlayerColor.WHITE, PieceType.SPY, PieceType.CLANDESTINITE, index++);
-            handPieceCreateService.CreateHandPiece(PlayerColor.WHITE, PieceType.CATAPULT, PieceType.LANCE, index++);
-            handPieceCreateService.CreateHandPiece(PlayerColor.WHITE, PieceType.BOW, PieceType.ARROW, index++);
-            handPieceCreateService.CreateHandPiece(PlayerColor.WHITE, PieceType.COMMANDER, PieceType.COMMANDER, index++);
+            CreateTeamHandPieces(handPieceCreateService, PlayerColor.BLACK);
+            CreateTeamHandPieces(handPieceCreateService, PlayerColor.WHITE);
         }
 
         private void BuildModalEntity()
@@ -176,6 +168,17 @@ namespace ECS.Context
             GameObject modalPanel = GameObject.Find("ModalPanel");
 
             entityFactory.BuildEntity<ModalED>(modalPanel.GetInstanceID(), modalPanel.GetComponents<IImplementor>());
+        }
+
+        private void CreateTeamHandPieces(HandPieceCreateService handPieceCreateService, PlayerColor playerColor)
+        {
+            int index = 0;
+            handPieceCreateService.CreateHandPiece(playerColor, PieceType.PAWN, PieceType.BRONZE, index++);
+            handPieceCreateService.CreateHandPiece(playerColor, PieceType.SPY, PieceType.CLANDESTINITE, index++);
+            handPieceCreateService.CreateHandPiece(playerColor, PieceType.CATAPULT, PieceType.LANCE, index++);
+            handPieceCreateService.CreateHandPiece(playerColor, PieceType.FORTRESS, PieceType.LANCE, index++);
+            handPieceCreateService.CreateHandPiece(playerColor, PieceType.BOW, PieceType.ARROW, index++);
+            handPieceCreateService.CreateHandPiece(playerColor, PieceType.COMMANDER, PieceType.COMMANDER, index++);
         }
     }
 }

@@ -6,5 +6,6 @@
         BOW,        ARROW,
         SPY,        CLANDESTINITE,
         CATAPULT,   LANCE,
+        FORTRESS,
         PAWN,       BRONZE, GOLD };
 }

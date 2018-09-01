@@ -31,6 +31,8 @@ namespace Service.Piece.Factory
 
                 case PieceType.CATAPULT:
                     return new CatapultData();
+                case PieceType.FORTRESS:
+                    return new CatapultData();
                 case PieceType.LANCE:
                     return new LanceData();
 

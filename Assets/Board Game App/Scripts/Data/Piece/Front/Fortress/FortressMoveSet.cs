@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace Data.Piece.Front.Catapult
+namespace Data.Piece.Front.Fortress
 {
-    class CatapultMoveSetTier1st : IMoveSet
+    class FortressMoveSetTier1st : IMoveSet
     {
         private static readonly List<Vector2> single = new List<Vector2>();
         private static readonly List<Vector2> jump = new List<Vector2>();
@@ -34,7 +34,7 @@ namespace Data.Piece.Front.Catapult
         }
     }
 
-    class CatapultMoveSetTier2nd : IMoveSet
+    class FortressMoveSetTier2nd : IMoveSet
     {
         private static readonly List<Vector2> single = new List<Vector2>();
         private static readonly List<Vector2> jump = new List<Vector2>();
@@ -65,7 +65,7 @@ namespace Data.Piece.Front.Catapult
         }
     }
 
-    class CatapultMoveSetTier3rd : IMoveSet
+    class FortressMoveSetTier3rd : IMoveSet
     {
         private static readonly List<Vector2> single = new List<Vector2>();
         private static readonly List<Vector2> jump = new List<Vector2>();
