@@ -11,7 +11,11 @@ namespace Data.Piece.Front.Fortress
         {
             get
             {
-                return new List<PreMoveAbility>(new PreMoveAbility[] { PreMoveAbility.MOBILE_RANGE_EXPANSION_LINE });
+                return new List<PreMoveAbility>(new PreMoveAbility[]
+                {
+                    PreMoveAbility.CANNOT_IMMOBILE_CAPTURE,
+                    PreMoveAbility.MOBILE_RANGE_EXPANSION_LINE
+                });
             }
         }
 

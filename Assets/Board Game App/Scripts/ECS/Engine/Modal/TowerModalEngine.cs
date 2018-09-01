@@ -3,9 +3,11 @@ using Data.Enums.Player;
 using Data.Step.Piece.Click;
 using ECS.EntityView.Modal;
 using ECS.EntityView.Piece;
+using ECS.EntityView.Turn;
 using Service.Modal;
 using Service.Piece.Find;
 using Service.Piece.ImmobileCapture;
+using Service.Turn;
 using Svelto.ECS;
 using System.Collections.Generic;
 
@@ -16,6 +18,7 @@ namespace ECS.Engine.Modal
         private ImmobileCaptureService immobileCaptureService = new ImmobileCaptureService();
         private ModalService modalService = new ModalService();
         private PieceFindService pieceFindService = new PieceFindService();
+        private TurnService turnService = new TurnService();
 
         public IEntitiesDB entitiesDB { private get; set; }
 
@@ -65,13 +68,19 @@ namespace ECS.Engine.Modal
 
         private void SetTierOptions(ModalEV modal, ModalType modalType, List<PieceEV> piecesAtLocation)
         {
+            TurnEV currentTurn = turnService.GetCurrentTurnEV(entitiesDB);
             PieceEV pieceTier1 = piecesAtLocation[0];
             PieceEV pieceTier2 = piecesAtLocation[1];
             PieceEV? pieceTier3 = modalType == ModalType.TOWER_3RD_TIER ? (PieceEV?)piecesAtLocation[2] : null;
             PlayerColor topPlayerColor = pieceTier3.HasValue ?
                 pieceTier3.Value.PlayerOwner.PlayerColor : pieceTier2.PlayerOwner.PlayerColor;
-            bool immobileCapturePossible = pieceTier2.PlayerOwner.PlayerColor != pieceTier1.PlayerOwner.PlayerColor
-                || (pieceTier3.HasValue && pieceTier2.PlayerOwner.PlayerColor != pieceTier3.Value.PlayerOwner.PlayerColor);
+            bool immobileCapturePossible =
+                (pieceTier2.PlayerOwner.PlayerColor != pieceTier1.PlayerOwner.PlayerColor
+                    && immobileCaptureService.CanImmobileCapture(currentTurn.TurnPlayer.PlayerColor, pieceTier1)
+                    && immobileCaptureService.CanImmobileCapture(currentTurn.TurnPlayer.PlayerColor, pieceTier2))
+                || (pieceTier3.HasValue && pieceTier2.PlayerOwner.PlayerColor != pieceTier3.Value.PlayerOwner.PlayerColor
+                    && immobileCaptureService.CanImmobileCapture(currentTurn.TurnPlayer.PlayerColor, pieceTier2)
+                    && immobileCaptureService.CanImmobileCapture(currentTurn.TurnPlayer.PlayerColor, pieceTier3.Value));
             bool noCheckViolationsExist = immobileCaptureService.NoCheckViolationsExist(piecesAtLocation, immobileCapturePossible, entitiesDB);
 
             entitiesDB.ExecuteOnEntity(

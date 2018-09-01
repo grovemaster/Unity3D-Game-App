@@ -1,6 +1,8 @@
 ﻿using Data.Check.PreviousMove;
+using Data.Enums.Piece.PreMove;
 using Data.Enums.Piece.Side;
 using Data.Enums.Player;
+using Data.Piece.Map;
 using ECS.EntityView.Piece;
 using ECS.EntityView.Turn;
 using Service.Check;
@@ -19,6 +21,7 @@ namespace Service.Piece.ImmobileCapture
         private PieceSetService pieceSetService = new PieceSetService();
         private TurnService turnService = new TurnService();
 
+        #region No Check Violations
         public bool NoCheckViolationsExist(List<PieceEV> towerPieces, bool immobileCapturePossible, IEntitiesDB entitiesDB)
         {
             if (!immobileCapturePossible)
@@ -27,10 +30,14 @@ namespace Service.Piece.ImmobileCapture
             }
 
             bool returnValue = true;
+            TurnEV currentTurn = turnService.GetCurrentTurnEV(entitiesDB);
 
             for (int tierIndex = 1; tierIndex < towerPieces.Count; ++tierIndex)
             {
-                if (towerPieces[tierIndex].PlayerOwner.PlayerColor != towerPieces[tierIndex - 1].PlayerOwner.PlayerColor)
+                if (towerPieces[tierIndex].PlayerOwner.PlayerColor != towerPieces[tierIndex - 1].PlayerOwner.PlayerColor
+                    // Also ensure piece that strikes is capable of immobile capture
+                    && CanImmobileCapture(currentTurn.TurnPlayer.PlayerColor, towerPieces[tierIndex])
+                    && CanImmobileCapture(currentTurn.TurnPlayer.PlayerColor, towerPieces[tierIndex - 1]))
                 {
                     if (!DoesImmobileCaptureResolveOrPreventCheck(towerPieces, tierIndex, entitiesDB))
                     {
@@ -61,6 +68,15 @@ namespace Service.Piece.ImmobileCapture
                 || !checkService.DoesLowerTierThreatenCommander(
                     commander, towerPieces[towerPieces.Count - 1], towerPieces[towerPieces.Count - 2], towerPieces, entitiesDB);
         }
+        #endregion
+
+        #region Cannot Immobile Capture Ability
+        // Return true if piece is not a turn player piece or DOES NOT possess CANNOT_IMMOBILE_CAPTURE ability
+        public bool CanImmobileCapture(PlayerColor playerColor, PieceEV piece)
+        {
+            return piece.PlayerOwner.PlayerColor != playerColor || !AbilityToPiece.HasAbility(PreMoveAbility.CANNOT_IMMOBILE_CAPTURE, piece.Piece.PieceType);
+        }
+        #endregion
 
         private bool IsTowerEFEOrFEE(List<PieceEV> towerPieces, PlayerColor turnPlayerColor)
         {
