@@ -1,5 +1,5 @@
-﻿using Data.Enum.Move;
-using Data.Enum.Piece;
+﻿using Data.Enums.Move;
+using Data.Enums.Piece;
 using Data.Step.Piece.Capture;
 using Data.Step.Piece.Move;
 using ECS.EntityView.Piece;

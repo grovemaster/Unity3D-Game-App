@@ -1,4 +1,4 @@
-﻿namespace Data.Enum.Piece.Side
+﻿namespace Data.Enums.Piece.Side
 {
     public enum PieceSide { FRONT, BACK }
 }

@@ -1,4 +1,4 @@
-﻿namespace Data.Enum.Piece.Drop
+﻿namespace Data.Enums.Piece.Drop
 {
     public enum DropAbility {
         DOUBLE_FILE_DROP,

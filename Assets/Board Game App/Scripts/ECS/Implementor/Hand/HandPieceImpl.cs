@@ -1,9 +1,8 @@
-﻿using Data.Enum.Piece;
-using Data.Enum.Player;
+﻿using Data.Enums.Piece;
+using Data.Enums.Player;
 using ECS.Component.Hand;
 using ECS.Component.Player;
 using Svelto.ECS;
-using System;
 using UnityEngine;
 using View.Hand;
 

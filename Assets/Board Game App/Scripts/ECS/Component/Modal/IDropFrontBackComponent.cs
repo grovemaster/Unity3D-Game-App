@@ -1,5 +1,5 @@
-﻿using Data.Enum.Piece;
-using Data.Enum.Piece.Side;
+﻿using Data.Enums.Piece;
+using Data.Enums.Piece.Side;
 using Svelto.ECS;
 
 namespace ECS.Component.Modal

@@ -1,7 +1,7 @@
 ﻿using Data.Check.PreviousMove;
 using Data.Constants.Board;
-using Data.Enum.Piece;
-using Data.Enum.Player;
+using Data.Enums.Piece;
+using Data.Enums.Player;
 using Data.Piece;
 using ECS.EntityView.Piece;
 using Service.Drop;

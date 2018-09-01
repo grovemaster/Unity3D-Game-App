@@ -1,4 +1,4 @@
-﻿using Data.Enum;
+﻿using Data.Enums;
 using Data.Step;
 using ECS.EntityView.Piece;
 using Service.Highlight;

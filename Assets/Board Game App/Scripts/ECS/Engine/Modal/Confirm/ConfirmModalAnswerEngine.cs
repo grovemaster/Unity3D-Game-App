@@ -1,4 +1,4 @@
-﻿using Data.Enum.AB;
+﻿using Data.Enums.AB;
 using Data.Step.Piece.Ability.ForcedRearrangement;
 using Data.Step.Piece.Move;
 using ECS.EntityView.Modal;

@@ -1,8 +1,6 @@
 ﻿using Data.Check.PreviousMove;
-using Data.Constants.Board;
-using Data.Enum.Piece;
-using Data.Enum.Piece.Side;
-using Data.Enum.Player;
+using Data.Enums.Piece.Side;
+using Data.Enums.Player;
 using ECS.EntityView.Piece;
 using ECS.EntityView.Turn;
 using Service.Check;
@@ -10,9 +8,7 @@ using Service.Piece.Find;
 using Service.Piece.Set;
 using Service.Turn;
 using Svelto.ECS;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Service.Piece.ImmobileCapture
 {

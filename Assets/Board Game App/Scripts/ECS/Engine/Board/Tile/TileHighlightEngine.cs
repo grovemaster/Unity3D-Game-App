@@ -1,4 +1,4 @@
-﻿using Data.Enum;
+﻿using Data.Enums;
 using Data.Step;
 using ECS.EntityView.Board.Tile;
 using ECS.EntityView.Piece;

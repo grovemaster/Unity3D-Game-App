@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using Data.Constants.ColorConst;
-using Data.Enum;
+using Data.Enums;
 using ECS.Component.SharedComponent;
 using Svelto.ECS;
 using UI.Modal;

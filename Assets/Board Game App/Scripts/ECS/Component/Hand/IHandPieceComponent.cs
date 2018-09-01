@@ -1,4 +1,4 @@
-﻿using Data.Enum.Piece;
+﻿using Data.Enums.Piece;
 using Svelto.ECS;
 
 namespace ECS.Component.Hand

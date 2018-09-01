@@ -1,4 +1,4 @@
-﻿namespace Data.Enum.Player
+﻿namespace Data.Enums.Player
 {
     public enum PlayerColor { BLACK, WHITE }
 }

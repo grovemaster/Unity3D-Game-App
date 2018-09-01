@@ -1,4 +1,4 @@
-﻿using Data.Enum;
+﻿using Data.Enums;
 using System.Collections.Generic;
 using UnityEngine;
 

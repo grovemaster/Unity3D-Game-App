@@ -1,4 +1,4 @@
-﻿using Data.Enum.Player;
+﻿using Data.Enums.Player;
 using Data.Step.Modal;
 using ECS.EntityView.Modal;
 using ECS.EntityView.Piece;

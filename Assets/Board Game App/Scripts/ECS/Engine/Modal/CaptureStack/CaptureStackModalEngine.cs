@@ -1,4 +1,4 @@
-﻿using Data.Enum.Modal;
+﻿using Data.Enums.Modal;
 using Data.Step.Piece.Capture;
 using ECS.EntityView.Modal;
 using Service.Modal;

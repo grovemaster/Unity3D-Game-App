@@ -1,6 +1,6 @@
-﻿using Data.Enum.Piece;
-using Data.Enum.Piece.Side;
-using Data.Enum.Player;
+﻿using Data.Enums.Piece;
+using Data.Enums.Piece.Side;
+using Data.Enums.Player;
 using ECS.Context.EngineStep;
 using ECS.EntityDescriptor.Modal;
 using ECS.EntityDescriptor.Turn;
@@ -103,7 +103,7 @@ namespace ECS.Context
             //but the HealthEntityStruct does. Here I show the official method to do it
             //var initializer = entityFactory.BuildEntity<PieceED>(pawn.GetInstanceID(), pawn.GetComponents<IImplementor>());
             var pieceCreateService = new PieceCreateService(entityFactory);
-            pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.COMMANDER, PieceType.COMMANDER, PieceSide.FRONT, 2, 4);
+            pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.COMMANDER, PieceType.COMMANDER, PieceSide.FRONT, 4, 1);
             pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.COMMANDER, PieceType.COMMANDER, PieceSide.FRONT, 6, 5);
 
             pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.PAWN, PieceType.BRONZE, PieceSide.FRONT, 0, 0);
@@ -128,10 +128,13 @@ namespace ECS.Context
             pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.BOW, PieceType.ARROW, PieceSide.FRONT, 2, 8);
 
             pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.SPY, PieceType.CLANDESTINITE, PieceSide.FRONT, 3, 0);
-            pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.SPY, PieceType.CLANDESTINITE, PieceSide.FRONT, 3, 8);
+            pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.SPY, PieceType.CLANDESTINITE, PieceSide.BACK, 3, 4);
 
-            pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.CATAPULT, PieceType.LANCE, PieceSide.FRONT, 4, 1);
-            pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.CATAPULT, PieceType.LANCE, PieceSide.FRONT, 5, 8);
+            pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.CATAPULT, PieceType.LANCE, PieceSide.BACK, 5, 1);
+            pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.CATAPULT, PieceType.LANCE, PieceSide.BACK, 5, 8);
+
+            pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.PAWN, PieceType.BRONZE, PieceSide.BACK, 7, 8);
+            pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.CATAPULT, PieceType.LANCE, PieceSide.BACK, 6, 8);
         }
 
         private void BuildTileEntities()

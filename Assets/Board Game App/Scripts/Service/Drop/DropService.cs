@@ -1,5 +1,5 @@
-﻿using Data.Enum.Piece.Side;
-using Data.Enum.Player;
+﻿using Data.Enums.Piece.Side;
+using Data.Enums.Player;
 using ECS.EntityView.Board.Tile;
 using ECS.EntityView.Piece;
 using Service.Piece.Find;

@@ -1,5 +1,5 @@
-﻿using Data.Enum;
-using Data.Enum.Player;
+﻿using Data.Enums;
+using Data.Enums.Player;
 using Data.Step.Turn;
 using ECS.EntityView.Board.Tile;
 using ECS.EntityView.Piece;

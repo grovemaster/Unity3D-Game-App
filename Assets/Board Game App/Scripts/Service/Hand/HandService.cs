@@ -1,6 +1,6 @@
-﻿using Data.Enum;
-using Data.Enum.Piece;
-using Data.Enum.Player;
+﻿using Data.Enums;
+using Data.Enums.Piece;
+using Data.Enums.Player;
 using ECS.EntityView.Hand;
 using ECS.EntityView.Piece;
 using Service.Common;

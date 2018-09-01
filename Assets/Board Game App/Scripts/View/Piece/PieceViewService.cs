@@ -1,4 +1,4 @@
-﻿using Data.Enum.Piece;
+﻿using Data.Enums.Piece;
 using UnityEngine;
 
 namespace View.Piece

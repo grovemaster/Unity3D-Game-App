@@ -1,5 +1,5 @@
-﻿using Data.Enum;
-using Data.Enum.Piece;
+﻿using Data.Enums;
+using Data.Enums.Piece;
 using ECS.Component.Piece;
 using UnityEngine;
 using View.Piece;

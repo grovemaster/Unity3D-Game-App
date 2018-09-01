@@ -1,5 +1,5 @@
-﻿using Data.Enum;
-using Data.Enum.Modal;
+﻿using Data.Enums;
+using Data.Enums.Modal;
 using Data.Step;
 using Data.Step.Modal;
 using Data.Step.Piece.Capture;

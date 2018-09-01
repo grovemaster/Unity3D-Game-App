@@ -1,4 +1,4 @@
-﻿namespace Data.Enum.AB
+﻿namespace Data.Enums.AB
 {
     public enum StepAB
     {

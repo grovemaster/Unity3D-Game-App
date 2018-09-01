@@ -1,4 +1,4 @@
-﻿using Data.Enum.Player;
+﻿using Data.Enums.Player;
 using ECS.Component.Player;
 using UnityEngine;
 

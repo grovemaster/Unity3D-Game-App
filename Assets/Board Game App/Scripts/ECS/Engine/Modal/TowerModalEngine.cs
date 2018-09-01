@@ -1,5 +1,5 @@
-﻿using Data.Enum.Modal;
-using Data.Enum.Player;
+﻿using Data.Enums.Modal;
+using Data.Enums.Player;
 using Data.Step.Piece.Click;
 using ECS.EntityView.Modal;
 using ECS.EntityView.Piece;

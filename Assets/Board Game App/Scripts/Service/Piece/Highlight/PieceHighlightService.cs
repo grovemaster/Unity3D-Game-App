@@ -1,4 +1,4 @@
-﻿using Data.Enum.Player;
+﻿using Data.Enums.Player;
 using ECS.EntityView.Piece;
 using Service.Piece.Find;
 using Svelto.ECS;

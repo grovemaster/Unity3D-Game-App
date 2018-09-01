@@ -1,5 +1,5 @@
-﻿using Data.Enum;
-using Data.Enum.Piece;
+﻿using Data.Enums;
+using Data.Enums.Piece;
 
 namespace ECS.Component.Piece
 {

@@ -1,6 +1,6 @@
 ﻿using Data.Constants.Board;
-using Data.Enum.Piece;
-using Data.Enum.Player;
+using Data.Enums.Piece;
+using Data.Enums.Player;
 using ECS.EntityDescriptor.Hand;
 using ECS.Implementor;
 using ECS.Implementor.Hand;

@@ -1,4 +1,4 @@
-﻿using Data.Enum.Piece.Side;
+﻿using Data.Enums.Piece.Side;
 using ECS.EntityView.Board.Tile;
 using ECS.EntityView.Hand;
 

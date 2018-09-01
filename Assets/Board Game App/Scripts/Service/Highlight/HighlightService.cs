@@ -1,5 +1,5 @@
-﻿using Data.Enum;
-using Data.Enum.Player;
+﻿using Data.Enums;
+using Data.Enums.Player;
 
 namespace Service.Highlight
 {

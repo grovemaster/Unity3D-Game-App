@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Data.Constants.ColorConst;
-using Data.Enum;
-using Data.Enum.Player;
+using Data.Enums;
+using Data.Enums.Player;
 using ECS.Component.Player;
 using ECS.Component.SharedComponent;
 using Svelto.ECS;

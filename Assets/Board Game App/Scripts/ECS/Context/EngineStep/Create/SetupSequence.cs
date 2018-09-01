@@ -1,10 +1,9 @@
-﻿using Data.Enum;
-using Data.Enum.AB;
-using Data.Enum.Click;
-using Data.Enum.Modal;
-using Data.Enum.Move;
+﻿using Data.Enums;
+using Data.Enums.AB;
+using Data.Enums.Click;
+using Data.Enums.Modal;
+using Data.Enums.Move;
 using Svelto.ECS;
-using System;
 using System.Collections.Generic;
 
 namespace ECS.Context.EngineStep.Create

@@ -1,4 +1,4 @@
-﻿using Data.Enum.Player;
+﻿using Data.Enums.Player;
 using Data.Step.Piece.Move;
 using Data.Step.Turn;
 using ECS.EntityView.Hand;

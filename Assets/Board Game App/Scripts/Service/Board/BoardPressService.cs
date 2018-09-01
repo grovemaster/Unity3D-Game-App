@@ -1,4 +1,4 @@
-﻿using Data.Enum;
+﻿using Data.Enums;
 using ECS.EntityView.Board.Tile;
 using ECS.EntityView.Turn;
 using Scripts.Data.Board;

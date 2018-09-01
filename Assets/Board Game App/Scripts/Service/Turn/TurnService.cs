@@ -1,5 +1,5 @@
 ﻿using Data.Constants.Board;
-using Data.Enum.Player;
+using Data.Enums.Player;
 using ECS.EntityView.Turn;
 using Service.Common;
 using Svelto.ECS;

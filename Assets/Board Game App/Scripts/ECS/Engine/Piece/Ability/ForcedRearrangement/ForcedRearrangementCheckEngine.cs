@@ -1,6 +1,6 @@
-﻿using Data.Enum.AB;
-using Data.Enum.Piece;
-using Data.Enum.Piece.PostMove;
+﻿using Data.Enums.AB;
+using Data.Enums.Piece;
+using Data.Enums.Piece.PostMove;
 using Data.Piece;
 using Data.Step.Piece.Ability.ForcedRearrangement;
 using Service.Piece.Factory;

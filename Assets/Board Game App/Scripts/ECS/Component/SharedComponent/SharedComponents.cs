@@ -1,4 +1,4 @@
-﻿using Data.Enum;
+﻿using Data.Enums;
 using Svelto.ECS;
 using System.Collections.Generic;
 using UnityEngine;

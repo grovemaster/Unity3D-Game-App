@@ -1,9 +1,7 @@
-﻿using System;
-using Data.Enum.AB;
-using Data.Enum.Piece.PostMove;
+﻿using Data.Enums.AB;
+using Data.Enums.Piece.PostMove;
 using Data.Piece;
 using Data.Step.Piece.Move;
-using Data.Step.Turn;
 using ECS.EntityView.Piece;
 using ECS.EntityView.Turn;
 using Service.Board;

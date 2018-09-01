@@ -1,5 +1,5 @@
-﻿using Data.Enum;
-using Data.Enum.Player;
+﻿using Data.Enums;
+using Data.Enums.Player;
 using Data.Step;
 using Data.Step.Hand;
 using Data.Step.Modal;

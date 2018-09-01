@@ -1,4 +1,4 @@
-﻿namespace Data.Enum.Piece
+﻿namespace Data.Enums.Piece
 {
     public enum PieceType {
         // Front-Back Combos

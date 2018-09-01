@@ -1,4 +1,4 @@
-﻿using Data.Enum.Piece;
+﻿using Data.Enums.Piece;
 using Data.Piece;
 using Data.Piece.Back.Arrow;
 using Data.Piece.Back.Bronze;

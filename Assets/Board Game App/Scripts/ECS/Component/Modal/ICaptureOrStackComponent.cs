@@ -1,4 +1,4 @@
-﻿using Data.Enum.Modal;
+﻿using Data.Enums.Modal;
 using Svelto.ECS;
 
 namespace ECS.Component.Modal

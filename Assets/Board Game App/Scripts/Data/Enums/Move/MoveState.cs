@@ -1,4 +1,4 @@
-﻿namespace Data.Enum.Move
+﻿namespace Data.Enums.Move
 {
     public enum MoveState
     {

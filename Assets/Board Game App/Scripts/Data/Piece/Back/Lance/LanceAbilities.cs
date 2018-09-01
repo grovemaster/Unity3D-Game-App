@@ -1,5 +1,5 @@
-﻿using Data.Enum.Piece.Drop;
-using Data.Enum.Piece.PostMove;
+﻿using Data.Enums.Piece.Drop;
+using Data.Enums.Piece.PostMove;
 using System.Collections.Generic;
 
 namespace Data.Piece.Back.Lance

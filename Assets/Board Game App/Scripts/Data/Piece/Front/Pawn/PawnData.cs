@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Data.Enum.Piece;
+using Data.Enums.Piece;
 
 namespace Data.Piece.Front.Pawn
 {

@@ -1,4 +1,4 @@
-﻿namespace Data.Enum.Modal
+﻿namespace Data.Enums.Modal
 {
     public enum ModalType {
         TOWER_2ND_TIER,

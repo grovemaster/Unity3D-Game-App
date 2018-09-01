@@ -1,4 +1,4 @@
-﻿namespace Data.Enum.Click
+﻿namespace Data.Enums.Click
 {
     public enum ClickState
     {

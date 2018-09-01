@@ -1,6 +1,6 @@
 ﻿using Data.Constants.Board;
-using Data.Enum.AB;
-using Data.Enum.Piece.Side;
+using Data.Enums.AB;
+using Data.Enums.Piece.Side;
 using Data.Step.Drop;
 using ECS.EntityView.Board.Tile;
 using ECS.EntityView.Hand;

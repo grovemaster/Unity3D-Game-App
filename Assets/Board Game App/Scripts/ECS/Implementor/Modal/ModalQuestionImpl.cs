@@ -1,4 +1,4 @@
-﻿using Data.Enum.Modal;
+﻿using Data.Enums.Modal;
 using ECS.Component.Modal;
 using Svelto.ECS;
 using UnityEngine;

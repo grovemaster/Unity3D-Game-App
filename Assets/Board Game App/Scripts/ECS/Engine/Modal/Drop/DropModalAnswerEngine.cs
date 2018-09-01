@@ -1,4 +1,4 @@
-﻿using Data.Enum.Piece.Side;
+﻿using Data.Enums.Piece.Side;
 using Data.Step.Drop;
 using ECS.EntityView.Modal;
 using Service.Board.Tile;

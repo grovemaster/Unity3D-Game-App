@@ -1,5 +1,5 @@
-﻿using Data.Enum;
-using Data.Enum.Click;
+﻿using Data.Enums;
+using Data.Enums.Click;
 using Data.Step;
 using Data.Step.Piece.Click;
 using ECS.EntityView.Turn;

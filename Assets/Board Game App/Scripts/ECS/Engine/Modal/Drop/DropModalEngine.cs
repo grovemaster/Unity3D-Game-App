@@ -1,5 +1,5 @@
-﻿using Data.Enum.Piece;
-using Data.Enum.Modal;
+﻿using Data.Enums.Piece;
+using Data.Enums.Modal;
 using Data.Step.Drop;
 using ECS.EntityView.Modal;
 using Service.Modal;

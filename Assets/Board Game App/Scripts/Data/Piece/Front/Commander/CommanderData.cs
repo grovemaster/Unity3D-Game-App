@@ -1,4 +1,4 @@
-﻿using Data.Enum.Piece;
+﻿using Data.Enums.Piece;
 using System.Collections.Generic;
 
 namespace Data.Piece.Front.Commander
