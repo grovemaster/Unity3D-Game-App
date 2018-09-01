@@ -43,14 +43,14 @@ namespace Data.Piece.Front.Spy
     {
         private static readonly List<Vector2> single = new List<Vector2>(new Vector2[]
         {
-            new Vector2(1, 2),
-            new Vector2(-1, 2)
+            new Vector2(1, 1),
+            new Vector2(-1, 1)
         });
 
         private static readonly List<Vector2> jump = new List<Vector2>(new Vector2[]
         {
-            new Vector2(1, 1),
-            new Vector2(-1, 1)
+            new Vector2(1, 2),
+            new Vector2(-1, 2)
         });
 
         private static readonly List<Vector2> line = new List<Vector2>();
@@ -84,14 +84,14 @@ namespace Data.Piece.Front.Spy
     {
         private static readonly List<Vector2> single = new List<Vector2>(new Vector2[]
         {
-            new Vector2(1, 2),
-            new Vector2(-1, 2)
+            new Vector2(1, 1),
+            new Vector2(-1, 1)
         });
 
         private static readonly List<Vector2> jump = new List<Vector2>(new Vector2[]
         {
-            new Vector2(1, 1),
-            new Vector2(-1, 1)
+            new Vector2(1, 2),
+            new Vector2(-1, 2)
         });
 
         private static readonly List<Vector2> line = new List<Vector2>();
