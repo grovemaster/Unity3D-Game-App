@@ -218,7 +218,7 @@ namespace Service.Board
             List<PieceEV> allPieces,
             bool excludeObstructedDestinations)
         {
-            int tier = CalcTierToUse(pieceEV.PlayerOwner.PlayerColor, pieceEV.Location.Location, pieceEV.Tier.Tier, allPieces);
+            int tier = CalcTierToUse(pieceEV, allPieces);
             List<Vector2> returnValue = pieceData.Tiers[tier - 1].Single;
             AdjustDestinations(returnValue, pieceEV, allPieces);
 
@@ -235,7 +235,7 @@ namespace Service.Board
             PieceEV pieceEV,
             List<PieceEV> allPieces)
         {
-            int tier = CalcTierToUse(pieceEV.PlayerOwner.PlayerColor, pieceEV.Location.Location, pieceEV.Tier.Tier, allPieces);
+            int tier = CalcTierToUse(pieceEV, allPieces);
             List<Vector2> returnValue = pieceData.Tiers[tier - 1].Jump;
             AdjustDestinations(returnValue, pieceEV, allPieces);
 
@@ -248,7 +248,7 @@ namespace Service.Board
             List<PieceEV> allPieces,
             bool excludeObstructedDestinations)
         {
-            int tier = CalcTierToUse(pieceEV.PlayerOwner.PlayerColor, pieceEV.Location.Location, pieceEV.Tier.Tier, allPieces);
+            int tier = CalcTierToUse(pieceEV, allPieces);
             List<Vector2> vectors = pieceData.Tiers[tier - 1].Line;
             List<Vector2> returnValue = new List<Vector2>();
 
@@ -788,11 +788,17 @@ namespace Service.Board
         #endregion
 
         #region Mobile Range Expansion
-        private int CalcTierToUse(PlayerColor playerColor, Vector2 location, int tier, List<PieceEV> allPieces)
+        private int CalcTierToUse(PieceEV piece, List<PieceEV> allPieces)
         {
-            return IsAffectedByMobileRangeExpansionRadial(playerColor, location, allPieces)
-                || IsAffectedByMobileRangeExpansionLine(playerColor, location, allPieces)
-                ? Math.Min(tier + 1, 3) : tier;
+            return CanMobileRangeExpansion(piece)
+                && (IsAffectedByMobileRangeExpansionRadial(piece.PlayerOwner.PlayerColor, piece.Location.Location, allPieces)
+                || IsAffectedByMobileRangeExpansionLine(piece.PlayerOwner.PlayerColor, piece.Location.Location, allPieces))
+                ? Math.Min(piece.Tier.Tier + 1, 3) : piece.Tier.Tier;
+        }
+
+        private bool CanMobileRangeExpansion(PieceEV piece)
+        {
+            return !AbilityToPiece.HasAbility(PreMoveAbility.CANNOT_MOBILE_RANGE_EXPANSION, piece.Piece.PieceType);
         }
 
         private bool IsAffectedByMobileRangeExpansionRadial(PlayerColor playerColor, Vector2 location, List<PieceEV> allPieces)
