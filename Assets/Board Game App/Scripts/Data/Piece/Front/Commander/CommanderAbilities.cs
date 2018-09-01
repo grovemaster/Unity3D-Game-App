@@ -1,11 +1,20 @@
 ﻿using Data.Enums.Piece.Drop;
 using Data.Enums.Piece.PostMove;
+using Data.Enums.Piece.PreMove;
 using System.Collections.Generic;
 
 namespace Data.Piece.Front.Commander
 {
     class CommanderAbilities : IAbilities
     {
+        public List<PreMoveAbility> PreMove
+        {
+            get
+            {
+                return new List<PreMoveAbility>();
+            }
+        }
+
         public List<DropAbility> Drop
         {
             get

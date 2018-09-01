@@ -1,6 +1,7 @@
 ﻿using Data.Enums.Piece;
 using Data.Enums.Piece.Drop;
 using Data.Enums.Piece.Side;
+using Data.Piece.Map;
 using Data.Step.Drop;
 using ECS.EntityView.Hand;
 using ECS.EntityView.Piece;
@@ -80,10 +81,8 @@ namespace Service.Drop
         {
             // Since this is called after IsEmptyTile with an OR condition, we know there is at least one piece on the tile
             PieceEV topPiece = piecesAtLocation[piecesAtLocation.Count - 1];
-            List<DropAbility> topPieceDropAbility = pieceFactory.CreateIPieceData(topPiece.Piece.PieceType).Abilities.Drop;
-            bool hasEarthLinkAbility = topPieceDropAbility.Contains(GetEarthLinkAbilityType(side));
 
-            return topPiece.Tier.Tier < 3 && hasEarthLinkAbility;
+            return topPiece.Tier.Tier < 3 && AbilityToPiece.HasAbility(GetEarthLinkAbilityType(side), topPiece.Piece.PieceType);
         }
 
         private DropAbility GetEarthLinkAbilityType(PieceSide? side)

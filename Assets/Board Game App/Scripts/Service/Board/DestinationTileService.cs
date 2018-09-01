@@ -2,10 +2,12 @@
 using Data.Constants.Board;
 using Data.Enums.Piece;
 using Data.Enums.Piece.PostMove;
+using Data.Enums.Piece.PreMove;
 using Data.Enums.Player;
 using Data.Piece;
 using Data.Piece.Map;
 using ECS.EntityView.Piece;
+using Service.Distance;
 using Service.Drop;
 using Service.Piece.Factory;
 using Service.Piece.Find;
@@ -20,6 +22,7 @@ namespace Service.Board
 {
     public class DestinationTileService
     {
+        private DistanceService distanceService = new DistanceService();
         private PieceFactory pieceFactory = new PieceFactory();
         private PieceFindService pieceFindService = new PieceFindService();
         private PreDropService preDropService = new PreDropService();
@@ -215,7 +218,8 @@ namespace Service.Board
             List<PieceEV> allPieces,
             bool excludeObstructedDestinations)
         {
-            List<Vector2> returnValue = pieceData.Tiers[pieceEV.Tier.Tier - 1].Single;
+            int tier = CalcTierToUse(pieceEV.PlayerOwner.PlayerColor, pieceEV.Location.Location, pieceEV.Tier.Tier, allPieces);
+            List<Vector2> returnValue = pieceData.Tiers[tier - 1].Single;
             AdjustDestinations(returnValue, pieceEV, allPieces);
 
             if (excludeObstructedDestinations) // Do NOT allow destinations other pieces in the way
@@ -231,7 +235,8 @@ namespace Service.Board
             PieceEV pieceEV,
             List<PieceEV> allPieces)
         {
-            List<Vector2> returnValue = pieceData.Tiers[pieceEV.Tier.Tier - 1].Jump;
+            int tier = CalcTierToUse(pieceEV.PlayerOwner.PlayerColor, pieceEV.Location.Location, pieceEV.Tier.Tier, allPieces);
+            List<Vector2> returnValue = pieceData.Tiers[tier - 1].Jump;
             AdjustDestinations(returnValue, pieceEV, allPieces);
 
             return returnValue;
@@ -243,7 +248,8 @@ namespace Service.Board
             List<PieceEV> allPieces,
             bool excludeObstructedDestinations)
         {
-            List<Vector2> vectors = pieceData.Tiers[pieceEV.Tier.Tier - 1].Line;
+            int tier = CalcTierToUse(pieceEV.PlayerOwner.PlayerColor, pieceEV.Location.Location, pieceEV.Tier.Tier, allPieces);
+            List<Vector2> vectors = pieceData.Tiers[tier - 1].Line;
             List<Vector2> returnValue = new List<Vector2>();
 
             foreach (Vector2 vector in vectors)
@@ -779,6 +785,32 @@ namespace Service.Board
             return preDropService.IsValidForcedRearrangementDrop(piecesAtLocation, entitiesDB);
         }
         #endregion
+        #endregion
+
+        #region Mobile Range Expansion
+        private int CalcTierToUse(PlayerColor playerColor, Vector2 location, int tier, List<PieceEV> allPieces)
+        {
+            List<PieceEV> piecesMreRadial = allPieces.Where(piece =>
+                   piece.PlayerOwner.PlayerColor == playerColor
+                   && AbilityToPiece.HasAbility(PreMoveAbility.MOBILE_RANGE_EXPANSION_RADIAL, piece.Piece.PieceType)).ToList();
+
+            bool isAffectedByMobileRangeExpansion = IsAffectedByMobileRangeExpansion(location, piecesMreRadial);
+
+            return isAffectedByMobileRangeExpansion ? Math.Min(tier + 1, 3) : tier;
+        }
+
+        private bool IsAffectedByMobileRangeExpansion(Vector2 location, List<PieceEV> piecesMreRadial)
+        {
+            if (piecesMreRadial.Count == 0)
+            {
+                return false;
+            }
+
+            List<PieceEV> piecesMreRadialInRange = piecesMreRadial.Where(piece =>
+                distanceService.CalcAbsoluteDistance(location, piece.Location.Location) <= 2).ToList();
+
+            return piecesMreRadialInRange.Count > 0;
+        }
         #endregion
     }
 }
