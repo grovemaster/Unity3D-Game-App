@@ -112,6 +112,54 @@ namespace Service.Board
                 && commander.PlayerOwner.PlayerColor != commanderTowerPieces[commander.Tier.Tier - 2].PlayerOwner.PlayerColor;
         }
         #endregion
+
+        #region Find Enemy Threats
+        public List<PieceEV> FindActualEnemyThreats(
+            PieceEV commander, List<PieceEV> enemyThreats, List<PieceEV> allPieces, IEntitiesDB entitiesDB)
+        {
+            List<PieceEV> returnValue = new List<PieceEV>();
+
+            foreach (PieceEV threat in enemyThreats)
+            {
+                if (threat.Tier.TopOfTower // Temporarily moved piece may have captured/stacked this enemy piece
+                    && (threat.Location.Location == commander.Location.Location
+                    || CalcDestinations(threat, allPieces, entitiesDB, false).Contains(commander.Location.Location)))
+                {
+                    returnValue.Add(threat);
+                }
+            }
+
+            return returnValue;
+        }
+        #endregion
+
+        #region Forced Rearrangement
+        public bool ForcedRearrangementCanResolveThreats(
+            PieceEV commander, PieceEV pieceToDrop, List<PieceEV> actualThreats, List<PieceEV> allPieces, IEntitiesDB entitiesDB)
+        {
+            bool returnValue = false;
+
+            // Test drop each valid location to see if threats resolved
+            for (int rank = turnService.GetMinRankWithinTerritory(commander.PlayerOwner.PlayerColor); rank <= turnService.GetMaxRankWithinTerritory(commander.PlayerOwner.PlayerColor); ++rank)
+            {
+                for (int file = 0; file < BoardConst.NUM_FILES_RANKS; ++file)
+                {
+                    Vector2 location = new Vector2(file, rank);
+                    List<PieceEV> piecesAtLocation = pieceFindService.FindPiecesByLocation(location, entitiesDB);
+
+                    if (IsValidDrop(piecesAtLocation, entitiesDB)
+                        && DoesDropResolveCheck(
+                            commander, pieceToDrop, location, piecesAtLocation, actualThreats, allPieces, entitiesDB))
+                    {
+                        returnValue = true;
+                        break;
+                    }
+                }
+            }
+
+            return returnValue;
+        }
+        #endregion
         #endregion
 
         private List<Vector2> CalcDestinations(
@@ -468,6 +516,7 @@ namespace Service.Board
                     if (HaveCapturedEnemyLance(previousMoveState)
                         && ForcedRearrangementCanResolveThreats(commander, previousMoveState.pieceCaptured.Value.Piece, actualThreats, allPieces, entitiesDB))
                     {
+                        // TODO Clean up boolean statement logic here
                         RestorePreviousState(previousMoveState);
                         continue;
                     }
@@ -563,24 +612,6 @@ namespace Service.Board
         private List<Vector2> CalcUnobstructedDestinationTiles(PieceEV piece, List<PieceEV> allPieces, IEntitiesDB entitiesDB)
         {
             return CalcDestinations(piece, allPieces, entitiesDB, false, false);
-        }
-
-        private List<PieceEV> FindActualEnemyThreats(
-            PieceEV commander, List<PieceEV> enemyThreats, List<PieceEV> allPieces, IEntitiesDB entitiesDB)
-        {
-            List<PieceEV> returnValue = new List<PieceEV>();
-
-            foreach (PieceEV threat in enemyThreats)
-            {
-                if (threat.Tier.TopOfTower // Temporarily moved piece may have captured/stacked this enemy piece
-                    && (threat.Location.Location == commander.Location.Location
-                    || CalcDestinations(threat, allPieces, entitiesDB, false).Contains(commander.Location.Location)))
-                {
-                    returnValue.Add(threat);
-                }
-            }
-
-            return returnValue;
         }
         #endregion
 
@@ -696,44 +727,6 @@ namespace Service.Board
         #endregion
 
         #region Forced Rearrangement
-        private bool HaveCapturedEnemyLance(PreviousMoveState previousMoveState)
-        {
-            // TODO Use AbilityMap described in MRE ticket
-            return previousMoveState.pieceCaptured.HasValue
-                && previousMoveState.pieceCaptured.Value.Piece.Piece.PieceType == PieceType.LANCE;
-        }
-
-        private bool ForcedRearrangementCanResolveThreats(
-            PieceEV commander, PieceEV pieceToDrop, List<PieceEV> actualThreats, List<PieceEV> allPieces, IEntitiesDB entitiesDB)
-        {
-            bool returnValue = false;
-
-            // Test drop each valid location to see if threats resolved
-            for (int rank = turnService.GetMinRankWithinTerritory(commander.PlayerOwner.PlayerColor); rank <= turnService.GetMaxRankWithinTerritory(commander.PlayerOwner.PlayerColor); ++rank)
-            {
-                for (int file = 0; file < BoardConst.NUM_FILES_RANKS; ++file)
-                {
-                    Vector2 location = new Vector2(file, rank);
-                    List<PieceEV> piecesAtLocation = pieceFindService.FindPiecesByLocation(location, entitiesDB);
-
-                    if (IsValidDrop(piecesAtLocation, entitiesDB)
-                        && DoesDropResolveCheck(
-                            commander, pieceToDrop, location, piecesAtLocation, actualThreats, allPieces, entitiesDB))
-                    {
-                        returnValue = true;
-                        break;
-                    }
-                }
-            }
-
-            return returnValue;
-        }
-
-        private bool IsValidDrop(List<PieceEV> piecesAtLocation, IEntitiesDB entitiesDB)
-        {
-            return preDropService.IsValidForcedRearrangementDrop(piecesAtLocation, entitiesDB);
-        }
-
         private bool DoesDropResolveCheck(
             PieceEV commander,
             PieceEV pieceToDrop,
@@ -771,6 +764,18 @@ namespace Service.Board
             }
 
             return returnValue;
+        }
+
+        private bool HaveCapturedEnemyLance(PreviousMoveState previousMoveState)
+        {
+            // TODO Use AbilityMap described in MRE ticket
+            return previousMoveState.pieceCaptured.HasValue
+                && previousMoveState.pieceCaptured.Value.Piece.Piece.PieceType == PieceType.LANCE;
+        }
+
+        private bool IsValidDrop(List<PieceEV> piecesAtLocation, IEntitiesDB entitiesDB)
+        {
+            return preDropService.IsValidForcedRearrangementDrop(piecesAtLocation, entitiesDB);
         }
         #endregion
         #endregion

@@ -1,12 +1,16 @@
-﻿using Data.Enum.Piece.Side;
+﻿using Data.Enum.Piece;
+using Data.Enum.Piece.Side;
 using Data.Enum.Player;
 using ECS.EntityView.Piece;
 using ECS.EntityView.Turn;
 using Service.Board;
 using Service.Piece.Find;
 using Service.Piece.Set;
+using Service.Turn;
 using Svelto.ECS;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Service.Check
@@ -73,23 +77,44 @@ namespace Service.Check
             return returnValue;
         }
 
-        public bool DoesTopOfTowerThreatenCommander(PieceEV commander, PieceEV enemyPiece, IEntitiesDB entitiesDB)
+        public bool DoesLowerTierThreatenCommander(
+            PieceEV commander, PieceEV enemyPiece, PieceEV secondFromTopEnemyPiece, List<PieceEV> towerPieces, IEntitiesDB entitiesDB)
         {
-            return (commander.Tier.TopOfTower
-                && destinationTileService.CalcDestinationTileLocations(enemyPiece, entitiesDB).Contains(commander.Location.Location))
-                || (!commander.Tier.TopOfTower && EnemyThreatensCommanderFromAdjacentTier(commander, enemyPiece));
-        }
-
-        public bool DoesLowerTierThreatenCommander(PieceEV commander, PieceEV enemyPiece, IEntitiesDB entitiesDB)
-        {
+            // If middle piece is lance, Forced Rearrangement could potentially resolve or prevent check
             enemyPiece.Tier.Tier--;
 
             bool returnValue = commander.Tier.TopOfTower
                 && destinationTileService.CalcDestinationTileLocations(enemyPiece, entitiesDB, null, false).Contains(commander.Location.Location);
 
+            if (returnValue && IsForcedRearrangementPossible(secondFromTopEnemyPiece))
+            {
+                returnValue = DoesForcedRearrangementResolveOrPreventCheck(
+                    secondFromTopEnemyPiece, commander, towerPieces, entitiesDB);
+            }
+
             enemyPiece.Tier.Tier++;
 
             return returnValue;
+        }
+
+        public bool DoesForcedRearrangementResolveOrPreventCheck(
+            PieceEV forcedRearrangementPiece, PieceEV commander, List<PieceEV> towerPieces, IEntitiesDB entitiesDB)
+        {
+            List <PieceEV> allPieces = pieceFindService.FindAllBoardPieces(entitiesDB).ToList();
+            List<PieceEV> enemyPieces = pieceFindService.FindPiecesByTeam(
+                TurnService.CalcOtherTurnPlayer(commander.PlayerOwner.PlayerColor), entitiesDB).ToList();
+            List<PieceEV> actualThreats = destinationTileService.FindActualEnemyThreats(
+                commander, enemyPieces, allPieces, entitiesDB);
+
+            return destinationTileService.ForcedRearrangementCanResolveThreats(
+                commander, forcedRearrangementPiece, actualThreats, allPieces, entitiesDB);
+        }
+
+        // TODO This public method belongs in a different service, such as a PieceAbilityService
+        public bool IsForcedRearrangementPossible(PieceEV forcedRearrangementPiece)
+        {
+            // TODO Use AbilityMap for FORCED_REARRANGEMENT
+            return forcedRearrangementPiece.Piece.PieceType == PieceType.LANCE;
         }
 
         private bool EnemyThreatensCommanderFromAdjacentTier(PieceEV commander, PieceEV enemyPiece)

@@ -1,13 +1,18 @@
-﻿using Data.Constants.Board;
+﻿using Data.Check.PreviousMove;
+using Data.Constants.Board;
+using Data.Enum.Piece;
+using Data.Enum.Piece.Side;
 using Data.Enum.Player;
 using ECS.EntityView.Piece;
 using ECS.EntityView.Turn;
 using Service.Check;
 using Service.Piece.Find;
+using Service.Piece.Set;
 using Service.Turn;
 using Svelto.ECS;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Service.Piece.ImmobileCapture
 {
@@ -15,6 +20,7 @@ namespace Service.Piece.ImmobileCapture
     {
         private CheckService checkService = new CheckService();
         private PieceFindService pieceFindService = new PieceFindService();
+        private PieceSetService pieceSetService = new PieceSetService();
         private TurnService turnService = new TurnService();
 
         public bool NoCheckViolationsExist(List<PieceEV> towerPieces, bool immobileCapturePossible, IEntitiesDB entitiesDB)
@@ -26,65 +32,14 @@ namespace Service.Piece.ImmobileCapture
 
             bool returnValue = true;
 
-            TurnEV currentTurn = turnService.GetCurrentTurnEV(entitiesDB);
-            PieceEV commander = pieceFindService.FindCommander(currentTurn.TurnPlayer.PlayerColor, entitiesDB);
-            int numCommanderThreats = checkService.CalcNumCommanderThreats(commander.PlayerOwner.PlayerColor, entitiesDB);
-
-            if (commander.Location.Location == towerPieces[0].Location.Location)
+            for (int tierIndex = 1; tierIndex < towerPieces.Count; ++tierIndex)
             {
-                if (currentTurn.Check.CommanderInCheck)
+                if (towerPieces[tierIndex].PlayerOwner.PlayerColor != towerPieces[tierIndex - 1].PlayerOwner.PlayerColor)
                 {
-                    if (IsAdjacentPieceEnemy(commander, towerPieces))
-                    {
-                        if (commander.Tier.TopOfTower)
-                        {
-                            returnValue = numCommanderThreats == 1;
-                        }
-                        else
-                        {
-                            returnValue = !WouldCommanderBeTopOfTower(commander, towerPieces)
-                                || !WouldCommanderBeInCheck(commander, towerPieces, entitiesDB);
-                        }
-                    }
-                    else
+                    if (!DoesImmobileCaptureResolveOrPreventCheck(towerPieces, tierIndex, entitiesDB))
                     {
                         returnValue = false;
-                    }
-                }
-            }
-            else
-            {
-                PieceEV topPiece = towerPieces[towerPieces.Count - 1];
-
-                if (currentTurn.Check.CommanderInCheck)
-                {
-                    if (topPiece.PlayerOwner.PlayerColor == commander.PlayerOwner.PlayerColor)
-                    {
-                        returnValue = false;
-                    }
-                    else
-                    {
-                        if (numCommanderThreats > 1 || !checkService.DoesTopOfTowerThreatenCommander(commander, topPiece, entitiesDB))
-                        {
-                            returnValue = false;
-                        }
-                        else
-                        {
-                            // FEE scenario, enemy topOfTower would have new movement, potentially releasing Commander from check
-                            if (towerPieces[towerPieces.Count - 2].PlayerOwner.PlayerColor != commander.PlayerOwner.PlayerColor)
-                            {
-                                returnValue = !checkService.DoesLowerTierThreatenCommander(commander, topPiece, entitiesDB);
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    // FEE scenario, enemy topOfTower would have new movement, potentially putting Commander into check
-                    if (topPiece.PlayerOwner.PlayerColor != commander.PlayerOwner.PlayerColor
-                        && towerPieces[towerPieces.Count - 2].PlayerOwner.PlayerColor != commander.PlayerOwner.PlayerColor)
-                    {
-                        returnValue = !checkService.DoesLowerTierThreatenCommander(commander, topPiece, entitiesDB);
+                        break;
                     }
                 }
             }
@@ -107,42 +62,8 @@ namespace Service.Piece.ImmobileCapture
             PieceEV commander = pieceFindService.FindCommander(currentTurn.TurnPlayer.PlayerColor, entitiesDB);
 
             return !IsTowerEFEOrFEE(towerPieces, currentTurn.TurnPlayer.PlayerColor)
-                || !checkService.DoesLowerTierThreatenCommander(commander, towerPieces[towerPieces.Count - 1], entitiesDB);
-        }
-
-        // TODO Move to utility service/class and call from there
-        private bool IsAdjacentPieceEnemy(PieceEV pieceToCompare, List<PieceEV> towerPieces)
-        {
-            switch (pieceToCompare.Tier.Tier)
-            {
-                case 1:
-                case 3:
-                    return pieceToCompare.PlayerOwner.PlayerColor != towerPieces[1].PlayerOwner.PlayerColor;
-                case 2:
-                    return pieceToCompare.PlayerOwner.PlayerColor != towerPieces[0].PlayerOwner.PlayerColor
-                        || (towerPieces.Count > 2 && pieceToCompare.PlayerOwner.PlayerColor != towerPieces[2].PlayerOwner.PlayerColor);
-                default:
-                    throw new InvalidOperationException("Invalid tier number");
-            }
-        }
-
-        private bool WouldCommanderBeTopOfTower(PieceEV commander, List<PieceEV> towerPieces)
-        {
-            return commander.Tier.Tier == towerPieces.Count - 1;
-        }
-
-        private bool WouldCommanderBeInCheck(PieceEV commander, List<PieceEV> towerPieces, IEntitiesDB entitiesDB)
-        {
-            PieceEV formerTopOfTower = towerPieces[towerPieces.Count - 1];
-            formerTopOfTower.Location.Location = BoardConst.HAND_LOCATION;
-            commander.Tier.TopOfTower = true;
-
-            bool returnValue = checkService.IsCommanderInCheck(commander.PlayerOwner.PlayerColor, entitiesDB);
-
-            commander.Tier.TopOfTower = false;
-            formerTopOfTower.Location.Location = commander.Location.Location;
-
-            return returnValue;
+                || !checkService.DoesLowerTierThreatenCommander(
+                    commander, towerPieces[towerPieces.Count - 1], towerPieces[towerPieces.Count - 2], towerPieces, entitiesDB);
         }
 
         private bool IsTowerEFEOrFEE(List<PieceEV> towerPieces, PlayerColor turnPlayerColor)
@@ -154,6 +75,100 @@ namespace Service.Piece.ImmobileCapture
                 || (towerPieces[0].PlayerOwner.PlayerColor == turnPlayerColor
                 && towerPieces[1].PlayerOwner.PlayerColor != turnPlayerColor
                 && towerPieces[2].PlayerOwner.PlayerColor != turnPlayerColor));
+        }
+
+        #region Forced Rearrangement
+        private bool DoesForcedRearrangementResolveOrPreventCheck(
+            PieceEV forcedRearrangementPiece, PieceEV commander, List<PieceEV> towerPieces, IEntitiesDB entitiesDB)
+        {
+            return checkService.DoesForcedRearrangementResolveOrPreventCheck(forcedRearrangementPiece, commander, towerPieces, entitiesDB);
+        }
+        #endregion
+
+        #region Save And Restore Previous Move State
+        private PreviousImmobileCaptureState CreatePreviousState(List<PieceEV> towerPieces)
+        {
+            PreviousImmobileCaptureState returnValue = new PreviousImmobileCaptureState
+            {
+                pieces = new List<PreviousPieceState>()
+            };
+
+            foreach (PieceEV piece in towerPieces)
+            {
+                returnValue.pieces.Add(new PreviousPieceState
+                {
+                    Piece = piece,
+                    PlayerColor = piece.PlayerOwner.PlayerColor,
+                    PieceType = piece.Piece.PieceType,
+                    Location = piece.Location.Location,
+                    Tier = piece.Tier.Tier,
+                    TopOfTower = piece.Tier.TopOfTower
+                });
+            }
+
+            return returnValue;
+        }
+
+        private void RestorePreviousState(PreviousImmobileCaptureState previousState, IEntitiesDB entitiesDB)
+        {
+            foreach (PreviousPieceState state in previousState.pieces)
+            {
+                PieceEV piece = state.Piece;
+                pieceSetService.SetPiecePlayerOwner(piece, state.PlayerColor, entitiesDB);
+
+                if (piece.Piece.PieceType != state.PieceType)
+                {
+                    pieceSetService.SetPieceSide(piece, state.PieceType == piece.Piece.Front ? PieceSide.FRONT : PieceSide.BACK, entitiesDB);
+                }
+
+                pieceSetService.SetPieceLocationAndTier(piece, state.Location, state.Tier, entitiesDB);
+                pieceSetService.SetTopOfTower(piece, entitiesDB, state.TopOfTower);
+            }
+        }
+        #endregion
+
+        private bool DoesImmobileCaptureResolveOrPreventCheck(List<PieceEV> towerPieces, int tierIndex, IEntitiesDB entitiesDB)
+        {
+            bool returnValue = false;
+            PreviousImmobileCaptureState previousState = CreatePreviousState(towerPieces);
+            TurnEV currentTurn = turnService.GetCurrentTurnEV(entitiesDB);
+            PieceEV commander = pieceFindService.FindCommander(currentTurn.TurnPlayer.PlayerColor, entitiesDB);
+
+            PieceEV capturedPiece = TempImmobileCapture(
+                towerPieces, tierIndex, currentTurn.TurnPlayer.PlayerColor, entitiesDB);
+
+            returnValue = !checkService.IsCommanderInCheck(currentTurn.TurnPlayer.PlayerColor, entitiesDB);
+
+            if (!returnValue && checkService.IsForcedRearrangementPossible(capturedPiece))
+            {
+                returnValue = DoesForcedRearrangementResolveOrPreventCheck(capturedPiece, commander, towerPieces, entitiesDB);
+            }
+
+            RestorePreviousState(previousState, entitiesDB);
+            return returnValue;
+        }
+
+        private PieceEV TempImmobileCapture(List<PieceEV> towerPieces, int tierIndex, PlayerColor currentTurnColor, IEntitiesDB entitiesDB)
+        {
+            PieceEV pieceToStrike = towerPieces[tierIndex].PlayerOwner.PlayerColor == currentTurnColor ? towerPieces[tierIndex] : towerPieces[tierIndex - 1];
+            PieceEV pieceToCapture = towerPieces[tierIndex].PlayerOwner.PlayerColor == currentTurnColor ? towerPieces[tierIndex - 1] : towerPieces[tierIndex];
+
+            pieceSetService.SetPieceLocationToHandLocation(pieceToCapture, entitiesDB);
+            pieceSetService.SetTopOfTowerToFalse(pieceToCapture, entitiesDB);
+
+            int currentTier = 1;
+            foreach (PieceEV towerPiece in towerPieces)
+            {
+                if (towerPiece.ID.entityID != pieceToCapture.ID.entityID)
+                {
+                    pieceSetService.SetPieceLocationAndTier(towerPiece, towerPiece.Location.Location, currentTier++, entitiesDB);
+                }
+            }
+
+            PieceEV topPiece = towerPieces[towerPieces.Count - 1].ID.entityID == pieceToCapture.ID.entityID
+                ? towerPieces[towerPieces.Count - 2] : towerPieces[towerPieces.Count - 1];
+
+            return pieceToCapture;
         }
     }
 }
