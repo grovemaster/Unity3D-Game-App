@@ -3,6 +3,7 @@ using Data.Piece;
 using Data.Piece.Back.Arrow;
 using Data.Piece.Back.Bronze;
 using Data.Piece.Back.Clandestinite;
+using Data.Piece.Back.DragonKing;
 using Data.Piece.Back.Gold;
 using Data.Piece.Back.Lance;
 using Data.Piece.Front.Bow;
@@ -40,6 +41,8 @@ namespace Service.Piece.Factory
 
                 case PieceType.HIDDEN_DRAGON:
                     return new HiddenDragonData();
+                case PieceType.DRAGON_KING:
+                    return new DragonKingData();
 
                 case PieceType.BOW:
                     return new BowData();

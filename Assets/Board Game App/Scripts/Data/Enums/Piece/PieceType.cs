@@ -7,6 +7,7 @@
         SPY,            CLANDESTINITE,
         CATAPULT,       LANCE,
         FORTRESS,
-        HIDDEN_DRAGON,
-        PAWN,           BRONZE, GOLD };
+        HIDDEN_DRAGON,  DRAGON_KING,
+        PAWN,           BRONZE,
+                        GOLD };
 }
