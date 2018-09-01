@@ -64,7 +64,7 @@ namespace ECS.Context.EngineStep.Create
             engines.Add("highlightAllDestinationTiles", new HighlightAllDestinationTilesEngine());
 
             engines.Add("mobileCapturePiece", new MobileCapturePieceEngine());
-            engines.Add("addPieceToHand", new AddPieceToHandEngine());
+            engines.Add("addPieceToHand", new AddPieceToHandEngine(sequences["boardPress"]));
             engines.Add("gotoMovePiece", new GotoMovePieceEngine(sequences["boardPress"]));
 
             engines.Add("handPiecePress", new HandPiecePressEngine(sequences["handPiecePress"]));
@@ -96,7 +96,7 @@ namespace ECS.Context.EngineStep.Create
             engines.Add("captureStackModalAnswer", new CaptureStackModalAnswerEngine(sequences["captureStackModalAnswer"]));
 
             engines.Add("designateImmobileCapture", new DesignateImmobileCaptureEngine());
-            engines.Add("immobileCapture", new ImmobileCaptureEngine(sequences["boardPress"]));
+            engines.Add("immobileCapture", new ImmobileCaptureEngine());
             engines.Add("gotoTurnEnd", new GotoTurnEndEngine(sequences["towerModalAnswer"]));
         }
 

@@ -1,5 +1,4 @@
-﻿using Data.Step.Piece.Ability.ForcedRearrangement;
-using Data.Step.Piece.Capture;
+﻿using Data.Step.Piece.Capture;
 using ECS.EntityView.Piece;
 using Service.Piece.Find;
 using Service.Piece.Set;
@@ -14,14 +13,7 @@ namespace ECS.Engine.Piece.Capture
         private PieceFindService pieceFindService = new PieceFindService();
         private PieceSetService pieceSetService = new PieceSetService();
 
-        private readonly ISequencer forcedRearrangementSequence;
-
         public IEntitiesDB entitiesDB { private get; set; }
-
-        public ImmobileCaptureEngine(ISequencer forcedRearrangementSequence)
-        {
-            this.forcedRearrangementSequence = forcedRearrangementSequence;
-        }
 
         public void Ready()
         { }
@@ -34,8 +26,6 @@ namespace ECS.Engine.Piece.Capture
             pieceToCapture.Visibility.IsVisible.value = false;
 
             AdjustRemainingTowerPieces(towerLocation);
-
-            NextAction(ref token);
         }
 
         private void AdjustRemainingTowerPieces(Vector2 towerLocation)
@@ -49,16 +39,6 @@ namespace ECS.Engine.Piece.Capture
 
                 pieces[i].MovePiece.NewLocation = pieces[i].Location.Location;
             }
-        }
-
-        private void NextAction(ref ImmobileCapturePieceStepState token)
-        {
-            var forcedRearrangementToken = new ForcedRearrangementStepState
-            {
-                PieceToRearrange = token.PieceToCapture
-            };
-
-            forcedRearrangementSequence.Next(this, ref forcedRearrangementToken);
         }
     }
 }

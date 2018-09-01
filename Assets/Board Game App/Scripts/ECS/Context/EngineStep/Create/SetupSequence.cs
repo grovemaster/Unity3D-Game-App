@@ -166,7 +166,7 @@ namespace ECS.Context.EngineStep.Create
                         }
                     },
                     {
-                        engines["immobileCapture"],
+                        engines["addPieceToHand"],
                         new To
                         {
                             steps["forcedRearrangementCheck"]
