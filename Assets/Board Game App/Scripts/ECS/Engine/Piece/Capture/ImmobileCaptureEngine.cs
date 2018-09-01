@@ -5,6 +5,7 @@ using Data.Step.Piece.Capture;
 using ECS.EntityView.Piece;
 using ECS.EntityView.Turn;
 using Service.Piece.Find;
+using Service.Piece.ImmobileCapture;
 using Service.Piece.Set;
 using Service.Turn;
 using Svelto.ECS;
@@ -15,6 +16,7 @@ namespace ECS.Engine.Piece.Capture
 {
     class ImmobileCaptureEngine : IStep<ImmobileCapturePieceStepState>, IQueryingEntitiesEngine
     {
+        private ImmobileCaptureService immobileCaptureService = new ImmobileCaptureService();
         private PieceFindService pieceFindService = new PieceFindService();
         private PieceSetService pieceSetService = new PieceSetService();
         private TurnService turnService = new TurnService();
@@ -29,13 +31,13 @@ namespace ECS.Engine.Piece.Capture
             TurnEV currentTurn = turnService.GetCurrentTurnEV(entitiesDB);
             PieceEV pieceToCapture = token.PieceToCapture;
             Vector2 towerLocation = new Vector2(pieceToCapture.Location.Location.x, pieceToCapture.Location.Location.y);
-            bool isBetrayalPossible = !IsFriendlyBetrayalTopOfTower(towerLocation, currentTurn.TurnPlayer.PlayerColor);
+            bool isBetrayalPossible = !immobileCaptureService.IsFriendlyBetrayalTopOfTower(towerLocation, currentTurn.TurnPlayer.PlayerColor, entitiesDB);
             pieceSetService.SetPieceLocationToHandLocation(pieceToCapture, entitiesDB);
             pieceToCapture.Visibility.IsVisible.value = false;
 
             AdjustRemainingTowerPieces(towerLocation);
             // Betrayal possible if friendly betrayal piece BECOMES topOfTower
-            isBetrayalPossible = isBetrayalPossible && IsFriendlyBetrayalTopOfTower(towerLocation, currentTurn.TurnPlayer.PlayerColor);
+            isBetrayalPossible = isBetrayalPossible && immobileCaptureService.IsFriendlyBetrayalTopOfTower(towerLocation, currentTurn.TurnPlayer.PlayerColor, entitiesDB);
             token.BetrayalPossible = isBetrayalPossible;
 
             if (token.BetrayalPossible)
@@ -43,14 +45,6 @@ namespace ECS.Engine.Piece.Capture
                 // If friendly betrayal piece becomes topOfTower, by deduction, it's the pieceToStrike
                 token.pieceToStrike = pieceFindService.FindTopPieceByLocation(towerLocation, entitiesDB).Value;
             }
-        }
-
-        private bool IsFriendlyBetrayalTopOfTower(Vector2 towerLocation, PlayerColor currentTurnColor)
-        {
-            List<PieceEV> towerPieces = pieceFindService.FindPiecesByLocation(towerLocation, entitiesDB);
-
-            return towerPieces[towerPieces.Count - 1].PlayerOwner.PlayerColor == currentTurnColor
-                && AbilityToPiece.HasAbility(PostMoveAbility.BETRAYAL, towerPieces[towerPieces.Count - 1].Piece.PieceType);
         }
 
         private void AdjustRemainingTowerPieces(Vector2 towerLocation)

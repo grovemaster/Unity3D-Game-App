@@ -1,4 +1,5 @@
 ﻿using Data.Check.PreviousMove;
+using Data.Enums.Piece.PostMove;
 using Data.Enums.Piece.PreMove;
 using Data.Enums.Piece.Side;
 using Data.Enums.Player;
@@ -11,6 +12,7 @@ using Service.Piece.Set;
 using Service.Turn;
 using Svelto.ECS;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Service.Piece.ImmobileCapture
 {
@@ -75,6 +77,21 @@ namespace Service.Piece.ImmobileCapture
         public bool CanImmobileCapture(PlayerColor playerColor, PieceEV piece)
         {
             return piece.PlayerOwner.PlayerColor != playerColor || !AbilityToPiece.HasAbility(PreMoveAbility.CANNOT_IMMOBILE_CAPTURE, piece.Piece.PieceType);
+        }
+        #endregion
+
+        #region Betrayal Check
+        public bool IsFriendlyBetrayalTopOfTower(Vector2 towerLocation, PlayerColor currentTurnColor, IEntitiesDB entitiesDB)
+        {
+            List<PieceEV> towerPieces = pieceFindService.FindPiecesByLocation(towerLocation, entitiesDB);
+
+            return IsFriendlyBetrayalTopOfTower(towerPieces, currentTurnColor, entitiesDB);
+        }
+
+        private bool IsFriendlyBetrayalTopOfTower(List<PieceEV> towerPieces, PlayerColor currentTurnColor, IEntitiesDB entitiesDB)
+        {
+            return towerPieces[towerPieces.Count - 1].PlayerOwner.PlayerColor == currentTurnColor
+                && AbilityToPiece.HasAbility(PostMoveAbility.BETRAYAL, towerPieces[towerPieces.Count - 1].Piece.PieceType);
         }
         #endregion
 
@@ -162,6 +179,7 @@ namespace Service.Piece.ImmobileCapture
 
         private PieceEV TempImmobileCapture(List<PieceEV> towerPieces, int tierIndex, PlayerColor currentTurnColor, IEntitiesDB entitiesDB)
         {
+            bool isBetrayalPossible = !IsFriendlyBetrayalTopOfTower(towerPieces, currentTurnColor, entitiesDB);
             PieceEV pieceToStrike = towerPieces[tierIndex].PlayerOwner.PlayerColor == currentTurnColor ? towerPieces[tierIndex] : towerPieces[tierIndex - 1];
             PieceEV pieceToCapture = towerPieces[tierIndex].PlayerOwner.PlayerColor == currentTurnColor ? towerPieces[tierIndex - 1] : towerPieces[tierIndex];
 
@@ -180,7 +198,27 @@ namespace Service.Piece.ImmobileCapture
             PieceEV topPiece = towerPieces[towerPieces.Count - 1].ID.entityID == pieceToCapture.ID.entityID
                 ? towerPieces[towerPieces.Count - 2] : towerPieces[towerPieces.Count - 1];
 
+            isBetrayalPossible = isBetrayalPossible && IsFriendlyBetrayalTopOfTower(towerPieces, currentTurnColor, entitiesDB);
+
+            if (isBetrayalPossible)
+            {
+                // If friendly betrayal piece becomes topOfTower, by deduction, it's the pieceToStrike
+                BetrayalEffectOnTower(towerPieces, currentTurnColor, entitiesDB);
+            }
+
             return pieceToCapture;
+        }
+
+        private void BetrayalEffectOnTower(List<PieceEV> towerPieces, PlayerColor betrayalColor, IEntitiesDB entitiesDB)
+        {
+            foreach (PieceEV piece in towerPieces)
+            {
+                if (piece.PlayerOwner.PlayerColor != betrayalColor)
+                {
+                    pieceSetService.SetPiecePlayerOwner(piece, betrayalColor, entitiesDB);
+                    pieceSetService.SetPieceSide(piece, piece.Piece.PieceType == piece.Piece.Front ? PieceSide.BACK : PieceSide.FRONT, entitiesDB);
+                }
+            }
         }
     }
 }
