@@ -1,8 +1,10 @@
 ﻿using Data.Check.PreviousMove;
 using Data.Constants.Board;
 using Data.Enums.Piece;
+using Data.Enums.Piece.PostMove;
 using Data.Enums.Player;
 using Data.Piece;
+using Data.Piece.Map;
 using ECS.EntityView.Piece;
 using Service.Drop;
 using Service.Piece.Factory;
@@ -513,7 +515,7 @@ namespace Service.Board
                 if (actualThreats.Count > 0)
                 {
                     // Special scenario: Capture enemy lance to initiate Forced Rearrangement, then drop Catapult/Fortress to resolve check
-                    if (HaveCapturedEnemyLance(previousMoveState)
+                    if (HaveCapturedForcedRearrangementPiece(previousMoveState)
                         && ForcedRearrangementCanResolveThreats(commander, previousMoveState.pieceCaptured.Value.Piece, actualThreats, allPieces, entitiesDB))
                     {
                         // TODO Clean up boolean statement logic here
@@ -766,11 +768,10 @@ namespace Service.Board
             return returnValue;
         }
 
-        private bool HaveCapturedEnemyLance(PreviousMoveState previousMoveState)
+        private bool HaveCapturedForcedRearrangementPiece(PreviousMoveState previousMoveState)
         {
-            // TODO Use AbilityMap described in MRE ticket
             return previousMoveState.pieceCaptured.HasValue
-                && previousMoveState.pieceCaptured.Value.Piece.Piece.PieceType == PieceType.LANCE;
+                && AbilityToPiece.HasAbility(PostMoveAbility.FORCED_REARRANGEMENT, previousMoveState.pieceCaptured.Value.Piece.Piece.PieceType);
         }
 
         private bool IsValidDrop(List<PieceEV> piecesAtLocation, IEntitiesDB entitiesDB)

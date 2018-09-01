@@ -1,6 +1,8 @@
 ﻿using Data.Enums.Piece;
+using Data.Enums.Piece.PostMove;
 using Data.Enums.Piece.Side;
 using Data.Enums.Player;
+using Data.Piece.Map;
 using ECS.EntityView.Piece;
 using ECS.EntityView.Turn;
 using Service.Board;
@@ -113,8 +115,7 @@ namespace Service.Check
         // TODO This public method belongs in a different service, such as a PieceAbilityService
         public bool IsForcedRearrangementPossible(PieceEV forcedRearrangementPiece)
         {
-            // TODO Use AbilityMap for FORCED_REARRANGEMENT
-            return forcedRearrangementPiece.Piece.PieceType == PieceType.LANCE;
+            return AbilityToPiece.HasAbility(PostMoveAbility.FORCED_REARRANGEMENT, forcedRearrangementPiece.Piece.PieceType);
         }
 
         private bool EnemyThreatensCommanderFromAdjacentTier(PieceEV commander, PieceEV enemyPiece)
