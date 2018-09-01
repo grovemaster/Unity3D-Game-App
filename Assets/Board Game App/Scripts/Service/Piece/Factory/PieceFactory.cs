@@ -9,6 +9,7 @@ using Data.Piece.Front.Bow;
 using Data.Piece.Front.Catapult;
 using Data.Piece.Front.Commander;
 using Data.Piece.Front.Fortress;
+using Data.Piece.Front.HiddenDragon;
 using Data.Piece.Front.Pawn;
 using Data.Piece.Front.Spy;
 using System;
@@ -36,6 +37,9 @@ namespace Service.Piece.Factory
                     return new FortressData();
                 case PieceType.LANCE:
                     return new LanceData();
+
+                case PieceType.HIDDEN_DRAGON:
+                    return new HiddenDragonData();
 
                 case PieceType.BOW:
                     return new BowData();
