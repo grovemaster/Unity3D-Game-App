@@ -8,6 +8,7 @@ using Data.Piece.Back.Lance;
 using Data.Piece.Front.Bow;
 using Data.Piece.Front.Catapult;
 using Data.Piece.Front.Commander;
+using Data.Piece.Front.Fortress;
 using Data.Piece.Front.Pawn;
 using Data.Piece.Front.Spy;
 using System;
@@ -32,7 +33,7 @@ namespace Service.Piece.Factory
                 case PieceType.CATAPULT:
                     return new CatapultData();
                 case PieceType.FORTRESS:
-                    return new CatapultData();
+                    return new FortressData();
                 case PieceType.LANCE:
                     return new LanceData();
 

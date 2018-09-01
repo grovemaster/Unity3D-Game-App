@@ -19,7 +19,7 @@ namespace Data.Piece.Front.Fortress
         {
             get
             {
-                return PieceType.CATAPULT;
+                return PieceType.FORTRESS;
             }
         }
 

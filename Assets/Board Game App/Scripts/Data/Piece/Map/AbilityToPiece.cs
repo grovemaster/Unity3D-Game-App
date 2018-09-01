@@ -28,14 +28,14 @@ namespace Data.Piece.Map
             }
         }
 
-        public static bool HasAbility(DropAbility ability, PieceType pieceType)
-        {
-            return Drop[ability].Contains(pieceType);
-        }
-
         public static bool HasAbility(PreMoveAbility ability, PieceType pieceType)
         {
             return PreMove[ability].Contains(pieceType);
+        }
+
+        public static bool HasAbility(DropAbility ability, PieceType pieceType)
+        {
+            return Drop[ability].Contains(pieceType);
         }
 
         public static bool HasAbility(PostMoveAbility ability, PieceType pieceType)

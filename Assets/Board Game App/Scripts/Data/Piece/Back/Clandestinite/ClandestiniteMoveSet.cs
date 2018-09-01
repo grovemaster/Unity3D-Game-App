@@ -43,7 +43,7 @@ namespace Data.Piece.Back.Clandestinite
         }
     }
 
-    class ClandestiniteMoveSetTier3rd : IMoveSet
+    class ClandestiniteMoveSetTier2nd : IMoveSet
     {
         private static readonly List<Vector2> single = new List<Vector2>(new Vector2[]
         {
@@ -55,10 +55,6 @@ namespace Data.Piece.Back.Clandestinite
         private static readonly List<Vector2> jump = new List<Vector2>(new Vector2[]
         {
             new Vector2(1, 2),
-            new Vector2(1, -2),
-            new Vector2(2, -2),
-            new Vector2(-1, -2),
-            new Vector2(-2, -2),
             new Vector2(-1, 2)
         });
 
@@ -89,7 +85,7 @@ namespace Data.Piece.Back.Clandestinite
         }
     }
 
-    class ClandestiniteMoveSetTier2nd : IMoveSet
+    class ClandestiniteMoveSetTier3rd : IMoveSet
     {
         private static readonly List<Vector2> single = new List<Vector2>(new Vector2[]
         {
@@ -101,6 +97,10 @@ namespace Data.Piece.Back.Clandestinite
         private static readonly List<Vector2> jump = new List<Vector2>(new Vector2[]
         {
             new Vector2(1, 2),
+            new Vector2(1, -2),
+            new Vector2(2, -2),
+            new Vector2(-1, -2),
+            new Vector2(-2, -2),
             new Vector2(-1, 2)
         });
 

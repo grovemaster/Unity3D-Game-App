@@ -790,17 +790,17 @@ namespace Service.Board
         #region Mobile Range Expansion
         private int CalcTierToUse(PlayerColor playerColor, Vector2 location, int tier, List<PieceEV> allPieces)
         {
+            return IsAffectedByMobileRangeExpansionRadial(playerColor, location, allPieces)
+                || IsAffectedByMobileRangeExpansionLine(playerColor, location, allPieces)
+                ? Math.Min(tier + 1, 3) : tier;
+        }
+
+        private bool IsAffectedByMobileRangeExpansionRadial(PlayerColor playerColor, Vector2 location, List<PieceEV> allPieces)
+        {
             List<PieceEV> piecesMreRadial = allPieces.Where(piece =>
                    piece.PlayerOwner.PlayerColor == playerColor
                    && AbilityToPiece.HasAbility(PreMoveAbility.MOBILE_RANGE_EXPANSION_RADIAL, piece.Piece.PieceType)).ToList();
 
-            bool isAffectedByMobileRangeExpansion = IsAffectedByMobileRangeExpansion(location, piecesMreRadial);
-
-            return isAffectedByMobileRangeExpansion ? Math.Min(tier + 1, 3) : tier;
-        }
-
-        private bool IsAffectedByMobileRangeExpansion(Vector2 location, List<PieceEV> piecesMreRadial)
-        {
             if (piecesMreRadial.Count == 0)
             {
                 return false;
@@ -810,6 +810,23 @@ namespace Service.Board
                 distanceService.CalcAbsoluteDistance(location, piece.Location.Location) <= 2).ToList();
 
             return piecesMreRadialInRange.Count > 0;
+        }
+
+        private bool IsAffectedByMobileRangeExpansionLine(PlayerColor playerColor, Vector2 location, List<PieceEV> allPieces)
+        {
+            List<PieceEV> piecesMreLine = allPieces.Where(piece =>
+                   piece.PlayerOwner.PlayerColor == playerColor
+                   && AbilityToPiece.HasAbility(PreMoveAbility.MOBILE_RANGE_EXPANSION_LINE, piece.Piece.PieceType)).ToList();
+
+            if (piecesMreLine.Count == 0)
+            {
+                return false;
+            }
+
+            List<PieceEV> piecesMreLineInRange = piecesMreLine.Where(piece =>
+                distanceService.IsAhead(piece.Location.Location, location, playerColor)).ToList();
+
+            return piecesMreLineInRange.Count > 0;
         }
         #endregion
     }
