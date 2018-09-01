@@ -102,12 +102,12 @@ namespace Service.Piece.ImmobileCapture
         {
             PreviousTowerState returnValue = new PreviousTowerState
             {
-                pieces = new List<PreviousPieceState>()
+                Pieces = new List<PreviousPieceState>()
             };
 
             foreach (PieceEV piece in towerPieces)
             {
-                returnValue.pieces.Add(new PreviousPieceState
+                returnValue.Pieces.Add(new PreviousPieceState
                 {
                     Piece = piece,
                     PlayerColor = piece.PlayerOwner.PlayerColor,
@@ -123,7 +123,7 @@ namespace Service.Piece.ImmobileCapture
 
         private void RestorePreviousState(PreviousTowerState previousState, IEntitiesDB entitiesDB)
         {
-            foreach (PreviousPieceState state in previousState.pieces)
+            foreach (PreviousPieceState state in previousState.Pieces)
             {
                 PieceEV piece = state.Piece;
                 pieceSetService.SetPiecePlayerOwner(piece, state.PlayerColor, entitiesDB);

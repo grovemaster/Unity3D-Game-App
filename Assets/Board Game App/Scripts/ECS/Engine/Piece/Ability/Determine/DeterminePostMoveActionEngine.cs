@@ -48,6 +48,7 @@ namespace ECS.Engine.Piece.Ability.Determine
             }
         }
 
+        // TODO This is duplicated elsewhere, refactor into common service later
         private bool BetrayalInEffect(ref DeterminePostMoveStepState token)
         {
             return token.PieceMoved.Tier.TopOfTower

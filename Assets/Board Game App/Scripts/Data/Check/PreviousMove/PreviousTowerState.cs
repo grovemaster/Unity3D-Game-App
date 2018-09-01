@@ -4,6 +4,6 @@ namespace Data.Check.PreviousMove
 {
     public struct PreviousTowerState
     {
-        public List<PreviousPieceState> pieces;
+        public List<PreviousPieceState> Pieces;
     }
 }

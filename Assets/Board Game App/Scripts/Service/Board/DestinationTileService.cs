@@ -486,13 +486,16 @@ namespace Service.Board
 
                 // Make temp move while saving old info
                 PreviousMoveState previousMoveState = SaveCurrentMove(pieceEV, destination, allPieces);
+                PreviousTowerState? previousDestinationTowerState = previousMoveState.pieceCaptured.HasValue
+                    && BetrayalInEffect(previousMoveState.pieceToMove.Piece)
+                    ? SaveDestinationTowerState(previousMoveState, allPieces) : null;
                 MakeTemporaryMove(pieceEV, destination, allPieces);
 
                 // If piece covers Commander, no threat to Commander
                 if (pieceEV.ID.entityID != commander.ID.entityID
                     && !commander.Tier.TopOfTower && pieceEV.Location.Location == commander.Location.Location)
                 {
-                    RestorePreviousState(previousMoveState);
+                    RestorePreviousState(previousMoveState, previousDestinationTowerState);
                     continue;
                 }
 
@@ -500,7 +503,7 @@ namespace Service.Board
                 if (pieceEV.ID.entityID == commander.ID.entityID && SecondFromTopTowerPiecesEnemy(pieceEV, allPieces))
                 {
                     destinationsToRemove.Add(destination);
-                    RestorePreviousState(previousMoveState);
+                    RestorePreviousState(previousMoveState, previousDestinationTowerState);
                     continue;
                 }
 
@@ -512,7 +515,7 @@ namespace Service.Board
                 // If no threats
                 if (enemyThreats.Count == 0)
                 {
-                    RestorePreviousState(previousMoveState);
+                    RestorePreviousState(previousMoveState, previousDestinationTowerState);
                     continue;
                 }
 
@@ -525,7 +528,7 @@ namespace Service.Board
                         && ForcedRearrangementCanResolveThreats(commander, previousMoveState.pieceCaptured.Value.Piece, actualThreats, allPieces, entitiesDB))
                     {
                         // TODO Clean up boolean statement logic here
-                        RestorePreviousState(previousMoveState);
+                        RestorePreviousState(previousMoveState, previousDestinationTowerState);
                         continue;
                     }
                     else
@@ -535,7 +538,7 @@ namespace Service.Board
                 }
 
                 // Restore old info into values
-                RestorePreviousState(previousMoveState);
+                RestorePreviousState(previousMoveState, previousDestinationTowerState);
             }
 
             foreach (Vector2 removeDestination in destinationsToRemove)
@@ -635,40 +638,47 @@ namespace Service.Board
 
             PreviousMoveState returnValue = new PreviousMoveState
             {
-                pieceToMove = new PreviousPieceState
-                {
-                    Piece = pieceToMove,
-                    PlayerColor = pieceToMove.PlayerOwner.PlayerColor,
-                    PieceType = pieceToMove.Piece.PieceType,
-                    Location = new Vector2(pieceToMove.Location.Location.x, pieceToMove.Location.Location.y),
-                    Tier = pieceToMove.Tier.Tier,
-                    TopOfTower = pieceToMove.Tier.TopOfTower
-                },
-
-                pieceBelow = piecesAtCurrentLocation.Count == 1 ? null : (PreviousPieceState?)new PreviousPieceState
-                {
-                    Piece = piecesAtCurrentLocation[pieceToMove.Tier.Tier - 2],
-                    PlayerColor = piecesAtCurrentLocation[pieceToMove.Tier.Tier - 2].PlayerOwner.PlayerColor,
-                    PieceType = piecesAtCurrentLocation[pieceToMove.Tier.Tier - 2].Piece.PieceType,
-                    Location = new Vector2(
-                        piecesAtCurrentLocation[pieceToMove.Tier.Tier - 2].Location.Location.x,
-                        piecesAtCurrentLocation[pieceToMove.Tier.Tier - 2].Location.Location.y),
-                    Tier = piecesAtCurrentLocation[pieceToMove.Tier.Tier - 2].Tier.Tier,
-                    TopOfTower = piecesAtCurrentLocation[pieceToMove.Tier.Tier - 2].Tier.TopOfTower
-                },
-
-                pieceCaptured = topPieceAtDestination.Count == 0 ? null : (PreviousPieceState?)new PreviousPieceState
-                {
-                    Piece = topPieceAtDestination[0],
-                    PlayerColor = topPieceAtDestination[0].PlayerOwner.PlayerColor,
-                    PieceType = topPieceAtDestination[0].Piece.PieceType,
-                    Location = new Vector2(topPieceAtDestination[0].Location.Location.x, topPieceAtDestination[0].Location.Location.y),
-                    Tier = topPieceAtDestination[0].Tier.Tier,
-                    TopOfTower = topPieceAtDestination[0].Tier.TopOfTower
-                }
+                pieceToMove = SaveSingleState(pieceToMove),
+                pieceBelow = piecesAtCurrentLocation.Count == 1
+                    ? null : (PreviousPieceState?)SaveSingleState(piecesAtCurrentLocation[pieceToMove.Tier.Tier - 2]),
+                pieceCaptured = topPieceAtDestination.Count == 0
+                    ? null : (PreviousPieceState?)SaveSingleState(topPieceAtDestination[0])
             };
 
             return returnValue;
+        }
+
+        private PreviousTowerState? SaveDestinationTowerState(PreviousMoveState previousMoveState, List<PieceEV> allPieces)
+        {
+            PreviousTowerState returnValue = new PreviousTowerState
+            {
+                Pieces = new List<PreviousPieceState>()
+            };
+
+            List<PieceEV> piecesAtDestination = allPieces.Where(piece => // Min size one
+                piece.Location.Location == previousMoveState.pieceCaptured.Value.Location).ToList();
+            piecesAtDestination.Sort(delegate (PieceEV p1, PieceEV p2)
+            { return p1.Tier.Tier.CompareTo(p2.Tier.Tier); });
+
+            foreach (PieceEV piece in piecesAtDestination)
+            {
+                returnValue.Pieces.Add(SaveSingleState(piece));
+            }
+
+            return returnValue;
+        }
+
+        private PreviousPieceState SaveSingleState(PieceEV pieceToSave)
+        {
+            return new PreviousPieceState
+            {
+                Piece = pieceToSave,
+                PlayerColor = pieceToSave.PlayerOwner.PlayerColor,
+                PieceType = pieceToSave.Piece.PieceType,
+                Location = new Vector2(pieceToSave.Location.Location.x, pieceToSave.Location.Location.y),
+                Tier = pieceToSave.Tier.Tier,
+                TopOfTower = pieceToSave.Tier.TopOfTower
+            };
         }
 
         private void MakeTemporaryMove(PieceEV pieceToMove, Vector2 destination, List<PieceEV> allPieces)
@@ -699,38 +709,51 @@ namespace Service.Board
                 {
                     pieceToMove.Tier.Tier = topPieceAtDestination[0].Tier.Tier;
                     topPieceAtDestination[0].Location.Location = BoardConst.HAND_LOCATION;
+
+                    if (BetrayalInEffect(pieceToMove))
+                    {
+                        List<PieceEV> piecesAtDestination = allPieces.Where(piece => // Min size one
+                            piece.Location.Location == destination).ToList();
+                        piecesAtDestination.Sort(delegate (PieceEV p1, PieceEV p2)
+                        { return p1.Tier.Tier.CompareTo(p2.Tier.Tier); });
+
+                        BetrayalEffectOnTower(piecesAtDestination, pieceToMove.PlayerOwner.PlayerColor);
+                    }
                 }
             }
         }
 
-        private void RestorePreviousState(PreviousMoveState previousState)
+        private void RestorePreviousState(PreviousMoveState previousState, PreviousTowerState? previousDestinationTowerState)
         {
-            PieceEV pieceMoved = previousState.pieceToMove.Piece;
-            pieceMoved.PlayerOwner.PlayerColor = previousState.pieceToMove.PlayerColor;
-            pieceMoved.Piece.PieceType = previousState.pieceToMove.PieceType;
-            pieceMoved.Location.Location = previousState.pieceToMove.Location;
-            pieceMoved.Tier.Tier = previousState.pieceToMove.Tier;
-            pieceMoved.Tier.TopOfTower = previousState.pieceToMove.TopOfTower;
+            if (previousDestinationTowerState.HasValue)
+            {
+                foreach (PreviousPieceState previousTowerPieceState in previousDestinationTowerState.Value.Pieces)
+                {
+                    RestoreSingleState(previousTowerPieceState);
+                }
+            }
+
+            RestoreSingleState(previousState.pieceToMove);
 
             if (previousState.pieceBelow.HasValue)
             {
-                PieceEV pieceBelow = previousState.pieceBelow.Value.Piece;
-                pieceBelow.PlayerOwner.PlayerColor = previousState.pieceBelow.Value.PlayerColor;
-                pieceBelow.Piece.PieceType = previousState.pieceBelow.Value.PieceType;
-                pieceBelow.Location.Location = previousState.pieceBelow.Value.Location;
-                pieceBelow.Tier.Tier = previousState.pieceBelow.Value.Tier;
-                pieceBelow.Tier.TopOfTower = previousState.pieceBelow.Value.TopOfTower;
+                RestoreSingleState(previousState.pieceBelow.Value);
             }
 
             if (previousState.pieceCaptured.HasValue)
             {
-                PieceEV pieceCaptured = previousState.pieceCaptured.Value.Piece;
-                pieceCaptured.PlayerOwner.PlayerColor = previousState.pieceCaptured.Value.PlayerColor;
-                pieceCaptured.Piece.PieceType = previousState.pieceCaptured.Value.PieceType;
-                pieceCaptured.Location.Location = previousState.pieceCaptured.Value.Location;
-                pieceCaptured.Tier.Tier = previousState.pieceCaptured.Value.Tier;
-                pieceCaptured.Tier.TopOfTower = previousState.pieceCaptured.Value.TopOfTower;
+                RestoreSingleState(previousState.pieceCaptured.Value);
             }
+        }
+
+        private void RestoreSingleState(PreviousPieceState previousState)
+        {
+            PieceEV pieceToRestore = previousState.Piece;
+            pieceToRestore.PlayerOwner.PlayerColor = previousState.PlayerColor;
+            pieceToRestore.Piece.PieceType = previousState.PieceType;
+            pieceToRestore.Location.Location = previousState.Location;
+            pieceToRestore.Tier.Tier = previousState.Tier;
+            pieceToRestore.Tier.TopOfTower = previousState.TopOfTower;
         }
         #endregion
 
@@ -833,6 +856,26 @@ namespace Service.Board
                 distanceService.IsAhead(piece.Location.Location, location, playerColor)).ToList();
 
             return piecesMreLineInRange.Count > 0;
+        }
+        #endregion
+
+        #region Betrayal
+        private bool BetrayalInEffect(PieceEV pieceToMove)
+        {
+            return pieceToMove.Tier.TopOfTower
+                && AbilityToPiece.HasAbility(PostMoveAbility.BETRAYAL, pieceToMove.Piece.PieceType);
+        }
+
+        private void BetrayalEffectOnTower(List<PieceEV> towerPieces, PlayerColor betrayalColor)
+        {
+            foreach (PieceEV piece in towerPieces)
+            {
+                if (piece.PlayerOwner.PlayerColor != betrayalColor)
+                {
+                    piece.PlayerOwner.PlayerColor = betrayalColor;
+                    piece.Piece.PieceType = piece.Piece.PieceType == piece.Piece.Front ? piece.Piece.Back : piece.Piece.Front;
+                }
+            }
         }
         #endregion
     }
