@@ -224,7 +224,7 @@ namespace Service.Board
 
             if (excludeObstructedDestinations) // Do NOT allow destinations other pieces in the way
             {
-                ExcludeDestinationsWithObstructingPieces(pieceEV, returnValue, allPieces);
+                ExcludeDestinationsWithObstructingPieces(pieceEV, returnValue, allPieces, true);
             }
 
             return returnValue;
@@ -424,7 +424,10 @@ namespace Service.Board
          * Some destinations are in different rank AND file as pieceToCalc's current location
          */
         private void ExcludeDestinationsWithObstructingPieces(
-            PieceEV pieceToCalc, List<Vector2> destinations, List<PieceEV> allPieces)
+            PieceEV pieceToCalc,
+            List<Vector2> destinations,
+            List<PieceEV> allPieces,
+            bool canIgnoreFriendlyPieces = false)
         {
             List<Vector2> destinationsToRemove = new List<Vector2>();
             /*
@@ -439,7 +442,7 @@ namespace Service.Board
             // for loop hopLocations, since that count will often be less than allPiece's count
             foreach (Vector2 destination in destinations)
             {
-                if (ShouldRemoveDestination(pieceToCalc, destination, allPieces))
+                if (ShouldRemoveDestination(pieceToCalc, destination, allPieces, canIgnoreFriendlyPieces))
                 {
                     destinationsToRemove.Add(destination);
                 }
@@ -452,7 +455,7 @@ namespace Service.Board
         }
 
         private bool ShouldRemoveDestination(
-            PieceEV pieceToCalc, Vector2 destination, List<PieceEV> allPieces)
+            PieceEV pieceToCalc, Vector2 destination, List<PieceEV> allPieces, bool canIgnoreFriendlyPieces)
         {
             bool returnValue = false;
             Vector2 pieceLocation = pieceToCalc.Location.Location;
@@ -469,7 +472,9 @@ namespace Service.Board
             while (evalLocation != destination)
             {
                 int numPiecesBarringPath = allPieces.Where(piece =>
-                    evalLocation == piece.Location.Location).Count();
+                    evalLocation == piece.Location.Location
+                    && (!canIgnoreFriendlyPieces || piece.PlayerOwner.PlayerColor != pieceToCalc.PlayerOwner.PlayerColor))
+                    .Count();
 
                 if (numPiecesBarringPath > 0)
                 {
