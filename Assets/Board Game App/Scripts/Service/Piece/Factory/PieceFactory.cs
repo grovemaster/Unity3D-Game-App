@@ -12,6 +12,7 @@ using Data.Piece.Front.Commander;
 using Data.Piece.Front.Fortress;
 using Data.Piece.Front.HiddenDragon;
 using Data.Piece.Front.Pawn;
+using Data.Piece.Front.Samurai;
 using Data.Piece.Front.Spy;
 using System;
 
@@ -26,6 +27,9 @@ namespace Service.Piece.Factory
                 // Front-Back Combos
                 case PieceType.COMMANDER:
                     return new CommanderData();
+
+                case PieceType.SAMURAI:
+                    return new SamuraiData();
 
                 case PieceType.SPY:
                     return new SpyData();

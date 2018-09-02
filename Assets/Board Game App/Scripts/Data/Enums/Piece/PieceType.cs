@@ -3,6 +3,7 @@
     public enum PieceType {
         // Front-Back Combos
         COMMANDER,
+        SAMURAI,
         BOW,            ARROW,
         SPY,            CLANDESTINITE,
         CATAPULT,       LANCE,
