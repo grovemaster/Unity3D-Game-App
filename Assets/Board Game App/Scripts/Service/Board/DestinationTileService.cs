@@ -388,9 +388,7 @@ namespace Service.Board
                 }
                 else
                 {
-                    List<PieceEV> destinationPieces = allPieces.Where(piece => piece.Location.Location == destination).ToList();
-                    destinationPieces.Sort(delegate (PieceEV p1, PieceEV p2)
-                    { return p1.Tier.Tier.CompareTo(p2.Tier.Tier); });
+                    List<PieceEV> destinationPieces = FindPiecesAtLocation(destination, allPieces);
 
                     if (destinationPieces.Count == 3 && destinationPieces[2].PlayerOwner.PlayerColor != pieceEV.PlayerOwner.PlayerColor
                         && ((destinationPieces[0].Piece.PieceType != pieceEV.Piece.PieceType && destinationPieces[0].Piece.Back == pieceEV.Piece.PieceType)
@@ -491,9 +489,7 @@ namespace Service.Board
         {
             PieceEV commander = allPieces.First(piece =>
                 piece.Piece.PieceType == PieceType.COMMANDER && piece.PlayerOwner.PlayerColor == pieceEV.PlayerOwner.PlayerColor);
-            List<PieceEV> commanderTowerPieces = allPieces.Where(piece => piece.Location.Location == commander.Location.Location).ToList();
-            commanderTowerPieces.Sort(delegate (PieceEV p1, PieceEV p2)
-                { return p1.Tier.Tier.CompareTo(p2.Tier.Tier); });
+            List<PieceEV> commanderTowerPieces = FindPiecesAtLocation(commander.Location.Location, allPieces);
 
             // If Commander safely buried in a tower whose adjacent piece(s) are not changing, Commander cannot be in check this turn
             if (pieceEV.Location.Location != commander.Location.Location && IsCommanderBuried(commander, commanderTowerPieces))
@@ -682,10 +678,7 @@ namespace Service.Board
         #region Previous Move State
         private PreviousMoveState SaveCurrentMove(PieceEV pieceToMove, Vector2 destination, List<PieceEV> allPieces)
         {
-            List<PieceEV> piecesAtCurrentLocation = allPieces.Where(piece => // Min size one
-                piece.Location.Location == pieceToMove.Location.Location).ToList();
-            piecesAtCurrentLocation.Sort(delegate (PieceEV p1, PieceEV p2)
-            { return p1.Tier.Tier.CompareTo(p2.Tier.Tier); });
+            List<PieceEV> piecesAtCurrentLocation = FindPiecesAtLocation(pieceToMove.Location.Location, allPieces); // Min size one
             List<PieceEV> topPieceAtDestination = allPieces.Where(piece => // Size one or zero
                 piece.Location.Location == destination && piece.Tier.TopOfTower).ToList();
 
@@ -708,10 +701,7 @@ namespace Service.Board
                 Pieces = new List<PreviousPieceState>()
             };
 
-            List<PieceEV> piecesAtDestination = allPieces.Where(piece => // Min size one
-                piece.Location.Location == previousMoveState.pieceCaptured.Value.Location).ToList();
-            piecesAtDestination.Sort(delegate (PieceEV p1, PieceEV p2)
-            { return p1.Tier.Tier.CompareTo(p2.Tier.Tier); });
+            List<PieceEV> piecesAtDestination = FindPiecesAtLocation(previousMoveState.pieceCaptured.Value.Location, allPieces); // Min size one
 
             foreach (PieceEV piece in piecesAtDestination)
             {
@@ -736,12 +726,11 @@ namespace Service.Board
 
         private void MakeTemporaryMove(PieceEV pieceToMove, Vector2 destination, List<PieceEV> allPieces)
         {
-            List<PieceEV> piecesAtCurrentLocation = allPieces.Where(piece => // Min size one
-                piece.Location.Location == pieceToMove.Location.Location).ToList();
-            piecesAtCurrentLocation.Sort(delegate (PieceEV p1, PieceEV p2)
-            { return p1.Tier.Tier.CompareTo(p2.Tier.Tier); });
+            List<PieceEV> piecesAtCurrentLocation = FindPiecesAtLocation(pieceToMove.Location.Location, allPieces); // Min size one
             List<PieceEV> topPieceAtDestination = allPieces.Where(piece => // Size one or zero
                 piece.Location.Location == destination && piece.Tier.TopOfTower).ToList();
+            bool cannotCaptureBecauseBetrayViolatesTwoFileMove =
+                CannotCaptureBecauseBetrayViolatesTwoFileMove(pieceToMove, destination, allPieces);
 
             pieceToMove.Location.Location = destination;
 
@@ -754,7 +743,8 @@ namespace Service.Board
             {
                 topPieceAtDestination[0].Tier.TopOfTower = false;
 
-                if (topPieceAtDestination[0].PlayerOwner.PlayerColor == pieceToMove.PlayerOwner.PlayerColor)
+                if (topPieceAtDestination[0].PlayerOwner.PlayerColor == pieceToMove.PlayerOwner.PlayerColor
+                    || cannotCaptureBecauseBetrayViolatesTwoFileMove)
                 {
                     pieceToMove.Tier.Tier = topPieceAtDestination[0].Tier.Tier + 1;
                 }
@@ -765,11 +755,7 @@ namespace Service.Board
 
                     if (BetrayalInEffect(pieceToMove))
                     {
-                        List<PieceEV> piecesAtDestination = allPieces.Where(piece => // Min size one
-                            piece.Location.Location == destination).ToList();
-                        piecesAtDestination.Sort(delegate (PieceEV p1, PieceEV p2)
-                        { return p1.Tier.Tier.CompareTo(p2.Tier.Tier); });
-
+                        List<PieceEV> piecesAtDestination = FindPiecesAtLocation(destination, allPieces); // Min size one
                         BetrayalEffectOnTower(piecesAtDestination, pieceToMove.PlayerOwner.PlayerColor);
                     }
                 }
@@ -929,6 +915,42 @@ namespace Service.Board
                     piece.Piece.PieceType = piece.Piece.PieceType == piece.Piece.Front ? piece.Piece.Back : piece.Piece.Front;
                 }
             }
+        }
+
+        private bool CannotCaptureBecauseBetrayViolatesTwoFileMove(PieceEV pieceToMove, Vector2 destination, List<PieceEV> allPieces)
+        {
+            // Only care about Bronze pieces, which only have Single move sets
+            if (!AbilityToPiece.HasAbility(PostMoveAbility.BETRAYAL, pieceToMove.Piece.PieceType)
+                || !AbilityToPiece.HasAbility(PreMoveAbility.TWO_FILE_MOVE, pieceToMove.Piece.PieceType))
+            {
+                return false;
+            }
+
+            bool returnValue = false;
+            List<PieceEV> towerPieces = FindPiecesAtLocation(destination, allPieces);
+
+            // Do not examine top piece, since it could be captured
+            for (int i = 0; i < towerPieces.Count - 1; ++i)
+            {
+                if (towerPieces[i].Piece.PieceType == pieceToMove.Piece.Front)
+                {
+                    returnValue = true;
+                    break;
+                }
+            }
+
+            return returnValue;
+        }
+        #endregion
+
+        #region Utility
+        private List<PieceEV> FindPiecesAtLocation(Vector2 location, List<PieceEV> allPieces)
+        {
+            List<PieceEV> returnValue = allPieces.Where(piece => piece.Location.Location == location).ToList();
+            returnValue.Sort(delegate (PieceEV p1, PieceEV p2)
+            { return p1.Tier.Tier.CompareTo(p2.Tier.Tier); });
+
+            return returnValue;
         }
         #endregion
     }
