@@ -567,6 +567,8 @@ namespace Service.Board
         {
             List<PieceEV> piecesAtLocation = allPieces.Where(piece =>
                 piece.Location.Location == commander.Location.Location && piece.ID.entityID != commander.ID.entityID).ToList();
+            piecesAtLocation.Sort(delegate (PieceEV p1, PieceEV p2)
+            { return p1.Tier.Tier.CompareTo(p2.Tier.Tier); });
 
             // Temporarily-modified commander not necessarily at piecesAtLocation
             if (piecesAtLocation.Count >= 1

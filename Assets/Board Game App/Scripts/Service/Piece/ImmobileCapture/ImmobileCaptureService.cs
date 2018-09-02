@@ -31,7 +31,9 @@ namespace Service.Piece.ImmobileCapture
                 return true;
             }
 
-            bool returnValue = true;
+            // EFE scenario, where capturing below one piece is invalid, but capturing the other piece is valid
+            int totalNumImmobileCaptures = 0;
+            int validNumImmobileCaptures = 0;
             TurnEV currentTurn = turnService.GetCurrentTurnEV(entitiesDB);
 
             for (int tierIndex = 1; tierIndex < towerPieces.Count; ++tierIndex)
@@ -41,15 +43,15 @@ namespace Service.Piece.ImmobileCapture
                     && CanImmobileCapture(currentTurn.TurnPlayer.PlayerColor, towerPieces[tierIndex])
                     && CanImmobileCapture(currentTurn.TurnPlayer.PlayerColor, towerPieces[tierIndex - 1]))
                 {
+                    totalNumImmobileCaptures++;
                     if (!DoesImmobileCaptureResolveOrPreventCheck(towerPieces, tierIndex, entitiesDB))
                     {
-                        returnValue = false;
-                        break;
+                        validNumImmobileCaptures++;
                     }
                 }
             }
 
-            return returnValue;
+            return totalNumImmobileCaptures == validNumImmobileCaptures || (totalNumImmobileCaptures > 0 && validNumImmobileCaptures > 0);
         }
 
         public bool NoTier1CheckViolationsExist(List<PieceEV> towerPieces, IEntitiesDB entitiesDB)

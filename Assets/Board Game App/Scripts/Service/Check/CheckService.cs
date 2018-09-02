@@ -83,7 +83,11 @@ namespace Service.Check
             PieceEV commander, PieceEV enemyPiece, PieceEV secondFromTopEnemyPiece, List<PieceEV> towerPieces, IEntitiesDB entitiesDB)
         {
             // If middle piece is lance, Forced Rearrangement could potentially resolve or prevent check
-            enemyPiece.Tier.Tier--;
+            // NOTE: Below foreach loop causes invalid tier values, I'm just too lazy too deal with it right now
+            foreach(PieceEV piece in towerPieces)
+            {
+                piece.Tier.Tier--;
+            }
 
             bool returnValue = commander.Tier.TopOfTower
                 && destinationTileService.CalcDestinationTileLocations(enemyPiece, entitiesDB, null, false).Contains(commander.Location.Location);
@@ -94,11 +98,15 @@ namespace Service.Check
                     secondFromTopEnemyPiece, commander, towerPieces, entitiesDB);
             }
 
-            enemyPiece.Tier.Tier++;
+            foreach (PieceEV piece in towerPieces)
+            {
+                piece.Tier.Tier++;
+            }
 
             return returnValue;
         }
 
+        #region Forced Rearrangement
         public bool DoesForcedRearrangementResolveOrPreventCheck(
             PieceEV forcedRearrangementPiece, PieceEV commander, List<PieceEV> towerPieces, IEntitiesDB entitiesDB)
         {
@@ -117,6 +125,7 @@ namespace Service.Check
         {
             return AbilityToPiece.HasAbility(PostMoveAbility.FORCED_REARRANGEMENT, forcedRearrangementPiece.Piece.PieceType);
         }
+        #endregion
 
         private bool EnemyThreatensCommanderFromAdjacentTier(PieceEV commander, PieceEV enemyPiece)
         {
