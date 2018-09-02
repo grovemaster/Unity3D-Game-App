@@ -145,8 +145,8 @@ namespace ECS.Context
             pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.SAMURAI, PieceType.PIKE, PieceSide.FRONT, 2, 2);
             pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.SAMURAI, PieceType.PIKE, PieceSide.FRONT, 2, 6);
 
-            pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.CAPTAIN, PieceType.BRONZE, PieceSide.FRONT, 4, 0);
-            pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.CAPTAIN, PieceType.BRONZE, PieceSide.FRONT, 4, 8);
+            pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.CAPTAIN, PieceType.PISTOL, PieceSide.FRONT, 4, 0);
+            pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.CAPTAIN, PieceType.PISTOL, PieceSide.FRONT, 4, 8);
         }
 
         private void BuildTileEntities()
@@ -189,7 +189,7 @@ namespace ECS.Context
             handPieceCreateService.CreateHandPiece(playerColor, PieceType.HIDDEN_DRAGON, PieceType.DRAGON_KING, index++);
             handPieceCreateService.CreateHandPiece(playerColor, PieceType.BOW, PieceType.ARROW, index++);
             handPieceCreateService.CreateHandPiece(playerColor, PieceType.SAMURAI, PieceType.PIKE, index++);
-            handPieceCreateService.CreateHandPiece(playerColor, PieceType.CAPTAIN, PieceType.BRONZE, index++);
+            handPieceCreateService.CreateHandPiece(playerColor, PieceType.CAPTAIN, PieceType.PISTOL, index++);
             handPieceCreateService.CreateHandPiece(playerColor, PieceType.COMMANDER, PieceType.COMMANDER, index++);
         }
     }

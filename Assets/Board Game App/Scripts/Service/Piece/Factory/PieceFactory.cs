@@ -7,6 +7,7 @@ using Data.Piece.Back.DragonKing;
 using Data.Piece.Back.Gold;
 using Data.Piece.Back.Lance;
 using Data.Piece.Back.Pike;
+using Data.Piece.Back.Pistol;
 using Data.Piece.Front.Bow;
 using Data.Piece.Front.Captain;
 using Data.Piece.Front.Catapult;
@@ -32,6 +33,8 @@ namespace Service.Piece.Factory
 
                 case PieceType.CAPTAIN:
                     return new CaptainData();
+                case PieceType.PISTOL:
+                    return new PistolData();
 
                 case PieceType.SAMURAI:
                     return new SamuraiData();
