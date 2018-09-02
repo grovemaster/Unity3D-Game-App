@@ -8,6 +8,7 @@ using Data.Piece.Back.Gold;
 using Data.Piece.Back.Lance;
 using Data.Piece.Back.Pike;
 using Data.Piece.Front.Bow;
+using Data.Piece.Front.Captain;
 using Data.Piece.Front.Catapult;
 using Data.Piece.Front.Commander;
 using Data.Piece.Front.Fortress;
@@ -28,6 +29,9 @@ namespace Service.Piece.Factory
                 // Front-Back Combos
                 case PieceType.COMMANDER:
                     return new CommanderData();
+
+                case PieceType.CAPTAIN:
+                    return new CaptainData();
 
                 case PieceType.SAMURAI:
                     return new SamuraiData();
