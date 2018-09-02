@@ -1,11 +1,16 @@
 ﻿using Data.Enums.Move;
 using Data.Enums.Piece;
+using Data.Enums.Piece.PostMove;
+using Data.Enums.Piece.PreMove;
+using Data.Piece.Map;
 using Data.Step.Piece.Capture;
 using Data.Step.Piece.Move;
 using ECS.EntityView.Piece;
 using Service.Piece.Find;
 using Svelto.ECS;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace ECS.Engine.Move
 {
@@ -38,7 +43,8 @@ namespace ECS.Engine.Move
             MoveState returnValue = MoveState.MOVE_PIECE;
 
             if (topPieceAtDestinationTile.HasValue
-                && topPieceAtDestinationTile.Value.PlayerOwner.PlayerColor != token.PieceToMove.PlayerOwner.PlayerColor)
+                && topPieceAtDestinationTile.Value.PlayerOwner.PlayerColor != token.PieceToMove.PlayerOwner.PlayerColor
+                && !TwoFileMoveViolatedByBetrayal(ref token))
             {
                 returnValue = topPieceAtDestinationTile.Value.Tier.Tier != 3
                         && token.PieceToMove.Piece.PieceType != PieceType.COMMANDER
@@ -46,6 +52,18 @@ namespace ECS.Engine.Move
             }
 
             return returnValue;
+        }
+
+        private bool TwoFileMoveViolatedByBetrayal(ref MovePieceStepState token)
+        {
+            List<PieceEV> towerPieces = pieceFindService.FindPiecesByLocation(token.DestinationTile.Location.Location, entitiesDB);
+            PieceEV pieceToMove = token.PieceToMove;
+
+            return towerPieces.Count > 0
+                && AbilityToPiece.HasAbility(PreMoveAbility.TWO_FILE_MOVE, token.PieceToMove.Piece.PieceType)
+                && AbilityToPiece.HasAbility(PostMoveAbility.BETRAYAL, token.PieceToMove.Piece.PieceType)
+                && towerPieces.Where(piece => piece.Piece.Back == pieceToMove.Piece.PieceType
+                    && piece.Piece.PieceType != pieceToMove.Piece.PieceType).ToList().Count > 0;
         }
 
         private void PerformNextAction(

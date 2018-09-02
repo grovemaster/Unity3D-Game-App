@@ -11,7 +11,7 @@ namespace Data.Piece.Back.Bronze
         {
             get
             {
-                return new List<PreMoveAbility>();
+                return new List<PreMoveAbility>(new PreMoveAbility[] { PreMoveAbility.TWO_FILE_MOVE });
             }
         }
 
@@ -19,7 +19,7 @@ namespace Data.Piece.Back.Bronze
         {
             get
             {
-                return new List<DropAbility>();
+                return new List<DropAbility>(new DropAbility[] { DropAbility.DOUBLE_FILE_DROP });
             }
         }
 

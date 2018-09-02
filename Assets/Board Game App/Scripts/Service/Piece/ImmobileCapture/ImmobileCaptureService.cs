@@ -44,7 +44,7 @@ namespace Service.Piece.ImmobileCapture
                     && CanImmobileCapture(currentTurn.TurnPlayer.PlayerColor, towerPieces[tierIndex - 1]))
                 {
                     totalNumImmobileCaptures++;
-                    if (!DoesImmobileCaptureResolveOrPreventCheck(towerPieces, tierIndex, entitiesDB))
+                    if (DoesImmobileCaptureResolveOrPreventCheck(towerPieces, tierIndex, entitiesDB))
                     {
                         validNumImmobileCaptures++;
                     }
