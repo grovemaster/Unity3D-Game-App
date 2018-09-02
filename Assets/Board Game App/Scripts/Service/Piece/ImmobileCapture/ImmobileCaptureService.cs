@@ -212,7 +212,6 @@ namespace Service.Piece.ImmobileCapture
         private PieceEV? TempImmobileCapture(List<PieceEV> towerPieces, int tierIndex, PlayerColor currentTurnColor, IEntitiesDB entitiesDB)
         {
             bool isBetrayalPossible = !IsFriendlyBetrayalTopOfTower(towerPieces, currentTurnColor, entitiesDB);
-            PieceEV pieceToStrike = towerPieces[tierIndex].PlayerOwner.PlayerColor == currentTurnColor ? towerPieces[tierIndex] : towerPieces[tierIndex - 1];
             PieceEV? pieceToCapture = towerPieces[tierIndex].PlayerOwner.PlayerColor == currentTurnColor ? towerPieces[tierIndex - 1] : towerPieces[tierIndex];
 
             pieceSetService.SetPieceLocationToHandLocation(pieceToCapture.Value, entitiesDB);
@@ -226,9 +225,6 @@ namespace Service.Piece.ImmobileCapture
                     pieceSetService.SetPieceLocationAndTier(towerPiece, towerPiece.Location.Location, currentTier++, entitiesDB);
                 }
             }
-
-            PieceEV topPiece = towerPieces[towerPieces.Count - 1].ID.entityID == pieceToCapture.Value.ID.entityID
-                ? towerPieces[towerPieces.Count - 2] : towerPieces[towerPieces.Count - 1];
 
             List<PieceEV> newTowerPieces = new List<PieceEV>(towerPieces);
             newTowerPieces.Sort(delegate (PieceEV p1, PieceEV p2)

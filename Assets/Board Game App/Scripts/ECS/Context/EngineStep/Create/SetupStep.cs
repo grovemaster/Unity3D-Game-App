@@ -6,6 +6,7 @@ using Data.Step.Modal;
 using Data.Step.Piece.Ability;
 using Data.Step.Piece.Ability.Betrayal;
 using Data.Step.Piece.Ability.ForcedRearrangement;
+using Data.Step.Piece.Ability.Substitution;
 using Data.Step.Piece.Capture;
 using Data.Step.Piece.Click;
 using Data.Step.Piece.Move;
@@ -73,6 +74,11 @@ namespace ECS.Context.EngineStep.Create
             steps.Add("captureStackModal", new IStep<CapturePieceStepState>[]
             {
                 (IStep<CapturePieceStepState>)engines["captureStackModal"]
+            });
+
+            steps.Add("substitutionModal", new IStep<SubstitutionStepState>[]
+            {
+                (IStep<SubstitutionStepState>)engines["substitutionModal"]
             });
 
             steps.Add("confirmModal", new IStep<ForcedRecoveryStepState>[]
@@ -158,6 +164,13 @@ namespace ECS.Context.EngineStep.Create
             steps.Add("gotoForcedRearrangement", new IStep<ForcedRecoveryStepState>[]
             {
                 (IStep<ForcedRecoveryStepState>)engines["gotoForcedRearrangement"]
+            });
+            #endregion
+
+            #region Substitution
+            steps.Add("substitution", new IStep<SubstitutionStepState>[]
+            {
+                (IStep<SubstitutionStepState>)engines["substitution"]
             });
             #endregion
 

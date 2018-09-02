@@ -1,6 +1,8 @@
 ﻿using Data.Enums.Modal;
 using Data.Enums.Move;
+using Data.Step.Piece.Ability.Substitution;
 using Data.Step.Piece.Capture;
+using Data.Step.Piece.Click;
 using Data.Step.Piece.Move;
 using ECS.EntityView.Board.Tile;
 using ECS.EntityView.Modal;
@@ -51,6 +53,12 @@ namespace ECS.Engine.Modal.CaptureStack
                 case ModalQuestionAnswer.STACK:
                     NextActionStack();
                     break;
+                case ModalQuestionAnswer.SUBSTITUTION:
+                    NextActionSubstitution();
+                    break;
+                case ModalQuestionAnswer.CLICK:
+                    NextActionClick();
+                    break;
                 default:
                     throw new InvalidOperationException("Unsupported ModalQuestionAnswer value");
             }
@@ -89,6 +97,35 @@ namespace ECS.Engine.Modal.CaptureStack
             captureStackModalAnswerSequence.Next(this, ref movePieceStepState, (int)MoveState.MOVE_PIECE);
         }
 
+        private void NextActionSubstitution()
+        {
+            ModalEV modal = modalService.FindModalEV(entitiesDB);
+            TileEV clickedTile = FindDestinationTile(modal);
+            PieceEV ninjaPiece = FindTopPiece(clickedTile);
+
+            var token = new SubstitutionStepState
+            {
+                SubstitutionPiece = ninjaPiece,
+                TileReferenceEV = clickedTile
+            };
+
+            captureStackModalAnswerSequence.Next(this, ref token, (int)MoveState.SUBSTITUTION);
+        }
+
+        private void NextActionClick()
+        {
+            ModalEV modal = modalService.FindModalEV(entitiesDB);
+            TileEV clickedTile = FindDestinationTile(modal);
+            PieceEV clickedPiece = FindTopPiece(clickedTile);
+
+            var token = new ClickPieceStepState
+            {
+                ClickedPiece = clickedPiece
+            };
+
+            captureStackModalAnswerSequence.Next(this, ref token, (int)MoveState.CLICK);
+        }
+
         private TileEV FindDestinationTile(ModalEV modal)
         {
             return tileService.FindTileEV(modal.CaptureOrStack.TileReferenceId, entitiesDB);
@@ -98,6 +135,12 @@ namespace ECS.Engine.Modal.CaptureStack
         {
             return pieceFindService.FindPieceEVById(
                 destinationTile.Tile.PieceRefEntityId.Value, entitiesDB).Value;
+        }
+
+        private PieceEV FindTopPiece(TileEV destinationTile)
+        {
+            return pieceFindService.FindTopPieceByLocation(
+                destinationTile.Location.Location, entitiesDB).Value;
         }
     }
 }

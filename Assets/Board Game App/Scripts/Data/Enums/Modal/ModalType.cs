@@ -5,6 +5,7 @@
         TOWER_3RD_TIER,
         CAPTURE_STACK,
         FRONT_BACK,
-        CONFIRM
+        CONFIRM,
+        SUBSTITUTION_CLICK
     }
 }

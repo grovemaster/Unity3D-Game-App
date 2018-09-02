@@ -4,6 +4,8 @@
     {
         MOVE_PIECE = 1,
         MOBILE_CAPTURE = 2,
-        CAPTURE_STACK_MODAL = 3
+        CAPTURE_STACK_MODAL = 3,
+        SUBSTITUTION = 4,
+        CLICK = 5
     }
 }

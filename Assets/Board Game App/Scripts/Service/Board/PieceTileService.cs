@@ -1,6 +1,7 @@
 ﻿using Data.Step.Board;
 using Scripts.Data.Board;
 using Service.Board.Tile;
+using Service.Check;
 using Service.Hand;
 using Service.Piece.Find;
 using Svelto.ECS;
@@ -9,6 +10,7 @@ namespace Service.Board
 {
     public class PieceTileService
     {
+        private CheckService checkService = new CheckService();
         private HandService handService = new HandService();
         private PieceFindService pieceFindService = new PieceFindService();
         private TileService tileService = new TileService();
@@ -62,6 +64,11 @@ namespace Service.Board
             }
 
             return returnValue;
+        }
+
+        public bool IsSubstitutionPossible(BoardPressStateInfo stateInfo, IEntitiesDB entitiesDB)
+        {
+            return checkService.IsSubstitutionPossible(stateInfo.piece, stateInfo.tile, entitiesDB);
         }
     }
 }

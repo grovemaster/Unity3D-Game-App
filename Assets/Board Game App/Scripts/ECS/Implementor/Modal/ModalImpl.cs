@@ -131,6 +131,13 @@ namespace ECS.Implementor.Modal
                     modalViewService.SetupButton(Button2, dropFrontBack, dropFrontBack.Front.ToString(), PieceSide.FRONT);
                     modalViewService.SetupButton(Button3, dropFrontBack, dropFrontBack.Back.ToString(), PieceSide.BACK);
                     break;
+                case ModalType.SUBSTITUTION_CLICK:
+                    SetTitle("Substitution or Click");
+                    SetQuestion("Substitution ability or click highlight?");
+                    modalViewService.DeactivateButton(Button1);
+                    modalViewService.SetupButton(Button2, questionAnswer, ModalQuestionAnswer.SUBSTITUTION);
+                    modalViewService.SetupButton(Button3, questionAnswer, ModalQuestionAnswer.CLICK);
+                    break;
                 default:
                     throw new InvalidOperationException("Unsupported ModalType");
             }

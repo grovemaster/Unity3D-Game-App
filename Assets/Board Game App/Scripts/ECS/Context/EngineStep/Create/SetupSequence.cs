@@ -76,7 +76,9 @@ namespace ECS.Context.EngineStep.Create
                             // Move piece or capture piece
                             { (int)BoardPress.MOVE_PIECE, steps["determineMoveType"] },
                             // Drop piece
-                            { (int)BoardPress.DROP, steps["preDropAbilities"] }
+                            { (int)BoardPress.DROP, steps["preDropAbilities"] },
+                            // Substitution Modal
+                            { (int)BoardPress.SUBSTITUTION, steps["substitutionModal"] }
                         }
                     },
                     {
@@ -196,6 +198,13 @@ namespace ECS.Context.EngineStep.Create
                         {
                             steps["forcedRearrangementCheck"]
                         }
+                    },
+                    {
+                        engines["substitution"],
+                        new To
+                        {
+                            steps["turnEnd"]
+                        }
                     }
                 });
         }
@@ -266,6 +275,8 @@ namespace ECS.Context.EngineStep.Create
                         {
                             { (int)MoveState.MOVE_PIECE, steps["movePiece"] },
                             { (int)MoveState.MOBILE_CAPTURE, steps["capturePiece"] },
+                            { (int)MoveState.SUBSTITUTION, steps["substitution"] },
+                            { (int)MoveState.CLICK, steps["determineClickType"] }
                         }
                     }
                 });

@@ -1,6 +1,7 @@
 ﻿using Data.Enums;
 using Data.Step.Board;
 using Data.Step.Drop;
+using Data.Step.Piece.Ability.Substitution;
 using Data.Step.Piece.Click;
 using Data.Step.Piece.Move;
 using ECS.EntityView.Board.Tile;
@@ -38,9 +39,10 @@ namespace ECS.Engine.Board
             ConstraintCheck(ref token);
 
             BoardPressStateInfo stateInfo = pieceTileService.FindBoardPressStateInfo(entitiesDB, ref token);
+            bool substitutionPossible = pieceTileService.IsSubstitutionPossible(stateInfo, entitiesDB);
             TurnEV currentTurn = turnService.GetCurrentTurnEV(entitiesDB);
 
-            BoardPress action = boardPressService.DecideAction(stateInfo, currentTurn);
+            BoardPress action = boardPressService.DecideAction(stateInfo, substitutionPossible, currentTurn);
             ExecuteNextAction(action, stateInfo);
         }
 
@@ -66,6 +68,9 @@ namespace ECS.Engine.Board
                     break;
                 case BoardPress.DROP:
                     NextActionDropPiece(stateInfo.handPiece.Value, stateInfo.tile.Value);
+                    break;
+                case BoardPress.SUBSTITUTION:
+                    NextActionSubstitution(stateInfo.piece.Value, stateInfo.tile.Value);
                     break;
                 case BoardPress.NOTHING:
                     break;
@@ -105,6 +110,17 @@ namespace ECS.Engine.Board
             };
 
             boardPressSequence.Next(this, ref dropInfo, (int)BoardPress.DROP);
+        }
+
+        private void NextActionSubstitution(PieceEV piece, TileEV tile)
+        {
+            var substitutionToken = new SubstitutionStepState
+            {
+                SubstitutionPiece = piece,
+                TileReferenceEV = tile
+            };
+
+            boardPressSequence.Next(this, ref substitutionToken, (int)BoardPress.SUBSTITUTION);
         }
     }
 }

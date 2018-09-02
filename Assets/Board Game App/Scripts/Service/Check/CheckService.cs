@@ -1,8 +1,10 @@
 ﻿using Data.Enums.Piece;
+using Data.Enums.Piece.OtherMove;
 using Data.Enums.Piece.PostMove;
 using Data.Enums.Piece.Side;
 using Data.Enums.Player;
 using Data.Piece.Map;
+using ECS.EntityView.Board.Tile;
 using ECS.EntityView.Piece;
 using ECS.EntityView.Turn;
 using Service.Board;
@@ -22,6 +24,7 @@ namespace Service.Check
         private PieceFindService pieceFindService = new PieceFindService();
         private PieceSetService pieceSetService = new PieceSetService();
         private DestinationTileService destinationTileService = new DestinationTileService();
+        private TurnService turnService = new TurnService();
 
         public int CalcNumCommanderThreats(PlayerColor commanderColor, IEntitiesDB entitiesDB)
         {
@@ -124,6 +127,66 @@ namespace Service.Check
         public bool IsForcedRearrangementPossible(PieceEV forcedRearrangementPiece)
         {
             return AbilityToPiece.HasAbility(PostMoveAbility.FORCED_REARRANGEMENT, forcedRearrangementPiece.Piece.PieceType);
+        }
+        #endregion
+
+        #region Substitution
+        public bool IsSubstitutionPossible(PieceEV? clickedPiece, TileEV? clickedTile, IEntitiesDB entitiesDB)
+        {
+            // Remember, Commander cannot run to Samurai during check, b/c that's a violation of a different rule
+            /* Conditions:
+             *      piece clicked
+             *      not a destination tile (user is clicking this piece to access substitution ability or click-highlight it)
+             *      commander in check
+             *      samurai (has substitution ability)
+             *      piece is topOfTower
+             *      piece tier == 1
+             *      piece is adjacent to Commander vertically or horizontally
+             *      substitution would resolve check
+             */
+
+            TurnEV currentTurn = turnService.GetCurrentTurnEV(entitiesDB);
+            PieceEV commander = pieceFindService.FindCommander(currentTurn.TurnPlayer.PlayerColor, entitiesDB);
+
+            return currentTurn.Check.CommanderInCheck
+                && clickedPiece.HasValue
+                && clickedTile.HasValue
+                && (!clickedTile.Value.Tile.PieceRefEntityId.HasValue || clickedTile.Value.Tile.PieceRefEntityId.Value == 0)
+                && AbilityToPiece.HasAbility(OtherMoveAbility.SUBSTITUTION, clickedPiece.Value.Piece.PieceType)
+                && clickedPiece.Value.Tier.Tier == 1
+                && clickedPiece.Value.Tier.TopOfTower
+                && IsAdjacentLocationToCommander(clickedPiece.Value, commander)
+                && DoesSubstitutionResolveCheck(clickedPiece.Value, commander, entitiesDB);
+        }
+
+        private bool IsAdjacentLocationToCommander(PieceEV piece, PieceEV commander)
+        {
+            return (piece.Location.Location.x == commander.Location.Location.x || piece.Location.Location.y == commander.Location.Location.y)
+                && (Math.Abs(piece.Location.Location.x - commander.Location.Location.x) == 1 || Math.Abs(piece.Location.Location.y - commander.Location.Location.y) == 1);
+        }
+
+        private bool DoesSubstitutionResolveCheck(PieceEV ninja, PieceEV commander, IEntitiesDB entitiesDB)
+        {
+            Vector2 commanderLocation = new Vector2(commander.Location.Location.x, commander.Location.Location.y);
+            int commanderTier = commander.Tier.Tier;
+            bool commanderTopOfTower = commander.Tier.TopOfTower;
+
+            pieceSetService.SetPieceLocationAndTier(commander, ninja.Location.Location, ninja.Tier.Tier, entitiesDB);
+            pieceSetService.SetTopOfTower(commander, entitiesDB, ninja.Tier.TopOfTower);
+
+            pieceSetService.SetPieceLocationAndTier(ninja, commanderLocation, commanderTier, entitiesDB);
+            pieceSetService.SetTopOfTower(ninja, entitiesDB, commanderTopOfTower);
+
+            // Make check
+            bool returnValue = !IsCommanderInCheck(commander.PlayerOwner.PlayerColor, entitiesDB);
+
+            pieceSetService.SetPieceLocationAndTier(ninja, commander.Location.Location, commander.Tier.Tier, entitiesDB);
+            pieceSetService.SetTopOfTower(ninja, entitiesDB, commander.Tier.TopOfTower);
+
+            pieceSetService.SetPieceLocationAndTier(commander, commanderLocation, commanderTier, entitiesDB);
+            pieceSetService.SetTopOfTower(commander, entitiesDB, commanderTopOfTower);
+
+            return returnValue;
         }
         #endregion
 

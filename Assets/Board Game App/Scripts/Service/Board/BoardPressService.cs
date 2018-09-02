@@ -7,7 +7,10 @@ namespace Service.Board
 {
     public class BoardPressService
     {
-        public BoardPress DecideAction(BoardPressStateInfo stateInfo, TurnEV currentTurn)
+        public BoardPress DecideAction(
+            BoardPressStateInfo stateInfo,
+            bool substitutionPossible,
+            TurnEV currentTurn)
         {
             BoardPress returnValue = BoardPress.NOTHING;
             TileEV tileEV = stateInfo.tile.Value;
@@ -18,6 +21,10 @@ namespace Service.Board
             if (stateInfo.handPiece.HasValue)
             {
                 returnValue = BoardPress.DROP;
+            }
+            else if (substitutionPossible)
+            {
+                returnValue = BoardPress.SUBSTITUTION;
             }
             // Tile is clicked, tile highlighted, piece reference exists; move vs mobile capture determined in later engine
             else if (tileEV.Highlight.IsHighlighted

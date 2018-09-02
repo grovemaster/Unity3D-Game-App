@@ -7,6 +7,7 @@ using ECS.Engine.Hand;
 using ECS.Engine.Hand.Highlight;
 using ECS.Engine.Modal;
 using ECS.Engine.Modal.CaptureStack;
+using ECS.Engine.Modal.CaptureStack.Substitution;
 using ECS.Engine.Modal.Confirm;
 using ECS.Engine.Modal.Drop;
 using ECS.Engine.Modal.ImmobileCapture;
@@ -17,6 +18,7 @@ using ECS.Engine.Piece.Ability.Determine;
 using ECS.Engine.Piece.Ability.Drop;
 using ECS.Engine.Piece.Ability.ForcedRearrangement;
 using ECS.Engine.Piece.Ability.ForcedRecovery;
+using ECS.Engine.Piece.Ability.Substitution;
 using ECS.Engine.Piece.Capture;
 using ECS.Engine.Piece.Click;
 using ECS.Engine.Piece.Move;
@@ -84,6 +86,8 @@ namespace ECS.Context.EngineStep.Create
             engines.Add("forcedRearrangementAbility", new ForcedRearrangementAbilityEngine(sequences["boardPress"]));
             engines.Add("gotoForcedRearrangement", new GotoForcedRearrangementEngine(sequences["boardPress"]));
 
+            engines.Add("substitution", new SubstitutionEngine(sequences["boardPress"]));
+
             engines.Add("betrayal", new BetrayalEngine(sequences["boardPress"]));
 
             engines.Add("determineClickType", new DetermineClickTypeEngine(sequences["boardPress"]));
@@ -97,6 +101,7 @@ namespace ECS.Context.EngineStep.Create
 
             engines.Add("captureStackModal", new CaptureStackModalEngine());
             engines.Add("captureStackModalAnswer", new CaptureStackModalAnswerEngine(sequences["captureStackModalAnswer"]));
+            engines.Add("substitutionModal", new SubstitutionModalEngine());
 
             engines.Add("designateImmobileCapture", new DesignateImmobileCaptureEngine());
             engines.Add("immobileCapture", new ImmobileCaptureEngine());
@@ -143,6 +148,8 @@ namespace ECS.Context.EngineStep.Create
             enginesRoot.AddEngine(engines["forcedRearrangementAbility"]);
             enginesRoot.AddEngine(engines["gotoForcedRearrangement"]);
 
+            enginesRoot.AddEngine(engines["substitution"]);
+
             enginesRoot.AddEngine(engines["betrayal"]);
 
             enginesRoot.AddEngine(engines["determineClickType"]);
@@ -156,6 +163,7 @@ namespace ECS.Context.EngineStep.Create
 
             enginesRoot.AddEngine(engines["captureStackModal"]);
             enginesRoot.AddEngine(engines["captureStackModalAnswer"]);
+            enginesRoot.AddEngine(engines["substitutionModal"]);
 
             enginesRoot.AddEngine(engines["designateImmobileCapture"]);
             enginesRoot.AddEngine(engines["immobileCapture"]);
