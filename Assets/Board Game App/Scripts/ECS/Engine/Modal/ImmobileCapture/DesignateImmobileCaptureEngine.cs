@@ -41,6 +41,7 @@ namespace ECS.Engine.Modal.ImmobileCapture
 
             // TODO I think this logic is unnecessary, but I'm too scared to remove it now (all handled in TowerModalEngine).  Later refactor.
             bool noTier1CheckViolationsExist = immobileCaptureService.NoTier1CheckViolationsExist(piecesAtLocation, entitiesDB);
+            bool noTier3BetrayalTwoFileMoveViolationsExist = immobileCaptureService.NoTier3BetrayalTwoFileMoveViolationsExist(piecesAtLocation, entitiesDB);
 
             entitiesDB.ExecuteOnEntity(
                 modal.ID,
@@ -58,8 +59,9 @@ namespace ECS.Engine.Modal.ImmobileCapture
 
                     if (pieceTier3.HasValue)
                     {
-                        modalToChange.Tier3.Enabled = pieceTier3.Value.PlayerOwner.PlayerColor == colorToEnable
-                        && pieceTier3.Value.PlayerOwner.PlayerColor != pieceTier2.PlayerOwner.PlayerColor;
+                        modalToChange.Tier3.Enabled = noTier3BetrayalTwoFileMoveViolationsExist
+                            && pieceTier3.Value.PlayerOwner.PlayerColor == colorToEnable
+                            && pieceTier3.Value.PlayerOwner.PlayerColor != pieceTier2.PlayerOwner.PlayerColor;
                     }
                     else
                     {

@@ -1,4 +1,5 @@
 ﻿using Data.Check.PreviousMove;
+using Data.Constants.Board;
 using Data.Enums.Piece.PostMove;
 using Data.Enums.Piece.PreMove;
 using Data.Enums.Piece.Side;
@@ -12,6 +13,7 @@ using Service.Piece.Set;
 using Service.Turn;
 using Svelto.ECS;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Service.Piece.ImmobileCapture
@@ -71,6 +73,30 @@ namespace Service.Piece.ImmobileCapture
             return !IsTowerEFEOrFEE(towerPieces, currentTurn.TurnPlayer.PlayerColor)
                 || !checkService.DoesLowerTierThreatenCommander(
                     commander, towerPieces[towerPieces.Count - 1], towerPieces[towerPieces.Count - 2], towerPieces, entitiesDB);
+        }
+
+        public bool NoTier3BetrayalTwoFileMoveViolationsExist(List<PieceEV> towerPieces, IEntitiesDB entitiesDB)
+        {
+            if (towerPieces.Count < 3)
+            {
+                return true;
+            }
+
+            bool returnValue = true;
+            TurnEV currentTurn = turnService.GetCurrentTurnEV(entitiesDB);
+
+            if (towerPieces[2].PlayerOwner.PlayerColor != towerPieces[1].PlayerOwner.PlayerColor
+                    // Also ensure piece that strikes is capable of immobile capture
+                    && CanImmobileCapture(currentTurn.TurnPlayer.PlayerColor, towerPieces[2])
+                    && CanImmobileCapture(currentTurn.TurnPlayer.PlayerColor, towerPieces[1]))
+            {
+                if (!DoesImmobileCaptureResolveOrPreventCheck(towerPieces, 2, entitiesDB))
+                {
+                    returnValue = false;
+                }
+            }
+
+            return returnValue;
         }
         #endregion
 
@@ -165,47 +191,60 @@ namespace Service.Piece.ImmobileCapture
             TurnEV currentTurn = turnService.GetCurrentTurnEV(entitiesDB);
             PieceEV commander = pieceFindService.FindCommander(currentTurn.TurnPlayer.PlayerColor, entitiesDB);
 
-            PieceEV capturedPiece = TempImmobileCapture(
+            PieceEV? capturedPiece = TempImmobileCapture(
                 towerPieces, tierIndex, currentTurn.TurnPlayer.PlayerColor, entitiesDB);
 
-            returnValue = !checkService.IsCommanderInCheck(currentTurn.TurnPlayer.PlayerColor, entitiesDB);
-
-            if (!returnValue && checkService.IsForcedRearrangementPossible(capturedPiece))
+            // Betrayal did not cause two file move violation
+            if (capturedPiece.HasValue)
             {
-                returnValue = DoesForcedRearrangementResolveOrPreventCheck(capturedPiece, commander, towerPieces, entitiesDB);
+                returnValue = !checkService.IsCommanderInCheck(currentTurn.TurnPlayer.PlayerColor, entitiesDB);
+
+                if (!returnValue && checkService.IsForcedRearrangementPossible(capturedPiece.Value))
+                {
+                    returnValue = DoesForcedRearrangementResolveOrPreventCheck(capturedPiece.Value, commander, towerPieces, entitiesDB);
+                }
             }
 
             RestorePreviousState(previousState, entitiesDB);
             return returnValue;
         }
 
-        private PieceEV TempImmobileCapture(List<PieceEV> towerPieces, int tierIndex, PlayerColor currentTurnColor, IEntitiesDB entitiesDB)
+        private PieceEV? TempImmobileCapture(List<PieceEV> towerPieces, int tierIndex, PlayerColor currentTurnColor, IEntitiesDB entitiesDB)
         {
             bool isBetrayalPossible = !IsFriendlyBetrayalTopOfTower(towerPieces, currentTurnColor, entitiesDB);
             PieceEV pieceToStrike = towerPieces[tierIndex].PlayerOwner.PlayerColor == currentTurnColor ? towerPieces[tierIndex] : towerPieces[tierIndex - 1];
-            PieceEV pieceToCapture = towerPieces[tierIndex].PlayerOwner.PlayerColor == currentTurnColor ? towerPieces[tierIndex - 1] : towerPieces[tierIndex];
+            PieceEV? pieceToCapture = towerPieces[tierIndex].PlayerOwner.PlayerColor == currentTurnColor ? towerPieces[tierIndex - 1] : towerPieces[tierIndex];
 
-            pieceSetService.SetPieceLocationToHandLocation(pieceToCapture, entitiesDB);
+            pieceSetService.SetPieceLocationToHandLocation(pieceToCapture.Value, entitiesDB);
             pieceSetService.SetTopOfTowerToFalse(pieceToCapture, entitiesDB);
 
             int currentTier = 1;
             foreach (PieceEV towerPiece in towerPieces)
             {
-                if (towerPiece.ID.entityID != pieceToCapture.ID.entityID)
+                if (towerPiece.ID.entityID != pieceToCapture.Value.ID.entityID)
                 {
                     pieceSetService.SetPieceLocationAndTier(towerPiece, towerPiece.Location.Location, currentTier++, entitiesDB);
                 }
             }
 
-            PieceEV topPiece = towerPieces[towerPieces.Count - 1].ID.entityID == pieceToCapture.ID.entityID
+            PieceEV topPiece = towerPieces[towerPieces.Count - 1].ID.entityID == pieceToCapture.Value.ID.entityID
                 ? towerPieces[towerPieces.Count - 2] : towerPieces[towerPieces.Count - 1];
 
-            isBetrayalPossible = isBetrayalPossible && IsFriendlyBetrayalTopOfTower(towerPieces, currentTurnColor, entitiesDB);
+            List<PieceEV> newTowerPieces = new List<PieceEV>(towerPieces);
+            newTowerPieces.Sort(delegate (PieceEV p1, PieceEV p2)
+            { return p1.Tier.Tier.CompareTo(p2.Tier.Tier); });
+
+            isBetrayalPossible = isBetrayalPossible && IsFriendlyBetrayalTopOfTower(newTowerPieces, currentTurnColor, entitiesDB);
 
             if (isBetrayalPossible)
             {
                 // If friendly betrayal piece becomes topOfTower, by deduction, it's the pieceToStrike
                 BetrayalEffectOnTower(towerPieces, currentTurnColor, entitiesDB);
+
+                if (TwoFileMoveViolated(towerPieces, currentTurnColor))
+                {
+                    pieceToCapture = null;
+                }
             }
 
             return pieceToCapture;
@@ -221,6 +260,15 @@ namespace Service.Piece.ImmobileCapture
                     pieceSetService.SetPieceSide(piece, piece.Piece.PieceType == piece.Piece.Front ? PieceSide.BACK : PieceSide.FRONT, entitiesDB);
                 }
             }
+        }
+
+        private bool TwoFileMoveViolated(List<PieceEV> towerPieces, PlayerColor currentTurnColor)
+        {
+            // 2+ Friendly Bronze pieces in the tower counts as a violation
+            return towerPieces.Where(piece => piece.PlayerOwner.PlayerColor == currentTurnColor
+                && piece.Location.Location != BoardConst.HAND_LOCATION
+                && AbilityToPiece.HasAbility(PreMoveAbility.TWO_FILE_MOVE, piece.Piece.PieceType))
+                .ToList().Count > 1;
         }
     }
 }

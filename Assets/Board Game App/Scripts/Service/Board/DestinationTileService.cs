@@ -358,12 +358,12 @@ namespace Service.Board
         }
 
         /**
-         * If pieceEV has betrayal and two file drop (Bronze), deny all destination tiles with another friendly piece
+         * If pieceEV has betrayal and two file move (Bronze), deny all destination tiles with another friendly piece
          * with same abilities (Bronze)
          * 
          * Also, deny destination if it has an enemy tier 3 tower with a buried enemy pawn
          *      Reason is capture would be mandatory, triggering betrayal, flipping buried enemy pawn into friendly
-         *      bronze, thus violating two file drop
+         *      bronze, thus violating two file move
          */
         private void ExcludeTwoFileMoveViolations(
             PieceEV pieceEV, List<Vector2> destinations, List<PieceEV> allPieces)
