@@ -277,6 +277,7 @@ namespace Service.Board
             AdjustRawDataWithPieceLocationAndDirection(pieceEV, destinations);
             ExcludeOutOfBoard(destinations);
             ExcludeDestinationsWithFriendlyTier3Tower(pieceEV, destinations, allPieces);
+            ExcludeTwoFileMoveViolations(pieceEV, destinations, allPieces);
         }
 
         #region Line
@@ -347,6 +348,56 @@ namespace Service.Board
                 if (HasFriendlyTier3Tower(pieceToCalc, destination, allPieces))
                 {
                     destinationsToRemove.Add(destination);
+                }
+            }
+
+            foreach (Vector2 removeDestination in destinationsToRemove)
+            {
+                destinations.Remove(removeDestination);
+            }
+        }
+
+        /**
+         * If pieceEV has betrayal and two file drop (Bronze), deny all destination tiles with another friendly piece
+         * with same abilities (Bronze)
+         * 
+         * Also, deny destination if it has an enemy tier 3 tower with a buried enemy pawn
+         *      Reason is capture would be mandatory, triggering betrayal, flipping buried enemy pawn into friendly
+         *      bronze, thus violating two file drop
+         */
+        private void ExcludeTwoFileMoveViolations(
+            PieceEV pieceEV, List<Vector2> destinations, List<PieceEV> allPieces)
+        {
+            // Only care about Bronze pieces, which only have Single move sets
+            if (!AbilityToPiece.HasAbility(PostMoveAbility.BETRAYAL, pieceEV.Piece.PieceType)
+                || !AbilityToPiece.HasAbility(PreMoveAbility.TWO_FILE_MOVE, pieceEV.Piece.PieceType))
+            {
+                return;
+            }
+
+            List<Vector2> destinationsToRemove = new List<Vector2>();
+            List<PieceEV> otherPiecesOfSameType = allPieces.Where(piece => piece.Piece.PieceType == pieceEV.Piece.PieceType
+                && piece.PlayerOwner.PlayerColor == pieceEV.PlayerOwner.PlayerColor
+                && piece.ID.entityID != pieceEV.ID.entityID).ToList();
+
+            foreach(Vector2 destination in destinations)
+            {
+                if (otherPiecesOfSameType.Where(piece => piece.Location.Location.x == destination.x).ToList().Count > 0)
+                {
+                    destinationsToRemove.Add(destination);
+                }
+                else
+                {
+                    List<PieceEV> destinationPieces = allPieces.Where(piece => piece.Location.Location == destination).ToList();
+                    destinationPieces.Sort(delegate (PieceEV p1, PieceEV p2)
+                    { return p1.Tier.Tier.CompareTo(p2.Tier.Tier); });
+
+                    if (destinationPieces.Count == 3 && destinationPieces[2].PlayerOwner.PlayerColor != pieceEV.PlayerOwner.PlayerColor
+                        && ((destinationPieces[0].Piece.PieceType != pieceEV.Piece.PieceType && destinationPieces[0].Piece.Back == pieceEV.Piece.PieceType)
+                        || (destinationPieces[0].Piece.PieceType != pieceEV.Piece.PieceType && destinationPieces[0].Piece.Back == pieceEV.Piece.PieceType)))
+                    {
+                        destinationsToRemove.Add(destination);
+                    }
                 }
             }
 
