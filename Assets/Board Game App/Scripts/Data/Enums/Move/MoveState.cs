@@ -6,6 +6,7 @@
         MOBILE_CAPTURE = 2,
         CAPTURE_STACK_MODAL = 3,
         SUBSTITUTION = 4,
-        CLICK = 5
+        TIER_1_3_EXCHANGE = 5,
+        CLICK = 6
     }
 }

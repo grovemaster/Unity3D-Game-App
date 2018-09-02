@@ -12,7 +12,7 @@ namespace Data.Piece.Front.Fortress
         {
             get
             {
-                return null;
+                return OtherMoveAbility.CANNOT_TIER_3_EXCHANGE;
             }
         }
 

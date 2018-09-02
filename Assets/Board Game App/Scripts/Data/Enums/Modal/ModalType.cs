@@ -6,6 +6,7 @@
         CAPTURE_STACK,
         FRONT_BACK,
         CONFIRM,
-        SUBSTITUTION_CLICK
+        SUBSTITUTION_CLICK,
+        TIER_1_3_EXCHANGE_CLICK
     }
 }

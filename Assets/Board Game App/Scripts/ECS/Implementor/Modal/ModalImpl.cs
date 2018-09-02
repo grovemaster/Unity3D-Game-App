@@ -138,6 +138,13 @@ namespace ECS.Implementor.Modal
                     modalViewService.SetupButton(Button2, questionAnswer, ModalQuestionAnswer.SUBSTITUTION);
                     modalViewService.SetupButton(Button3, questionAnswer, ModalQuestionAnswer.CLICK);
                     break;
+                case ModalType.TIER_1_3_EXCHANGE_CLICK:
+                    SetTitle("1-3 Tier Exchange or Click");
+                    SetQuestion("1-3 Tier Exchange ability or click highlight?");
+                    modalViewService.DeactivateButton(Button1);
+                    modalViewService.SetupButton(Button2, questionAnswer, ModalQuestionAnswer.TIER_1_3_EXCHANGE);
+                    modalViewService.SetupButton(Button3, questionAnswer, ModalQuestionAnswer.CLICK);
+                    break;
                 default:
                     throw new InvalidOperationException("Unsupported ModalType");
             }

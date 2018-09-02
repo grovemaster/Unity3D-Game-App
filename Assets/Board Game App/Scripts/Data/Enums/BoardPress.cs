@@ -6,6 +6,7 @@
         CLICK_HIGHLIGHT = 1,
         MOVE_PIECE = 2,
         DROP = 3,
-        SUBSTITUTION = 4
+        SUBSTITUTION = 4,
+        TIER_1_3_EXCHANGE = 5
     }
 }

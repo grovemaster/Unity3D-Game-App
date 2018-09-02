@@ -10,6 +10,7 @@ namespace Service.Board
         public BoardPress DecideAction(
             BoardPressStateInfo stateInfo,
             bool substitutionPossible,
+            bool tierExchangePossible,
             TurnEV currentTurn)
         {
             BoardPress returnValue = BoardPress.NOTHING;
@@ -25,6 +26,10 @@ namespace Service.Board
             else if (substitutionPossible)
             {
                 returnValue = BoardPress.SUBSTITUTION;
+            }
+            else if (tierExchangePossible)
+            {
+                returnValue = BoardPress.TIER_1_3_EXCHANGE;
             }
             // Tile is clicked, tile highlighted, piece reference exists; move vs mobile capture determined in later engine
             else if (tileEV.Highlight.IsHighlighted

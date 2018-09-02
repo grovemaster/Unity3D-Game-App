@@ -1,9 +1,17 @@
-﻿using Data.Step.Board;
+﻿using System;
+using System.Collections.Generic;
+using Data.Enums.Piece.OtherMove;
+using Data.Enums.Player;
+using Data.Piece.Map;
+using Data.Step.Board;
+using ECS.EntityView.Piece;
+using ECS.EntityView.Turn;
 using Scripts.Data.Board;
 using Service.Board.Tile;
 using Service.Check;
 using Service.Hand;
 using Service.Piece.Find;
+using Service.Turn;
 using Svelto.ECS;
 
 namespace Service.Board
@@ -14,6 +22,7 @@ namespace Service.Board
         private HandService handService = new HandService();
         private PieceFindService pieceFindService = new PieceFindService();
         private TileService tileService = new TileService();
+        private TurnService turnService = new TurnService();
 
         public BoardPressStateInfo FindBoardPressStateInfo(IEntitiesDB entitiesDB, ref BoardPressStepState token)
         {
@@ -69,6 +78,28 @@ namespace Service.Board
         public bool IsSubstitutionPossible(BoardPressStateInfo stateInfo, IEntitiesDB entitiesDB)
         {
             return checkService.IsSubstitutionPossible(stateInfo.piece, stateInfo.tile, entitiesDB);
+        }
+
+        public bool IsTierExchangePossible(BoardPressStateInfo stateInfo, IEntitiesDB entitiesDB)
+        {
+            if (!stateInfo.tile.HasValue)
+            {
+                return false;
+            }
+
+            TurnEV currentTurn = turnService.GetCurrentTurnEV(entitiesDB);
+            List<PieceEV> towerPieces = pieceFindService.FindPiecesByLocation(stateInfo.tile.Value.Location.Location, entitiesDB);
+
+            return IsTier3ExchangePossible(towerPieces, currentTurn.TurnPlayer.PlayerColor);
+        }
+
+        private bool IsTier3ExchangePossible(List<PieceEV> towerPieces, PlayerColor currentTurnColor)
+        {
+            return towerPieces.Count == 3
+                && AbilityToPiece.HasAbility(OtherMoveAbility.TIER_3_EXCHANGE, towerPieces[2].Piece.PieceType)
+                && towerPieces[2].PlayerOwner.PlayerColor == currentTurnColor
+                && towerPieces[0].PlayerOwner.PlayerColor == currentTurnColor
+                && !AbilityToPiece.HasAbility(OtherMoveAbility.CANNOT_TIER_3_EXCHANGE, towerPieces[0].Piece.PieceType);
         }
     }
 }

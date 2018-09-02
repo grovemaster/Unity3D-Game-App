@@ -1,6 +1,7 @@
 ﻿using Data.Enums.Modal;
 using Data.Enums.Move;
 using Data.Step.Piece.Ability.Substitution;
+using Data.Step.Piece.Ability.TierExchange;
 using Data.Step.Piece.Capture;
 using Data.Step.Piece.Click;
 using Data.Step.Piece.Move;
@@ -56,6 +57,9 @@ namespace ECS.Engine.Modal.CaptureStack
                 case ModalQuestionAnswer.SUBSTITUTION:
                     NextActionSubstitution();
                     break;
+                case ModalQuestionAnswer.TIER_1_3_EXCHANGE:
+                    NextActionTierExchange();
+                    break;
                 case ModalQuestionAnswer.CLICK:
                     NextActionClick();
                     break;
@@ -110,6 +114,19 @@ namespace ECS.Engine.Modal.CaptureStack
             };
 
             captureStackModalAnswerSequence.Next(this, ref token, (int)MoveState.SUBSTITUTION);
+        }
+
+        private void NextActionTierExchange()
+        {
+            ModalEV modal = modalService.FindModalEV(entitiesDB);
+            TileEV clickedTile = FindDestinationTile(modal);
+
+            var token = new TierExchangeStepState
+            {
+                ReferenceTile = clickedTile
+            };
+
+            captureStackModalAnswerSequence.Next(this, ref token, (int)MoveState.TIER_1_3_EXCHANGE);
         }
 
         private void NextActionClick()

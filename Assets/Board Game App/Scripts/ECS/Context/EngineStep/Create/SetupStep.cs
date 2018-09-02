@@ -7,6 +7,7 @@ using Data.Step.Piece.Ability;
 using Data.Step.Piece.Ability.Betrayal;
 using Data.Step.Piece.Ability.ForcedRearrangement;
 using Data.Step.Piece.Ability.Substitution;
+using Data.Step.Piece.Ability.TierExchange;
 using Data.Step.Piece.Capture;
 using Data.Step.Piece.Click;
 using Data.Step.Piece.Move;
@@ -79,6 +80,11 @@ namespace ECS.Context.EngineStep.Create
             steps.Add("substitutionModal", new IStep<SubstitutionStepState>[]
             {
                 (IStep<SubstitutionStepState>)engines["substitutionModal"]
+            });
+
+            steps.Add("tierExchangeModal", new IStep<TierExchangeStepState>[]
+            {
+                (IStep<TierExchangeStepState>)engines["tierExchangeModal"]
             });
 
             steps.Add("confirmModal", new IStep<ForcedRecoveryStepState>[]
@@ -171,6 +177,13 @@ namespace ECS.Context.EngineStep.Create
             steps.Add("substitution", new IStep<SubstitutionStepState>[]
             {
                 (IStep<SubstitutionStepState>)engines["substitution"]
+            });
+            #endregion
+
+            #region Tier Exchange
+            steps.Add("tierExchange", new IStep<TierExchangeStepState>[]
+            {
+                (IStep<TierExchangeStepState>)engines["tierExchange"]
             });
             #endregion
 

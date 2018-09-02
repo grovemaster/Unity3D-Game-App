@@ -2,6 +2,8 @@
 {
     public enum OtherMoveAbility
     {
-        SUBSTITUTION
+        CANNOT_TIER_3_EXCHANGE,
+        SUBSTITUTION,
+        TIER_3_EXCHANGE
     }
 }

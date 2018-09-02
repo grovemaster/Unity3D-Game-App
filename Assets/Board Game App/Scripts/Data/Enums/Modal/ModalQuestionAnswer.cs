@@ -1,4 +1,11 @@
 ﻿namespace Data.Enums.Modal
 {
-    public enum ModalQuestionAnswer { CAPTURE, STACK, CLICK, SUBSTITUTION }
+    public enum ModalQuestionAnswer
+    {
+        CAPTURE,
+        STACK,
+        CLICK,
+        SUBSTITUTION,
+        TIER_1_3_EXCHANGE
+    }
 }

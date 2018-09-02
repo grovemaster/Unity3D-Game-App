@@ -2,6 +2,7 @@
 using Data.Step.Board;
 using Data.Step.Drop;
 using Data.Step.Piece.Ability.Substitution;
+using Data.Step.Piece.Ability.TierExchange;
 using Data.Step.Piece.Click;
 using Data.Step.Piece.Move;
 using ECS.EntityView.Board.Tile;
@@ -40,9 +41,14 @@ namespace ECS.Engine.Board
 
             BoardPressStateInfo stateInfo = pieceTileService.FindBoardPressStateInfo(entitiesDB, ref token);
             bool substitutionPossible = pieceTileService.IsSubstitutionPossible(stateInfo, entitiesDB);
+            bool tierExchangePossible = pieceTileService.IsTierExchangePossible(stateInfo, entitiesDB);
             TurnEV currentTurn = turnService.GetCurrentTurnEV(entitiesDB);
 
-            BoardPress action = boardPressService.DecideAction(stateInfo, substitutionPossible, currentTurn);
+            BoardPress action = boardPressService.DecideAction(
+                stateInfo,
+                substitutionPossible,
+                tierExchangePossible,
+                currentTurn);
             ExecuteNextAction(action, stateInfo);
         }
 
@@ -71,6 +77,9 @@ namespace ECS.Engine.Board
                     break;
                 case BoardPress.SUBSTITUTION:
                     NextActionSubstitution(stateInfo.piece.Value, stateInfo.tile.Value);
+                    break;
+                case BoardPress.TIER_1_3_EXCHANGE:
+                    NextActionTierExchange(stateInfo.tile.Value);
                     break;
                 case BoardPress.NOTHING:
                     break;
@@ -121,6 +130,16 @@ namespace ECS.Engine.Board
             };
 
             boardPressSequence.Next(this, ref substitutionToken, (int)BoardPress.SUBSTITUTION);
+        }
+
+        private void NextActionTierExchange(TileEV tile)
+        {
+            var tierExchangeToken = new TierExchangeStepState
+            {
+                ReferenceTile = tile
+            };
+
+            boardPressSequence.Next(this, ref tierExchangeToken, (int)BoardPress.TIER_1_3_EXCHANGE);
         }
     }
 }

@@ -12,7 +12,7 @@ namespace Data.Piece.Front.Commander
         {
             get
             {
-                return null;
+                return OtherMoveAbility.TIER_3_EXCHANGE;
             }
         }
 
