@@ -62,8 +62,8 @@ namespace ECS.Engine.Move
             return towerPieces.Count > 0
                 && AbilityToPiece.HasAbility(PreMoveAbility.TWO_FILE_MOVE, token.PieceToMove.Piece.PieceType)
                 && AbilityToPiece.HasAbility(PostMoveAbility.BETRAYAL, token.PieceToMove.Piece.PieceType)
-                && towerPieces.Where(piece => piece.Piece.Back == pieceToMove.Piece.PieceType
-                    && piece.Piece.PieceType != pieceToMove.Piece.PieceType).ToList().Count > 0;
+                && towerPieces.Where(piece => piece.Piece.PieceType == pieceToMove.Piece.Front
+                    && !piece.Tier.TopOfTower).ToList().Count > 0;
         }
 
         private void PerformNextAction(
