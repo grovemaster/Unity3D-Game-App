@@ -6,6 +6,7 @@ using Data.Piece.Back.Clandestinite;
 using Data.Piece.Back.DragonKing;
 using Data.Piece.Back.Gold;
 using Data.Piece.Back.Lance;
+using Data.Piece.Back.Pike;
 using Data.Piece.Front.Bow;
 using Data.Piece.Front.Catapult;
 using Data.Piece.Front.Commander;
@@ -30,6 +31,8 @@ namespace Service.Piece.Factory
 
                 case PieceType.SAMURAI:
                     return new SamuraiData();
+                case PieceType.PIKE:
+                    return new PikeData();
 
                 case PieceType.SPY:
                     return new SpyData();
