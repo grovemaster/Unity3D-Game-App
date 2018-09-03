@@ -55,7 +55,7 @@ namespace Engine.Check.Drop
         {
             TurnEV currentTurn = turnService.GetCurrentTurnEV(entitiesDB);
             PieceEV pieceToDrop = pieceFindService.FindFirstPieceByLocationAndType(
-                BoardConst.HAND_LOCATION, handPiece.HandPiece.PieceType, entitiesDB);
+                BoardConst.HAND_LOCATION, handPiece.HandPiece.PieceType, handPiece.HandPiece.Back, entitiesDB);
             bool returnValue = !currentTurn.Check.CommanderInCheck;
 
             if (!returnValue) // Commander is in check

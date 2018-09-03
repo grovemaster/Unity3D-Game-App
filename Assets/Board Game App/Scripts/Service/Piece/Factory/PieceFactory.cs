@@ -9,6 +9,7 @@ using Data.Piece.Back.Lance;
 using Data.Piece.Back.Phoenix;
 using Data.Piece.Back.Pike;
 using Data.Piece.Back.Pistol;
+using Data.Piece.Back.Silver;
 using Data.Piece.Front.Bow;
 using Data.Piece.Front.Captain;
 using Data.Piece.Front.Catapult;
@@ -74,6 +75,8 @@ namespace Service.Piece.Factory
                     return new PawnData();
                 case PieceType.BRONZE:
                     return new BronzeData();
+                case PieceType.SILVER:
+                    return new SilverData();
                 case PieceType.GOLD:
                     return new GoldData();
                 default:

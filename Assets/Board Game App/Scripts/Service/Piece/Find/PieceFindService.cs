@@ -77,12 +77,12 @@ namespace Service.Piece.Find
         }
 
         public PieceEV FindFirstPieceByLocationAndType(
-            Vector2 location, PieceType pieceType, IEntitiesDB entitiesDB)
+            Vector2 location, PieceType front, PieceType back, IEntitiesDB entitiesDB)
         {
             List<PieceEV> piecesInHands = CommonService.FindAllEntities<PieceEV>(entitiesDB)
                 .Where(piece =>
                     piece.Location.Location == location
-                    && (piece.Piece.Front == pieceType || piece.Piece.Back == pieceType)
+                    && (piece.Piece.Front == front && piece.Piece.Back == back)
                 ).ToList();
 
             if (piecesInHands.Count == 0)

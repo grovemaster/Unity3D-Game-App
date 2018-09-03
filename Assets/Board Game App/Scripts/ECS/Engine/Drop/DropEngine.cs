@@ -37,7 +37,7 @@ namespace ECS.Engine.Drop
         {
             TurnEV currentTurn = turnService.GetCurrentTurnEV(entitiesDB);
             PieceEV pieceToDrop = pieceFindService.FindFirstPieceByLocationAndType(
-                BoardConst.HAND_LOCATION, token.HandPiece.HandPiece.PieceType, entitiesDB);
+                BoardConst.HAND_LOCATION, token.HandPiece.HandPiece.PieceType, token.HandPiece.HandPiece.Back, entitiesDB);
 
             dropService.DropPiece(
                 ref pieceToDrop,

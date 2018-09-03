@@ -12,5 +12,6 @@
         HIDDEN_DRAGON,  DRAGON_KING,
         PRODIGY,        PHOENIX,
         PAWN,           BRONZE,
+                        SILVER,
                         GOLD };
 }
