@@ -10,6 +10,7 @@
         CATAPULT,       LANCE,
         FORTRESS,
         HIDDEN_DRAGON,  DRAGON_KING,
+        PRODIGY,
         PAWN,           BRONZE,
                         GOLD };
 }

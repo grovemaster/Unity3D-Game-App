@@ -15,6 +15,7 @@ using Data.Piece.Front.Commander;
 using Data.Piece.Front.Fortress;
 using Data.Piece.Front.HiddenDragon;
 using Data.Piece.Front.Pawn;
+using Data.Piece.Front.Prodigy;
 using Data.Piece.Front.Samurai;
 using Data.Piece.Front.Spy;
 using System;
@@ -57,6 +58,9 @@ namespace Service.Piece.Factory
                     return new HiddenDragonData();
                 case PieceType.DRAGON_KING:
                     return new DragonKingData();
+
+                case PieceType.PRODIGY:
+                    return new ProdigyData();
 
                 case PieceType.BOW:
                     return new BowData();
