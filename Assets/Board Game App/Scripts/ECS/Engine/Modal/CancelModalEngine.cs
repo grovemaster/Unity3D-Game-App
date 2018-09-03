@@ -36,7 +36,8 @@ namespace ECS.Engine.Modal
         private void OnPressed(int entityId, bool cancel)
         {
             ModalEV modal = modalService.FindModalEV(entitiesDB);
-            bool continueCancelling = modal.Type.Type != ModalType.CONFIRM;
+            bool continueCancelling = modal.Type.Type != ModalType.CONFIRM
+                || modal.Type.Type != ModalType.TOWER_3RD_TIER;
 
             var token = new CancelModalStepState();
             cancelModalSequence.Next(this, ref token, (int)(continueCancelling ? StepAB.A : StepAB.B));

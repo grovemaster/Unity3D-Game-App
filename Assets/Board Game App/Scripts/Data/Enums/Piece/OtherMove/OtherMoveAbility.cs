@@ -4,6 +4,7 @@
     {
         CANNOT_TIER_3_EXCHANGE,
         SUBSTITUTION,
+        TIER_1_EXCHANGE,
         TIER_3_EXCHANGE
     }
 }

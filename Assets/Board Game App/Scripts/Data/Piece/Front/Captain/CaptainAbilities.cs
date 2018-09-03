@@ -12,7 +12,7 @@ namespace Data.Piece.Front.Captain
         {
             get
             {
-                return null;
+                return OtherMoveAbility.TIER_1_EXCHANGE;
             }
         }
 

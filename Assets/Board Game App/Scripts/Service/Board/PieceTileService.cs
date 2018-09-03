@@ -90,7 +90,17 @@ namespace Service.Board
             TurnEV currentTurn = turnService.GetCurrentTurnEV(entitiesDB);
             List<PieceEV> towerPieces = pieceFindService.FindPiecesByLocation(stateInfo.tile.Value.Location.Location, entitiesDB);
 
-            return IsTier3ExchangePossible(towerPieces, currentTurn.TurnPlayer.PlayerColor);
+            return IsTier1ExchangePossible(towerPieces, currentTurn.TurnPlayer.PlayerColor)
+                || IsTier3ExchangePossible(towerPieces, currentTurn.TurnPlayer.PlayerColor);
+        }
+
+        private bool IsTier1ExchangePossible(List<PieceEV> towerPieces, PlayerColor currentTurnColor)
+        {
+            return towerPieces.Count == 3
+                && AbilityToPiece.HasAbility(OtherMoveAbility.TIER_1_EXCHANGE, towerPieces[0].Piece.PieceType)
+                && !AbilityToPiece.HasAbility(OtherMoveAbility.TIER_3_EXCHANGE, towerPieces[2].Piece.PieceType)
+                && towerPieces[2].PlayerOwner.PlayerColor == currentTurnColor
+                && towerPieces[0].PlayerOwner.PlayerColor == currentTurnColor;
         }
 
         private bool IsTier3ExchangePossible(List<PieceEV> towerPieces, PlayerColor currentTurnColor)
@@ -99,7 +109,8 @@ namespace Service.Board
                 && AbilityToPiece.HasAbility(OtherMoveAbility.TIER_3_EXCHANGE, towerPieces[2].Piece.PieceType)
                 && towerPieces[2].PlayerOwner.PlayerColor == currentTurnColor
                 && towerPieces[0].PlayerOwner.PlayerColor == currentTurnColor
-                && !AbilityToPiece.HasAbility(OtherMoveAbility.CANNOT_TIER_3_EXCHANGE, towerPieces[0].Piece.PieceType);
+                && !AbilityToPiece.HasAbility(OtherMoveAbility.CANNOT_TIER_3_EXCHANGE, towerPieces[0].Piece.PieceType)
+                && !AbilityToPiece.HasAbility(OtherMoveAbility.TIER_1_EXCHANGE, towerPieces[0].Piece.PieceType);
         }
     }
 }

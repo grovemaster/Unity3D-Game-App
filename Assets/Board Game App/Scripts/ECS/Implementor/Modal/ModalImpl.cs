@@ -38,6 +38,7 @@ namespace ECS.Implementor.Modal
         private ModalViewService modalViewService;
 
         private ModalType? previousModalType = null;
+        private ModalType? previous2ndModalType = null;
 
         public ModalType Type { get; set; }
         public DispatchOnSet<int> Answer { get; set; }
@@ -150,6 +151,7 @@ namespace ECS.Implementor.Modal
             }
 
             ActivateModal();
+            previous2ndModalType = previousModalType;
             previousModalType = Type;
             isModalOpen.IsModalOpen = true;
         }
@@ -181,7 +183,8 @@ namespace ECS.Implementor.Modal
              * this function is run; it could be run after the 2nd opening.  This is a simple work-around, but it
              * doesn't handle the case of closing the confirm modal.  That is handled in the answer engine
              */
-            if (Type == ModalType.CONFIRM && previousModalType == ModalType.CONFIRM)
+            if ((Type == ModalType.CONFIRM && previousModalType == ModalType.CONFIRM && previous2ndModalType == ModalType.CAPTURE_STACK)
+                || (Type == ModalType.TOWER_3RD_TIER && previousModalType == ModalType.TOWER_3RD_TIER && previous2ndModalType == ModalType.TIER_1_3_EXCHANGE_CLICK))
             {
                 previousModalType = null;
             }
@@ -200,6 +203,7 @@ namespace ECS.Implementor.Modal
             overlayRect.offsetMax = new Vector2(-400f, overlayRect.offsetMax.y);
             isModalOpen.IsModalOpen = false;
             previousModalType = null;
+            previous2ndModalType = null;
         }
     }
 }
