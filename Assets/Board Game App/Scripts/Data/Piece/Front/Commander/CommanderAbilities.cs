@@ -20,7 +20,11 @@ namespace Data.Piece.Front.Commander
         {
             get
             {
-                return new List<PreMoveAbility>(new PreMoveAbility[] { PreMoveAbility.CANNOT_MOBILE_RANGE_EXPANSION });
+                return new List<PreMoveAbility>(new PreMoveAbility[]
+                {
+                    PreMoveAbility.CANNOT_BE_STACKED,
+                    PreMoveAbility.CANNOT_MOBILE_RANGE_EXPANSION
+                });
             }
         }
 

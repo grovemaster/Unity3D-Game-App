@@ -263,6 +263,9 @@ namespace Service.Board
                     ExcludeDestinationsWithObstructingPieces(pieceEV, line, allPieces);
                 }
 
+                // Always exclude this scenario
+                ExcludeDestinationsAtCannotBeStackedPieces(line, allPieces);
+
                 returnValue.AddRange(line);
             }
 
@@ -278,6 +281,7 @@ namespace Service.Board
             ExcludeOutOfBoard(destinations);
             ExcludeDestinationsWithFriendlyTier3Tower(pieceEV, destinations, allPieces);
             ExcludeTwoFileMoveViolations(pieceEV, destinations, allPieces);
+            ExcludeDestinationsAtCannotBeStackedPieces(destinations, allPieces);
         }
 
         #region Line
@@ -300,7 +304,6 @@ namespace Service.Board
         #endregion
 
         #region Excludes
-
         private bool IsOpponentPieceDirectlyBelow(PieceEV pieceEV, List<PieceEV> allPieces)
         {
             return pieceEV.Tier.Tier != 1
@@ -405,6 +408,29 @@ namespace Service.Board
             }
         }
 
+        private void ExcludeDestinationsAtCannotBeStackedPieces(List<Vector2> destinations, List<PieceEV> allPieces)
+        {
+            List<Vector2> destinationsToRemove = new List<Vector2>();
+            List<PieceEV> cannotBeStackedPieces = allPieces.Where(piece => piece.PlayerOwner.PlayerColor == piece.PlayerOwner.PlayerColor
+                && AbilityToPiece.HasAbility(PreMoveAbility.CANNOT_BE_STACKED, piece.Piece.PieceType)).ToList();
+
+            foreach (Vector2 destination in destinations)
+            {
+                List<PieceEV> piecesAtDestination = FindPiecesAtLocation(destination, allPieces);
+
+                if (piecesAtDestination.Count > 0
+                    && AbilityToPiece.HasAbility(PreMoveAbility.CANNOT_BE_STACKED, piecesAtDestination.Last().Piece.PieceType))
+                {
+                    destinationsToRemove.Add(destination);
+                }
+            }
+
+            foreach (Vector2 removeDestination in destinationsToRemove)
+            {
+                destinations.Remove(removeDestination);
+            }
+        }
+
         private bool HasFriendlyTier3Tower(
             PieceEV pieceToCalc, Vector2 destination, List<PieceEV> allPieces)
         {
@@ -473,8 +499,10 @@ namespace Service.Board
             {
                 int numPiecesBarringPath = allPieces.Where(piece =>
                     evalLocation == piece.Location.Location
-                    && (!canIgnoreFriendlyPieces || piece.PlayerOwner.PlayerColor != pieceToCalc.PlayerOwner.PlayerColor))
-                    .Count();
+                    && (!canIgnoreFriendlyPieces
+                        || (piece.PlayerOwner.PlayerColor != pieceToCalc.PlayerOwner.PlayerColor
+                            || (piece.Tier.TopOfTower && AbilityToPiece.HasAbility(PreMoveAbility.CANNOT_BE_STACKED, piece.Piece.PieceType)))
+                    )).Count();
 
                 if (numPiecesBarringPath > 0)
                 {
