@@ -113,7 +113,7 @@ namespace ECS.Context
             pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.PAWN, PieceType.BRONZE, PieceSide.FRONT, 1, 7);
             pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.PAWN, PieceType.BRONZE, PieceSide.FRONT, 2, 1);
             pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.PAWN, PieceType.SILVER, PieceSide.FRONT, 2, 7);
-            pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.PAWN, PieceType.BRONZE, PieceSide.FRONT, 4, 2);
+            pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.PAWN, PieceType.GOLD, PieceSide.FRONT, 4, 2);
 
             pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.PAWN, PieceType.BRONZE, PieceSide.FRONT, 0, 5);
             pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.PAWN, PieceType.BRONZE, PieceSide.FRONT, 0, 6);
@@ -122,7 +122,7 @@ namespace ECS.Context
             pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.PAWN, PieceType.BRONZE, PieceSide.FRONT, 1, 8);
             pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.PAWN, PieceType.BRONZE, PieceSide.FRONT, 3, 7);
             pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.PAWN, PieceType.SILVER, PieceSide.FRONT, 4, 6);
-            pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.PAWN, PieceType.BRONZE, PieceSide.FRONT, 4, 7);
+            pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.PAWN, PieceType.GOLD, PieceSide.FRONT, 4, 7);
 
             pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.BOW, PieceType.ARROW, PieceSide.FRONT, 2, 0);
             pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.BOW, PieceType.ARROW, PieceSide.FRONT, 2, 8);
@@ -187,6 +187,7 @@ namespace ECS.Context
             int index = 0;
             handPieceCreateService.CreateHandPiece(playerColor, PieceType.PAWN, PieceType.BRONZE, index++);
             handPieceCreateService.CreateHandPiece(playerColor, PieceType.PAWN, PieceType.SILVER, index++);
+            handPieceCreateService.CreateHandPiece(playerColor, PieceType.PAWN, PieceType.GOLD, index++);
             handPieceCreateService.CreateHandPiece(playerColor, PieceType.SPY, PieceType.CLANDESTINITE, index++);
             handPieceCreateService.CreateHandPiece(playerColor, PieceType.CATAPULT, PieceType.LANCE, index++);
             handPieceCreateService.CreateHandPiece(playerColor, PieceType.FORTRESS, PieceType.LANCE, index++);
