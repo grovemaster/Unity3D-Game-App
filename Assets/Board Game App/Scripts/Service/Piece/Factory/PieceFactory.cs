@@ -6,6 +6,7 @@ using Data.Piece.Back.Clandestinite;
 using Data.Piece.Back.DragonKing;
 using Data.Piece.Back.Gold;
 using Data.Piece.Back.Lance;
+using Data.Piece.Back.Phoenix;
 using Data.Piece.Back.Pike;
 using Data.Piece.Back.Pistol;
 using Data.Piece.Front.Bow;
@@ -61,6 +62,8 @@ namespace Service.Piece.Factory
 
                 case PieceType.PRODIGY:
                     return new ProdigyData();
+                case PieceType.PHOENIX:
+                    return new PhoenixData();
 
                 case PieceType.BOW:
                     return new BowData();
