@@ -263,8 +263,9 @@ namespace Service.Board
                     ExcludeDestinationsWithObstructingPieces(pieceEV, line, allPieces);
                 }
 
-                // Always exclude this scenario
+                // Always exclude these scenarios
                 ExcludeDestinationsAtCannotBeStackedPieces(line, allPieces);
+                ExcludeTowerDestinationsWithSameTypeAndTeam(pieceEV, line, allPieces);
 
                 returnValue.AddRange(line);
             }
@@ -280,6 +281,7 @@ namespace Service.Board
             AdjustRawDataWithPieceLocationAndDirection(pieceEV, destinations);
             ExcludeOutOfBoard(destinations);
             ExcludeDestinationsWithFriendlyTier3Tower(pieceEV, destinations, allPieces);
+            ExcludeTowerDestinationsWithSameTypeAndTeam(pieceEV, destinations, allPieces);
             ExcludeTwoFileMoveViolations(pieceEV, destinations, allPieces);
             ExcludeDestinationsAtCannotBeStackedPieces(destinations, allPieces);
         }
@@ -349,6 +351,25 @@ namespace Service.Board
             foreach (Vector2 destination in destinations)
             {
                 if (HasFriendlyTier3Tower(pieceToCalc, destination, allPieces))
+                {
+                    destinationsToRemove.Add(destination);
+                }
+            }
+
+            foreach (Vector2 removeDestination in destinationsToRemove)
+            {
+                destinations.Remove(removeDestination);
+            }
+        }
+
+        private void ExcludeTowerDestinationsWithSameTypeAndTeam(
+            PieceEV pieceToCalc, List<Vector2> destinations, List<PieceEV> allPieces)
+        {
+            List<Vector2> destinationsToRemove = new List<Vector2>();
+
+            foreach (Vector2 destination in destinations)
+            {
+                if (HasSameTypeAndTeamInTower(pieceToCalc, destination, allPieces))
                 {
                     destinationsToRemove.Add(destination);
                 }
@@ -442,6 +463,15 @@ namespace Service.Board
                 && destination == piece.Location.Location).Count();
 
             return numPiecesBarringPath > 0;
+        }
+
+        private bool HasSameTypeAndTeamInTower(
+            PieceEV pieceToCalc, Vector2 destination, List<PieceEV> allPieces)
+        {
+            return allPieces.Where(piece =>
+                piece.Location.Location == destination
+                && piece.PlayerOwner.PlayerColor == pieceToCalc.PlayerOwner.PlayerColor
+                && piece.Piece.PieceType == pieceToCalc.Piece.PieceType).Count() > 0;
         }
 
         /**
