@@ -183,10 +183,11 @@ namespace Service.Board
                 allPieces,
                 excludeObstructedDestinations);
 
-            returnValue.AddRange(AdjustJumpDestinations(
+            returnValue.AddRange(AdjustAndExcludeJumpDestinations(
                 pieceData,
                 pieceEV,
-                allPieces
+                allPieces,
+                excludeObstructedDestinations
                 ));
 
             returnValue.AddRange(AdjustAndExcludeLineDestinations(
@@ -230,14 +231,20 @@ namespace Service.Board
             return returnValue;
         }
 
-        private List<Vector2> AdjustJumpDestinations(
+        private List<Vector2> AdjustAndExcludeJumpDestinations(
             IPieceData pieceData,
             PieceEV pieceEV,
-            List<PieceEV> allPieces)
+            List<PieceEV> allPieces,
+            bool excludeObstructedDestinations)
         {
             int tier = CalcTierToUse(pieceEV, allPieces);
             List<Vector2> returnValue = pieceData.Tiers[tier - 1].Jump;
             AdjustDestinations(returnValue, pieceEV, allPieces);
+
+            if (excludeObstructedDestinations)
+            {
+                ExcludeJumpDestinationsWithObstructingMrePieces(pieceEV, returnValue, allPieces);
+            }
 
             return returnValue;
         }
@@ -264,7 +271,7 @@ namespace Service.Board
                 }
 
                 // Always exclude these scenarios
-                ExcludeDestinationsAtCannotBeStackedPieces(line, allPieces);
+                ExcludeDestinationsAtCannotBeStackedPieces(pieceEV.PlayerOwner.PlayerColor, line, allPieces);
                 ExcludeTowerDestinationsWithSameTypeAndTeam(pieceEV, line, allPieces);
 
                 returnValue.AddRange(line);
@@ -283,7 +290,7 @@ namespace Service.Board
             ExcludeDestinationsWithFriendlyTier3Tower(pieceEV, destinations, allPieces);
             ExcludeTowerDestinationsWithSameTypeAndTeam(pieceEV, destinations, allPieces);
             ExcludeTwoFileMoveViolations(pieceEV, destinations, allPieces);
-            ExcludeDestinationsAtCannotBeStackedPieces(destinations, allPieces);
+            ExcludeDestinationsAtCannotBeStackedPieces(pieceEV.PlayerOwner.PlayerColor, destinations, allPieces);
         }
 
         #region Line
@@ -429,10 +436,10 @@ namespace Service.Board
             }
         }
 
-        private void ExcludeDestinationsAtCannotBeStackedPieces(List<Vector2> destinations, List<PieceEV> allPieces)
+        private void ExcludeDestinationsAtCannotBeStackedPieces(PlayerColor playerColor, List<Vector2> destinations, List<PieceEV> allPieces)
         {
             List<Vector2> destinationsToRemove = new List<Vector2>();
-            List<PieceEV> cannotBeStackedPieces = allPieces.Where(piece => piece.PlayerOwner.PlayerColor == piece.PlayerOwner.PlayerColor
+            List<PieceEV> cannotBeStackedPieces = allPieces.Where(piece => piece.PlayerOwner.PlayerColor == playerColor
                 && AbilityToPiece.HasAbility(PreMoveAbility.CANNOT_BE_STACKED, piece.Piece.PieceType)).ToList();
 
             foreach (Vector2 destination in destinations)
@@ -440,6 +447,7 @@ namespace Service.Board
                 List<PieceEV> piecesAtDestination = FindPiecesAtLocation(destination, allPieces);
 
                 if (piecesAtDestination.Count > 0
+                    && piecesAtDestination.Last().PlayerOwner.PlayerColor == playerColor
                     && AbilityToPiece.HasAbility(PreMoveAbility.CANNOT_BE_STACKED, piecesAtDestination.Last().Piece.PieceType))
                 {
                     destinationsToRemove.Add(destination);
@@ -472,6 +480,57 @@ namespace Service.Board
                 piece.Location.Location == destination
                 && piece.PlayerOwner.PlayerColor == pieceToCalc.PlayerOwner.PlayerColor
                 && piece.Piece.PieceType == pieceToCalc.Piece.PieceType).Count() > 0;
+        }
+
+        /**
+         * Rules state piece cannot jump enemy piece that has received Mobile Range Expansion (MRE).
+         * Please note certain pieces cannot receive MRE, and thus do not apply.
+         * Jumps are either horizontal/vertical/diagonal (single line path) or L-shaped (L-shaped path).
+         * The first 3 are simple cases, because 1 or more MRE-affected enemy pieces will block the path.
+         * The L-Shaped path has 2 paths and requires 1 or more MRE-affected enemy pieces blocking both paths.
+         */
+        private void ExcludeJumpDestinationsWithObstructingMrePieces(
+            PieceEV pieceToCalc,
+            List<Vector2> destinations,
+            List<PieceEV> allPieces)
+        {
+            if (destinations.Count == 0)
+            {
+                return;
+            }
+
+            List<Vector2> destinationsToRemove = new List<Vector2>();
+            List<PieceEV> enemeyMreAffectedPieces = FindMobileRangeExpansionAffectedPieces(
+                TurnService.CalcOtherTurnPlayer(pieceToCalc.PlayerOwner.PlayerColor), allPieces);
+
+            if (enemeyMreAffectedPieces.Count == 0)
+            {
+                return;
+            }
+
+            foreach (Vector2 destination in destinations)
+            {
+                if (IsNotLShapedJump(pieceToCalc.Location.Location, destination))
+                {
+                    if (ShouldRemoveDestination(pieceToCalc, destination, enemeyMreAffectedPieces, true))
+                    {
+                        destinationsToRemove.Add(destination);
+                    }
+                }
+                else
+                {
+                    if (ShouldRemoveLShapedJumpDestination(pieceToCalc, destination, enemeyMreAffectedPieces))
+                    {
+                        destinationsToRemove.Add(destination);
+                    }
+                }
+            }
+            //*/
+
+            foreach (Vector2 removeDestination in destinationsToRemove)
+            {
+                destinations.Remove(removeDestination);
+            }
         }
 
         /**
@@ -531,7 +590,9 @@ namespace Service.Board
                     evalLocation == piece.Location.Location
                     && (!canIgnoreFriendlyPieces
                         || (piece.PlayerOwner.PlayerColor != pieceToCalc.PlayerOwner.PlayerColor
-                            || (piece.Tier.TopOfTower && AbilityToPiece.HasAbility(PreMoveAbility.CANNOT_BE_STACKED, piece.Piece.PieceType)))
+                            || (piece.Tier.TopOfTower
+                                && piece.PlayerOwner.PlayerColor == pieceToCalc.PlayerOwner.PlayerColor
+                                && AbilityToPiece.HasAbility(PreMoveAbility.CANNOT_BE_STACKED, piece.Piece.PieceType)))
                     )).Count();
 
                 if (numPiecesBarringPath > 0)
@@ -545,6 +606,81 @@ namespace Service.Board
 
             return returnValue;
         }
+
+        #region Jump Exclusion
+        private bool IsNotLShapedJump(Vector2 start, Vector2 destination)
+        {
+            Vector2 distance = new Vector2(
+                start.x == destination.x ?
+                    0 : Math.Abs(start.x - destination.x),
+                start.y == destination.y ?
+                    0 : Math.Abs(start.y - destination.y)
+                );
+
+            // Is Vertical, horizontal, or diagonal?
+            return distance.x == 0
+                || distance.y == 0
+                || distance.x == distance.y;
+        }
+
+        /**
+         * Requires Mre affected pieces along both paths of the jump
+         * Paths of jump:
+         * * File-first (change file, then rank)
+         * * Rank-first (change rank, then file)
+         * 
+         * Note that all L-shaped jumps (Spy & Clandestinite only) are +/-1 file, +/- 2 ranks
+         */
+        private bool ShouldRemoveLShapedJumpDestination(PieceEV pieceToCalc, Vector2 destination, List<PieceEV> enemeyMreAffectedPieces)
+        {
+            List<Vector2> fileFirstPath = CalcFileFirstPath(pieceToCalc, destination);
+
+            if (!DoesObstructingEnemyPieceExists(fileFirstPath, enemeyMreAffectedPieces))
+            {
+                return false;
+            }
+
+            List<Vector2> rankFirstPath = CalcRankFirstPath(pieceToCalc, destination);
+
+            return DoesObstructingEnemyPieceExists(rankFirstPath, enemeyMreAffectedPieces);
+        }
+
+        private List<Vector2> CalcFileFirstPath(PieceEV pieceToCalc, Vector2 destination)
+        {
+            List<Vector2> returnValue = new List<Vector2>();
+            float increment = (destination.y - pieceToCalc.Location.Location.y) / Math.Abs(destination.y - pieceToCalc.Location.Location.y);
+
+            // No obstructing piece AT destination; already account for in other function
+            // Thus no need to include destination location in returnedValue
+            for (float rank = pieceToCalc.Location.Location.y; rank != destination.y; rank += increment)
+            {
+                returnValue.Add(new Vector2(destination.x, rank));
+            }
+
+            return returnValue;
+        }
+
+        private List<Vector2> CalcRankFirstPath(PieceEV pieceToCalc, Vector2 destination)
+        {
+            List<Vector2> returnValue = new List<Vector2>();
+            float increment = (destination.y - pieceToCalc.Location.Location.y) / Math.Abs(destination.y - pieceToCalc.Location.Location.y);
+
+            // No obstructing piece AT destination; already account for in other function
+            // Thus no need to include destination location in returnedValue
+            for (float rank = pieceToCalc.Location.Location.y; rank != destination.y; rank += increment)
+            {
+                returnValue.Add(new Vector2(pieceToCalc.Location.Location.x, rank));
+            }
+
+            return returnValue;
+        }
+
+        private bool DoesObstructingEnemyPieceExists(List<Vector2> lShapedJumpPath, List<PieceEV> enemeyMreAffectedPieces)
+        {
+            return enemeyMreAffectedPieces.Where(piece =>
+                lShapedJumpPath.Contains(piece.Location.Location)).Count() > 0;
+        }
+        #endregion
         #endregion
 
         #region Exclude Check Violations
@@ -926,11 +1062,13 @@ namespace Service.Board
             return !AbilityToPiece.HasAbility(PreMoveAbility.CANNOT_MOBILE_RANGE_EXPANSION, piece.Piece.PieceType);
         }
 
-        private bool IsAffectedByMobileRangeExpansionRadial(PlayerColor playerColor, Vector2 location, List<PieceEV> allPieces)
+        private bool IsAffectedByMobileRangeExpansionRadial(
+            PlayerColor playerColor, Vector2 location, List<PieceEV> allPieces, List<PieceEV> piecesMreRadial = null)
         {
-            List<PieceEV> piecesMreRadial = allPieces.Where(piece =>
-                   piece.PlayerOwner.PlayerColor == playerColor
-                   && AbilityToPiece.HasAbility(PreMoveAbility.MOBILE_RANGE_EXPANSION_RADIAL, piece.Piece.PieceType)).ToList();
+            if (piecesMreRadial == null)
+            {
+                piecesMreRadial = FindPiecesMreRadial(playerColor, allPieces);
+            }
 
             if (piecesMreRadial.Count == 0)
             {
@@ -943,11 +1081,13 @@ namespace Service.Board
             return piecesMreRadialInRange.Count > 0;
         }
 
-        private bool IsAffectedByMobileRangeExpansionLine(PlayerColor playerColor, Vector2 location, List<PieceEV> allPieces)
+        private bool IsAffectedByMobileRangeExpansionLine(
+            PlayerColor playerColor, Vector2 location, List<PieceEV> allPieces, List<PieceEV> piecesMreLine = null)
         {
-            List<PieceEV> piecesMreLine = allPieces.Where(piece =>
-                   piece.PlayerOwner.PlayerColor == playerColor
-                   && AbilityToPiece.HasAbility(PreMoveAbility.MOBILE_RANGE_EXPANSION_LINE, piece.Piece.PieceType)).ToList();
+            if (piecesMreLine == null)
+            {
+                piecesMreLine = FindPiecesMreLine(playerColor, allPieces);
+            }
 
             if (piecesMreLine.Count == 0)
             {
@@ -958,6 +1098,50 @@ namespace Service.Board
                 distanceService.IsAhead(piece.Location.Location, location, playerColor)).ToList();
 
             return piecesMreLineInRange.Count > 0;
+        }
+
+        private List<PieceEV> FindPiecesMreRadial(PlayerColor playerColor, List<PieceEV> allPieces)
+        {
+            return allPieces.Where(piece =>
+                   piece.PlayerOwner.PlayerColor == playerColor
+                   && AbilityToPiece.HasAbility(PreMoveAbility.MOBILE_RANGE_EXPANSION_RADIAL, piece.Piece.PieceType)).ToList();
+        }
+
+        private List<PieceEV> FindPiecesMreLine(PlayerColor playerColor, List<PieceEV> allPieces)
+        {
+            return allPieces.Where(piece =>
+                       piece.PlayerOwner.PlayerColor == playerColor
+                       && AbilityToPiece.HasAbility(PreMoveAbility.MOBILE_RANGE_EXPANSION_LINE, piece.Piece.PieceType)).ToList();
+        }
+
+        private List<PieceEV> FindMobileRangeExpansionAffectedPieces(PlayerColor playerColor, List<PieceEV> allPieces)
+        {
+            List<PieceEV> returnValue = FindMreRadialAffectedPieces(playerColor, allPieces);
+            returnValue.AddRange(FindMreLineAffectedPieces(playerColor, allPieces));
+
+            return returnValue;
+        }
+
+        private List<PieceEV> FindMreRadialAffectedPieces(PlayerColor playerColor, List<PieceEV> allPieces)
+        {
+            // Mobile Range Expansion pieces affect themselves
+            List<PieceEV> mreRadialPieces = FindPiecesMreRadial(playerColor, allPieces);
+
+            return allPieces.Where(piece =>
+                piece.PlayerOwner.PlayerColor == playerColor
+                && CanMobileRangeExpansion(piece)
+                && IsAffectedByMobileRangeExpansionRadial(playerColor, piece.Location.Location, allPieces, mreRadialPieces)).ToList();
+        }
+
+        private List<PieceEV> FindMreLineAffectedPieces(PlayerColor playerColor, List<PieceEV> allPieces)
+        {
+            // Mobile Range Expansion pieces affect themselves
+            List<PieceEV> mreLinePieces = FindPiecesMreLine(playerColor, allPieces);
+
+            return allPieces.Where(piece =>
+                piece.PlayerOwner.PlayerColor == playerColor
+                && CanMobileRangeExpansion(piece)
+                && IsAffectedByMobileRangeExpansionLine(playerColor, piece.Location.Location, allPieces, mreLinePieces)).ToList();
         }
         #endregion
 

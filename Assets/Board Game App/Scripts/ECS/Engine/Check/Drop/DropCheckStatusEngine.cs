@@ -7,8 +7,6 @@ using ECS.EntityView.Hand;
 using ECS.EntityView.Piece;
 using ECS.EntityView.Turn;
 using Service.Check;
-using Service.Drop;
-using Service.Hand;
 using Service.Piece.Find;
 using Service.Turn;
 using Svelto.ECS;
@@ -18,8 +16,6 @@ namespace Engine.Check.Drop
     class DropCheckStatusEngine : IStep<DropPrepStepState>, IStep<DropStepState>, IQueryingEntitiesEngine
     {
         private CheckService checkService = new CheckService();
-        private DropService dropService = new DropService();
-        private HandService handService = new HandService();
         private PieceFindService pieceFindService = new PieceFindService();
         private TurnService turnService = new TurnService();
 

@@ -3,7 +3,6 @@ using Data.Step.Turn;
 using ECS.EntityView.Piece;
 using Service.Piece.Find;
 using Service.Piece.Set;
-using Service.Turn;
 using Svelto.ECS;
 using System.Collections.Generic;
 using UnityEngine;
@@ -14,7 +13,6 @@ namespace ECS.Engine.Piece.Ability.TierExchange
     {
         private PieceFindService pieceFindService = new PieceFindService();
         private PieceSetService pieceSetService = new PieceSetService();
-        private TurnService turnService = new TurnService();
 
         private readonly ISequencer tierExchangeSequence;
 

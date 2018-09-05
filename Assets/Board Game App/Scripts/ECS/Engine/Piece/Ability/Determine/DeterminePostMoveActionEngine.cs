@@ -6,15 +6,12 @@ using Data.Step.Piece.Ability.Betrayal;
 using Data.Step.Piece.Ability.ForcedRearrangement;
 using Data.Step.Piece.Move;
 using Data.Step.Turn;
-using Service.Piece.Factory;
 using Svelto.ECS;
 
 namespace ECS.Engine.Piece.Ability.Determine
 {
     class DeterminePostMoveActionEngine : IStep<DeterminePostMoveStepState>, IQueryingEntitiesEngine
     {
-        private PieceFactory pieceFactory = new PieceFactory();
-
         private readonly ISequencer determinePostMoveSequence;
 
         public IEntitiesDB entitiesDB { private get; set; }

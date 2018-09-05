@@ -3,23 +3,18 @@ using Data.Step.Drop;
 using Data.Step.Turn;
 using ECS.EntityView.Hand;
 using ECS.EntityView.Piece;
-using ECS.EntityView.Turn;
-using Service.Check;
 using Service.Drop;
 using Service.Hand;
 using Service.Piece.Find;
-using Service.Turn;
 using Svelto.ECS;
 
 namespace ECS.Engine.Drop
 {
     class DropEngine : IStep<DropStepState>, IQueryingEntitiesEngine
     {
-        private CheckService checkService = new CheckService();
         private DropService dropService = new DropService();
         private HandService handService = new HandService();
         private PieceFindService pieceFindService = new PieceFindService();
-        private TurnService turnService = new TurnService();
 
         private readonly ISequencer dropSequence;
 
@@ -35,7 +30,6 @@ namespace ECS.Engine.Drop
 
         public void Step(ref DropStepState token, int condition)
         {
-            TurnEV currentTurn = turnService.GetCurrentTurnEV(entitiesDB);
             PieceEV pieceToDrop = pieceFindService.FindFirstPieceByLocationAndType(
                 BoardConst.HAND_LOCATION, token.HandPiece.HandPiece.PieceType, token.HandPiece.HandPiece.Back, entitiesDB);
 
