@@ -707,17 +707,6 @@ namespace Service.Board
 
             // Commander is topOfTower
             List<Vector2> destinationsToRemove = new List<Vector2>();
-            List<PieceEV> enemyThreats = new List<PieceEV>();
-
-            if (pieceEV.ID.entityID != commander.ID.entityID)
-            {
-                enemyThreats = FindEnemyThreats(commander, pieceEV, allPieces, entitiesDB);
-
-                if (enemyThreats.Count == 0)
-                {
-                    return;
-                }
-            }
 
             foreach (Vector2 destination in returnValue)
             {
@@ -730,67 +719,94 @@ namespace Service.Board
                     continue;
                 }
 
-                // Make temp move while saving old info
-                PreviousMoveState previousMoveState = SaveCurrentMove(pieceEV, destination, allPieces);
-                PreviousTowerState? previousDestinationTowerState = previousMoveState.pieceCaptured.HasValue
-                    && BetrayalInEffect(previousMoveState.pieceToMove.Piece)
-                    ? SaveDestinationTowerState(previousMoveState, allPieces) : null;
-                MakeTemporaryMove(pieceEV, destination, allPieces);
+                bool wasDestinationRemoved = ExcludeMovingCheckViolations(
+                    pieceEV, commander, destination, allPieces, entitiesDB, false);
 
-                // If piece covers Commander, no threat to Commander
-                if (pieceEV.ID.entityID != commander.ID.entityID
-                    && !commander.Tier.TopOfTower && pieceEV.Location.Location == commander.Location.Location)
+                if (IsMreStackPossible(pieceEV, destination, allPieces))
                 {
-                    RestorePreviousState(previousMoveState, previousDestinationTowerState);
-                    continue;
+                    wasDestinationRemoved &= ExcludeMovingCheckViolations(
+                            pieceEV, commander, destination, allPieces, entitiesDB, true);
                 }
 
-                // If Commander captures enemy piece, it cannot put itself into check b/c of another enemy piece right below that piece
-                if (pieceEV.ID.entityID == commander.ID.entityID && SecondFromTopTowerPiecesEnemy(pieceEV, allPieces))
+                if (wasDestinationRemoved)
                 {
                     destinationsToRemove.Add(destination);
-                    RestorePreviousState(previousMoveState, previousDestinationTowerState);
-                    continue;
                 }
-
-                if (pieceEV.ID.entityID == commander.ID.entityID)
-                {
-                    enemyThreats = FindEnemyThreats(commander, pieceEV, allPieces, entitiesDB);
-                }
-
-                // If no threats
-                if (enemyThreats.Count == 0)
-                {
-                    RestorePreviousState(previousMoveState, previousDestinationTowerState);
-                    continue;
-                }
-
-                List<PieceEV> actualThreats = FindActualEnemyThreats(commander, enemyThreats, allPieces, entitiesDB);
-
-                if (actualThreats.Count > 0)
-                {
-                    // Special scenario: Capture enemy lance to initiate Forced Rearrangement, then drop Catapult/Fortress to resolve check
-                    if (HaveCapturedForcedRearrangementPiece(previousMoveState)
-                        && ForcedRearrangementCanResolveThreats(commander, previousMoveState.pieceCaptured.Value.Piece, actualThreats, allPieces, entitiesDB))
-                    {
-                        // TODO Clean up boolean statement logic here
-                        RestorePreviousState(previousMoveState, previousDestinationTowerState);
-                        continue;
-                    }
-                    else
-                    {
-                        destinationsToRemove.Add(destination);
-                    }
-                }
-
-                // Restore old info into values
-                RestorePreviousState(previousMoveState, previousDestinationTowerState);
             }
 
             foreach (Vector2 removeDestination in destinationsToRemove)
             {
                 returnValue.Remove(removeDestination);
             }
+        }
+
+        private bool ExcludeMovingCheckViolations(
+            PieceEV pieceEV,
+            PieceEV commander,
+            Vector2 destination,
+            List<PieceEV> allPieces,
+            IEntitiesDB entitiesDB,
+            bool stackMrePieceIfPossible)
+        {
+            // Make temp move while saving old info
+            PreviousMoveState previousMoveState = SaveCurrentMove(pieceEV, destination, allPieces);
+            PreviousTowerState? previousDestinationTowerState = previousMoveState.pieceCaptured.HasValue
+                && BetrayalInEffect(previousMoveState.pieceToMove.Piece)
+                ? SaveDestinationTowerState(previousMoveState, allPieces) : null;
+            bool wasMrePieceStacked = MakeTemporaryMove(pieceEV, destination, allPieces, stackMrePieceIfPossible);
+
+            if (!wasMrePieceStacked)
+            {
+                return false;
+            }
+
+            // If piece covers Commander, no threat to Commander
+            if (pieceEV.ID.entityID != commander.ID.entityID
+                && !commander.Tier.TopOfTower && pieceEV.Location.Location == commander.Location.Location)
+            {
+                RestorePreviousState(previousMoveState, previousDestinationTowerState);
+                return false;
+            }
+
+            // If Commander captures enemy piece, it cannot put itself into check b/c of another enemy piece right below that piece
+            if (pieceEV.ID.entityID == commander.ID.entityID && SecondFromTopTowerPiecesEnemy(pieceEV, allPieces))
+            {
+                RestorePreviousState(previousMoveState, previousDestinationTowerState);
+                return true;
+            }
+
+            // Always re-calculate in case a captured MRE piece changes things
+            List<PieceEV> enemyThreats = FindEnemyThreats(commander, pieceEV, allPieces, entitiesDB);
+
+            // If no threats
+            if (enemyThreats.Count == 0)
+            {
+                RestorePreviousState(previousMoveState, previousDestinationTowerState);
+                return false;
+            }
+
+            List<PieceEV> actualThreats = FindActualEnemyThreats(commander, enemyThreats, allPieces, entitiesDB);
+
+            if (actualThreats.Count > 0)
+            {
+                // Special scenario: Capture enemy lance to initiate Forced Rearrangement, then drop Catapult/Fortress to resolve check
+                if (HaveCapturedForcedRearrangementPiece(previousMoveState)
+                    && ForcedRearrangementCanResolveThreats(commander, previousMoveState.pieceCaptured.Value.Piece, actualThreats, allPieces, entitiesDB))
+                {
+                    // TODO Clean up boolean statement logic here
+                    RestorePreviousState(previousMoveState, previousDestinationTowerState);
+                    return false;
+                }
+                else
+                {
+                    RestorePreviousState(previousMoveState, previousDestinationTowerState);
+                    return true;
+                }
+            }
+
+            // Restore old info into values
+            RestorePreviousState(previousMoveState, previousDestinationTowerState);
+            return false;
         }
 
         // TODO Move to utility service/class and call from there
@@ -826,7 +842,13 @@ namespace Service.Board
             }
 
             return piecesAtLocation.Count >= 2
-                && piecesAtLocation[piecesAtLocation.Count - 2].PlayerOwner.PlayerColor != commander.PlayerOwner.PlayerColor;
+                && piecesAtLocation[piecesAtLocation.Count - 2].PlayerOwner.PlayerColor != commander.PlayerOwner.PlayerColor
+                && CanImmobileCapture(piecesAtLocation[piecesAtLocation.Count - 2]); // No worries about enemy Fortresses, since they cannot immobile capture
+        }
+
+        private bool CanImmobileCapture(PieceEV piece)
+        {
+            return !AbilityToPiece.HasAbility(PreMoveAbility.CANNOT_IMMOBILE_CAPTURE, piece.Piece.PieceType);
         }
 
         private bool DestinationOccupiedByFriendly(PlayerColor playerColor, Vector2 destination, List<PieceEV> allPieces)
@@ -923,13 +945,23 @@ namespace Service.Board
             };
         }
 
-        private void MakeTemporaryMove(PieceEV pieceToMove, Vector2 destination, List<PieceEV> allPieces)
+        private bool MakeTemporaryMove(
+            PieceEV pieceToMove, Vector2 destination, List<PieceEV> allPieces, bool stackMrePieceIfPossible)
         {
             List<PieceEV> piecesAtCurrentLocation = FindPiecesAtLocation(pieceToMove.Location.Location, allPieces); // Min size one
             List<PieceEV> topPieceAtDestination = allPieces.Where(piece => // Size one or zero
                 piece.Location.Location == destination && piece.Tier.TopOfTower).ToList();
             bool cannotCaptureBecauseBetrayViolatesTwoFileMove =
                 CannotCaptureBecauseBetrayViolatesTwoFileMove(pieceToMove, destination, allPieces);
+
+            if (stackMrePieceIfPossible
+                && !(topPieceAtDestination.Count > 0
+                    && topPieceAtDestination.Last().PlayerOwner.PlayerColor != pieceToMove.PlayerOwner.PlayerColor
+                    && topPieceAtDestination.Last().Tier.Tier < 3
+                    && IsMrePiece(topPieceAtDestination.Last())))
+            {
+                return false;
+            }
 
             pieceToMove.Location.Location = destination;
 
@@ -943,7 +975,8 @@ namespace Service.Board
                 topPieceAtDestination[0].Tier.TopOfTower = false;
 
                 if (topPieceAtDestination[0].PlayerOwner.PlayerColor == pieceToMove.PlayerOwner.PlayerColor
-                    || cannotCaptureBecauseBetrayViolatesTwoFileMove)
+                    || cannotCaptureBecauseBetrayViolatesTwoFileMove
+                    || stackMrePieceIfPossible)
                 {
                     pieceToMove.Tier.Tier = topPieceAtDestination[0].Tier.Tier + 1;
                 }
@@ -959,6 +992,8 @@ namespace Service.Board
                     }
                 }
             }
+
+            return true;
         }
 
         private void RestorePreviousState(PreviousMoveState previousState, PreviousTowerState? previousDestinationTowerState)
@@ -1062,6 +1097,12 @@ namespace Service.Board
             return !AbilityToPiece.HasAbility(PreMoveAbility.CANNOT_MOBILE_RANGE_EXPANSION, piece.Piece.PieceType);
         }
 
+        private bool IsMrePiece(PieceEV pieceEV)
+        {
+            return AbilityToPiece.HasAbility(PreMoveAbility.MOBILE_RANGE_EXPANSION_RADIAL, pieceEV.Piece.PieceType)
+                || AbilityToPiece.HasAbility(PreMoveAbility.MOBILE_RANGE_EXPANSION_LINE, pieceEV.Piece.PieceType);
+        }
+
         private bool IsAffectedByMobileRangeExpansionRadial(
             PlayerColor playerColor, Vector2 location, List<PieceEV> allPieces, List<PieceEV> piecesMreRadial = null)
         {
@@ -1142,6 +1183,18 @@ namespace Service.Board
                 piece.PlayerOwner.PlayerColor == playerColor
                 && CanMobileRangeExpansion(piece)
                 && IsAffectedByMobileRangeExpansionLine(playerColor, piece.Location.Location, allPieces, mreLinePieces)).ToList();
+        }
+
+        private bool IsMreStackPossible(PieceEV pieceToMove, Vector2 destination, List<PieceEV> allPieces)
+        {
+            List<PieceEV> piecesAtCurrentLocation = FindPiecesAtLocation(pieceToMove.Location.Location, allPieces); // Min size one
+            List<PieceEV> topPieceAtDestination = allPieces.Where(piece => // Size one or zero
+                piece.Location.Location == destination && piece.Tier.TopOfTower).ToList();
+
+            return topPieceAtDestination.Count > 0
+                    && topPieceAtDestination.Last().PlayerOwner.PlayerColor != pieceToMove.PlayerOwner.PlayerColor
+                    && topPieceAtDestination.Last().Tier.Tier < 3
+                    && IsMrePiece(topPieceAtDestination.Last());
         }
         #endregion
 
