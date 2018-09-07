@@ -101,10 +101,12 @@ namespace ECS.Context.EngineStep.Create
             #endregion
 
             #region Highlight
+            // TODO Renamed to turn start step
             steps.Add("highlightAllDestinationTiles", new IStep<TurnStartStepState>[]
             {
                 (IStep<TurnStartStepState>)engines["commanderCheck"],
-                (IStep<TurnStartStepState>)engines["highlightAllDestinationTiles"]
+                (IStep<TurnStartStepState>)engines["highlightAllDestinationTiles"],
+                (IStep<TurnStartStepState>)engines["checkmate"],
             });
 
             steps.Add("handHighlight", new IStep<HandPiecePressStepState>[]

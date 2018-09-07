@@ -71,6 +71,12 @@ namespace Service.Hand
             return CommonService.FindAllEntities<HandPieceEV>(entitiesDB);
         }
 
+        public List<HandPieceEV> FindAllTeamHandPieces(PlayerColor playerColor, IEntitiesDB entitiesDB)
+        {
+            return CommonService.FindAllEntities<HandPieceEV>(entitiesDB).Where(handPiece =>
+                handPiece.PlayerOwner.PlayerColor == playerColor).ToList();
+        }
+
         public HandPieceEV? FindHighlightedHandPiece(IEntitiesDB entitiesDB)
         {
             List<HandPieceEV> handPieces = FindAllHandPieces(entitiesDB)

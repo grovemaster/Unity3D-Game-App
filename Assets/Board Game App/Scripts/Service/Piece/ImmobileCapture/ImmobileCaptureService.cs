@@ -25,6 +25,22 @@ namespace Service.Piece.ImmobileCapture
         private PieceSetService pieceSetService = new PieceSetService();
         private TurnService turnService = new TurnService();
 
+        #region Immobile Capture Possible
+        public bool ImmobileCapturePossible(List<PieceEV> towerPieces, TurnEV currentTurn, IEntitiesDB entitiesDB)
+        {
+            PieceEV pieceTier1 = towerPieces[0];
+            PieceEV pieceTier2 = towerPieces[1];
+            PieceEV? pieceTier3 = towerPieces.Count == 3 ? (PieceEV?)towerPieces[2] : null;
+
+            return (pieceTier2.PlayerOwner.PlayerColor != pieceTier1.PlayerOwner.PlayerColor
+                    && CanImmobileCapture(currentTurn.TurnPlayer.PlayerColor, pieceTier1)
+                    && CanImmobileCapture(currentTurn.TurnPlayer.PlayerColor, pieceTier2))
+                || (pieceTier3.HasValue && pieceTier2.PlayerOwner.PlayerColor != pieceTier3.Value.PlayerOwner.PlayerColor
+                    && CanImmobileCapture(currentTurn.TurnPlayer.PlayerColor, pieceTier2)
+                    && CanImmobileCapture(currentTurn.TurnPlayer.PlayerColor, pieceTier3.Value));
+        }
+        #endregion
+
         #region No Check Violations
         public bool NoCheckViolationsExist(List<PieceEV> towerPieces, bool immobileCapturePossible, IEntitiesDB entitiesDB)
         {

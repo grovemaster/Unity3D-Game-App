@@ -3,7 +3,6 @@ using Data.Enums.Piece.Drop;
 using Data.Enums.Piece.Side;
 using Data.Enums.Player;
 using Data.Piece.Map;
-using Data.Step.Drop;
 using ECS.EntityView.Hand;
 using ECS.EntityView.Piece;
 using ECS.EntityView.Turn;
@@ -13,6 +12,7 @@ using Service.Turn;
 using Svelto.ECS;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 namespace Service.Drop
 {
@@ -23,14 +23,16 @@ namespace Service.Drop
         private TurnService turnService = new TurnService();
 
         // TODO Should not care about all pieces at location, just top piece at location, fix that
-        public bool IsValidFrontDrop(ref DropPrepStepState token, List<PieceEV> piecesAtLocation, IEntitiesDB entitiesDB)
+        public bool IsValidFrontDrop(
+            ref HandPieceEV handPiece, Vector2 location, List<PieceEV> piecesAtLocation, IEntitiesDB entitiesDB)
         {
-            return IsValidDrop(ref token, piecesAtLocation, PieceSide.FRONT, entitiesDB);
+            return IsValidDrop(ref handPiece, ref location, piecesAtLocation, PieceSide.FRONT, entitiesDB);
         }
 
-        public bool IsValidBackDrop(ref DropPrepStepState token, List<PieceEV> piecesAtLocation, IEntitiesDB entitiesDB)
+        public bool IsValidBackDrop(
+            ref HandPieceEV handPiece, Vector2 location, List<PieceEV> piecesAtLocation, IEntitiesDB entitiesDB)
         {
-            return IsValidDrop(ref token, piecesAtLocation, PieceSide.BACK, entitiesDB);
+            return IsValidDrop(ref handPiece, ref location, piecesAtLocation, PieceSide.BACK, entitiesDB);
         }
 
         public bool IsValidForcedRearrangementDrop(List<PieceEV> piecesAtLocation, IEntitiesDB entitiesDB)
@@ -39,12 +41,13 @@ namespace Service.Drop
             return IsEmptyTile(piecesAtLocation) || IsValidEarthLinkDrop(piecesAtLocation, PieceSide.FRONT) || IsValidEarthLinkDrop(piecesAtLocation, null);
         }
 
-        private bool IsValidDrop(ref DropPrepStepState token, List<PieceEV> piecesAtLocation, PieceSide side, IEntitiesDB entitiesDB)
+        private bool IsValidDrop(
+            ref HandPieceEV handPiece, ref Vector2 location, List<PieceEV> piecesAtLocation, PieceSide side, IEntitiesDB entitiesDB)
         {
             return (IsEmptyTile(piecesAtLocation) || IsValidEarthLinkDrop(piecesAtLocation, side) || IsValidEarthLinkDrop(piecesAtLocation, null))
-                && DoesNotViolateDoubleFileDrop(ref token, side, entitiesDB)
-                && DoesNotViolateTerritoryDrop(ref token, side, entitiesDB)
-                && DoesNotViolateForcedRearrangementFrontDrop(ref token, side, entitiesDB);
+                && DoesNotViolateDoubleFileDrop(ref handPiece, ref location, side, entitiesDB)
+                && DoesNotViolateTerritoryDrop(ref handPiece, ref location, side, entitiesDB)
+                && DoesNotViolateForcedRearrangementFrontDrop(side, entitiesDB);
         }
 
         private bool IsEmptyTile(List<PieceEV> piecesAtLocation)
@@ -53,7 +56,7 @@ namespace Service.Drop
         }
 
         #region Forced Rearrangement
-        private bool DoesNotViolateForcedRearrangementFrontDrop(ref DropPrepStepState token, PieceSide side, IEntitiesDB entitiesDB)
+        private bool DoesNotViolateForcedRearrangementFrontDrop(PieceSide side, IEntitiesDB entitiesDB)
         {
             TurnEV currentTurn = turnService.GetCurrentTurnEV(entitiesDB);
 
@@ -62,19 +65,20 @@ namespace Service.Drop
         #endregion
 
         #region Double File Drop (Pawn & Bronze)
-        private bool DoesNotViolateDoubleFileDrop(ref DropPrepStepState token, PieceSide side, IEntitiesDB entitiesDB)
+        private bool DoesNotViolateDoubleFileDrop(
+            ref HandPieceEV handPiece, ref Vector2 location, PieceSide side, IEntitiesDB entitiesDB)
         {
-            return !HasDropAbility(ref token.HandPiece, side, DropAbility.DOUBLE_FILE_DROP)
-                || NoOtherSameTypesInFile(ref token, side, entitiesDB);
+            return !HasDropAbility(ref handPiece, side, DropAbility.DOUBLE_FILE_DROP)
+                || NoOtherSameTypesInFile(ref handPiece, ref location, side, entitiesDB);
         }
 
-        private bool NoOtherSameTypesInFile(ref DropPrepStepState token, PieceSide side, IEntitiesDB entitiesDB)
+        private bool NoOtherSameTypesInFile(ref HandPieceEV handPiece, ref Vector2 location, PieceSide side, IEntitiesDB entitiesDB)
         {
-            PlayerColor playerColor = token.HandPiece.PlayerOwner.PlayerColor;
+            PlayerColor playerColor = handPiece.PlayerOwner.PlayerColor;
 
             return pieceFindService.FindPiecesByTypeAndFile(
-                GetPieceType(ref token.HandPiece, side),
-                token.DestinationTile.Location.Location.x,
+                GetPieceType(ref handPiece, side),
+                location.x,
                 entitiesDB
                 ).Where(piece => piece.PlayerOwner.PlayerColor == playerColor).ToList()
                 .Count == 0;
@@ -105,12 +109,13 @@ namespace Service.Drop
         #endregion
 
         #region Territory Drop
-        private bool DoesNotViolateTerritoryDrop(ref DropPrepStepState token, PieceSide side, IEntitiesDB entitiesDB)
+        private bool DoesNotViolateTerritoryDrop(
+            ref HandPieceEV handPiece, ref Vector2 location, PieceSide side, IEntitiesDB entitiesDB)
         {
             TurnEV turnPlayer = turnService.GetCurrentTurnEV(entitiesDB);
 
-            return !HasDropAbility(ref token.HandPiece, side, DropAbility.TERRITORY_DROP)
-                || turnService.IsRankWithinTerritory(turnPlayer, token.DestinationTile.Location.Location.y);
+            return !HasDropAbility(ref handPiece, side, DropAbility.TERRITORY_DROP)
+                || turnService.IsRankWithinTerritory(turnPlayer, location.y);
         }
         #endregion
 

@@ -2,6 +2,7 @@
 using ECS.Engine.Board.Tile;
 using ECS.Engine.Board.Tile.Highlight;
 using ECS.Engine.Check;
+using ECS.Engine.Checkmate;
 using ECS.Engine.Drop;
 using ECS.Engine.Hand;
 using ECS.Engine.Hand.Highlight;
@@ -67,6 +68,7 @@ namespace ECS.Context.EngineStep.Create
 
             engines.Add("commanderCheck", new CommanderCheckEngine());
             engines.Add("highlightAllDestinationTiles", new HighlightAllDestinationTilesEngine());
+            engines.Add("checkmate", new CheckmateEngine());
 
             engines.Add("mobileCapturePiece", new MobileCapturePieceEngine());
             engines.Add("addPieceToHand", new AddPieceToHandEngine(sequences["boardPress"]));
@@ -132,6 +134,7 @@ namespace ECS.Context.EngineStep.Create
 
             enginesRoot.AddEngine(engines["commanderCheck"]);
             enginesRoot.AddEngine(engines["highlightAllDestinationTiles"]);
+            enginesRoot.AddEngine(engines["checkmate"]);
 
             enginesRoot.AddEngine(engines["mobileCapturePiece"]);
             enginesRoot.AddEngine(engines["addPieceToHand"]);

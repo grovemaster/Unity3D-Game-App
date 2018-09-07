@@ -29,8 +29,8 @@ namespace ECS.Engine.Piece.Ability.Drop
         public void Step(ref DropPrepStepState token, int condition)
         {
             List<PieceEV> piecesAtLocation = pieceFindService.FindPiecesByLocation(token.DestinationTile.Location.Location, entitiesDB);
-            bool isFrontValid = preDropService.IsValidFrontDrop(ref token, piecesAtLocation, entitiesDB);
-            bool isBackValid = preDropService.IsValidBackDrop(ref token, piecesAtLocation, entitiesDB);
+            bool isFrontValid = preDropService.IsValidFrontDrop(ref token.HandPiece, token.DestinationTile.Location.Location, piecesAtLocation, entitiesDB);
+            bool isBackValid = preDropService.IsValidBackDrop(ref token.HandPiece, token.DestinationTile.Location.Location, piecesAtLocation, entitiesDB);
 
             if (isFrontValid && isBackValid)
             {

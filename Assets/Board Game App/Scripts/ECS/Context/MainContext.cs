@@ -139,7 +139,9 @@ namespace ECS.Context
             pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.PAWN, PieceType.BRONZE, PieceSide.BACK, 7, 8);
             pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.CATAPULT, PieceType.LANCE, PieceSide.BACK, 6, 8);
 
+            pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.HIDDEN_DRAGON, PieceType.DRAGON_KING, PieceSide.FRONT, 6, 1);
             pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.HIDDEN_DRAGON, PieceType.DRAGON_KING, PieceSide.FRONT, 7, 0);
+            pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.HIDDEN_DRAGON, PieceType.DRAGON_KING, PieceSide.FRONT, 8, 0);
             pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.HIDDEN_DRAGON, PieceType.DRAGON_KING, PieceSide.FRONT, 7, 7);
 
             pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.PRODIGY, PieceType.PHOENIX, PieceSide.FRONT, 7, 1);
