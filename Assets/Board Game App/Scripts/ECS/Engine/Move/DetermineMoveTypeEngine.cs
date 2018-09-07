@@ -6,6 +6,7 @@ using Data.Piece.Map;
 using Data.Step.Piece.Capture;
 using Data.Step.Piece.Move;
 using ECS.EntityView.Piece;
+using Service.Move;
 using Service.Piece.Find;
 using Svelto.ECS;
 using System;
@@ -16,6 +17,7 @@ namespace ECS.Engine.Move
 {
     class DetermineMoveTypeEngine : IStep<MovePieceStepState>, IQueryingEntitiesEngine
     {
+        private DetermineMoveTypeService determineMoveTypeService = new DetermineMoveTypeService();
         private PieceFindService pieceFindService = new PieceFindService();
 
         private readonly ISequencer moveSequence;
@@ -46,9 +48,18 @@ namespace ECS.Engine.Move
                 && topPieceAtDestinationTile.Value.PlayerOwner.PlayerColor != token.PieceToMove.PlayerOwner.PlayerColor
                 && !TwoFileMoveViolatedByBetrayal(ref token))
             {
-                returnValue = topPieceAtDestinationTile.Value.Tier.Tier != 3
-                        && token.PieceToMove.Piece.PieceType != PieceType.COMMANDER
-                    ? MoveState.CAPTURE_STACK_MODAL : MoveState.MOBILE_CAPTURE;
+                bool isMobileStackValid = topPieceAtDestinationTile.Value.Tier.Tier != 3 && determineMoveTypeService.IsMobileStackValid(token.PieceToMove, token.DestinationTile.Location.Location, entitiesDB);
+                bool isMobileCaptureValid = determineMoveTypeService.IsMobileCaptureValid(token.PieceToMove, token.DestinationTile.Location.Location, entitiesDB);
+
+                if (isMobileStackValid && isMobileCaptureValid)
+                {
+                    returnValue = MoveState.CAPTURE_STACK_MODAL;
+                }
+                else if (isMobileCaptureValid)
+                {
+                    returnValue = MoveState.MOBILE_CAPTURE;
+                }
+                // Else it's MoveState.MOVE_PIECE (stack), the default value
             }
 
             return returnValue;

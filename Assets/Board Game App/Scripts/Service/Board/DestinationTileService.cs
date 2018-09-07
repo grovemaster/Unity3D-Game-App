@@ -114,7 +114,8 @@ namespace Service.Board
         public bool IsCommanderInDangerFromBelow(PieceEV commander, List<PieceEV> commanderTowerPieces)
         {
             return commander.Tier.Tier > 1
-                && commander.PlayerOwner.PlayerColor != commanderTowerPieces[commander.Tier.Tier - 2].PlayerOwner.PlayerColor;
+                && commander.PlayerOwner.PlayerColor != commanderTowerPieces[commander.Tier.Tier - 2].PlayerOwner.PlayerColor
+                && CanImmobileCapture(commanderTowerPieces[commander.Tier.Tier - 2]);
         }
         #endregion
 
@@ -163,6 +164,116 @@ namespace Service.Board
             }
 
             return returnValue;
+        }
+        #endregion
+
+        #region Previous Move State
+        public PreviousMoveState SaveCurrentMove(PieceEV pieceToMove, Vector2 destination, List<PieceEV> allPieces)
+        {
+            List<PieceEV> piecesAtCurrentLocation = FindPiecesAtLocation(pieceToMove.Location.Location, allPieces); // Min size one
+            List<PieceEV> topPieceAtDestination = allPieces.Where(piece => // Size one or zero
+                piece.Location.Location == destination && piece.Tier.TopOfTower).ToList();
+
+            PreviousMoveState returnValue = new PreviousMoveState
+            {
+                pieceToMove = SaveSingleState(pieceToMove),
+                pieceBelow = piecesAtCurrentLocation.Count == 1
+                    ? null : (PreviousPieceState?)SaveSingleState(piecesAtCurrentLocation[pieceToMove.Tier.Tier - 2]),
+                pieceCaptured = topPieceAtDestination.Count == 0
+                    ? null : (PreviousPieceState?)SaveSingleState(topPieceAtDestination[0])
+            };
+
+            return returnValue;
+        }
+
+        public PreviousTowerState? SaveDestinationTowerState(PreviousMoveState previousMoveState, List<PieceEV> allPieces)
+        {
+            PreviousTowerState returnValue = new PreviousTowerState
+            {
+                Pieces = new List<PreviousPieceState>()
+            };
+
+            List<PieceEV> piecesAtDestination = FindPiecesAtLocation(previousMoveState.pieceCaptured.Value.Location, allPieces); // Min size one
+
+            foreach (PieceEV piece in piecesAtDestination)
+            {
+                returnValue.Pieces.Add(SaveSingleState(piece));
+            }
+
+            return returnValue;
+        }
+
+        public bool MakeTemporaryMove(
+            PieceEV pieceToMove, Vector2 destination, List<PieceEV> allPieces, bool stackEnemyPieceIfPossible)
+        {
+            List<PieceEV> piecesAtCurrentLocation = FindPiecesAtLocation(pieceToMove.Location.Location, allPieces); // Min size one
+            List<PieceEV> topPieceAtDestination = allPieces.Where(piece => // Size one or zero
+                piece.Location.Location == destination && piece.Tier.TopOfTower).ToList();
+            bool cannotCaptureBecauseBetrayViolatesTwoFileMove =
+                CannotCaptureBecauseBetrayViolatesTwoFileMove(pieceToMove, destination, allPieces);
+
+            pieceToMove.Location.Location = destination;
+
+            if (piecesAtCurrentLocation.Count > 1)
+            {
+                piecesAtCurrentLocation[piecesAtCurrentLocation.Count - 2].Tier.TopOfTower = true;
+            }
+
+            if (topPieceAtDestination.Count > 0)
+            {
+                topPieceAtDestination[0].Tier.TopOfTower = false;
+
+                if (topPieceAtDestination[0].PlayerOwner.PlayerColor == pieceToMove.PlayerOwner.PlayerColor
+                    || cannotCaptureBecauseBetrayViolatesTwoFileMove
+                    || stackEnemyPieceIfPossible)
+                {
+                    pieceToMove.Tier.Tier = topPieceAtDestination[0].Tier.Tier + 1;
+                }
+                else
+                {
+                    pieceToMove.Tier.Tier = topPieceAtDestination[0].Tier.Tier;
+                    topPieceAtDestination[0].Location.Location = BoardConst.HAND_LOCATION;
+
+                    if (BetrayalInEffect(pieceToMove))
+                    {
+                        List<PieceEV> piecesAtDestination = FindPiecesAtLocation(destination, allPieces); // Min size one
+                        BetrayalEffectOnTower(piecesAtDestination, pieceToMove.PlayerOwner.PlayerColor);
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        public void RestorePreviousState(PreviousMoveState previousState, PreviousTowerState? previousDestinationTowerState)
+        {
+            if (previousDestinationTowerState.HasValue)
+            {
+                foreach (PreviousPieceState previousTowerPieceState in previousDestinationTowerState.Value.Pieces)
+                {
+                    RestoreSingleState(previousTowerPieceState);
+                }
+            }
+
+            RestoreSingleState(previousState.pieceToMove);
+
+            if (previousState.pieceBelow.HasValue)
+            {
+                RestoreSingleState(previousState.pieceBelow.Value);
+            }
+
+            if (previousState.pieceCaptured.HasValue)
+            {
+                RestoreSingleState(previousState.pieceCaptured.Value);
+            }
+        }
+        #endregion
+
+        #region Betrayal
+        public bool BetrayalInEffect(PieceEV pieceToMove)
+        {
+            return pieceToMove.Tier.TopOfTower
+                && AbilityToPiece.HasAbility(PostMoveAbility.BETRAYAL, pieceToMove.Piece.PieceType);
         }
         #endregion
         #endregion
@@ -769,6 +880,7 @@ namespace Service.Board
             }
 
             // If Commander captures enemy piece, it cannot put itself into check b/c of another enemy piece right below that piece
+            // --assuming that piece can immobile capture
             if (pieceEV.ID.entityID == commander.ID.entityID && SecondFromTopTowerPiecesEnemy(pieceEV, allPieces))
             {
                 RestorePreviousState(previousMoveState, previousDestinationTowerState);
@@ -897,41 +1009,6 @@ namespace Service.Board
         #endregion
 
         #region Previous Move State
-        private PreviousMoveState SaveCurrentMove(PieceEV pieceToMove, Vector2 destination, List<PieceEV> allPieces)
-        {
-            List<PieceEV> piecesAtCurrentLocation = FindPiecesAtLocation(pieceToMove.Location.Location, allPieces); // Min size one
-            List<PieceEV> topPieceAtDestination = allPieces.Where(piece => // Size one or zero
-                piece.Location.Location == destination && piece.Tier.TopOfTower).ToList();
-
-            PreviousMoveState returnValue = new PreviousMoveState
-            {
-                pieceToMove = SaveSingleState(pieceToMove),
-                pieceBelow = piecesAtCurrentLocation.Count == 1
-                    ? null : (PreviousPieceState?)SaveSingleState(piecesAtCurrentLocation[pieceToMove.Tier.Tier - 2]),
-                pieceCaptured = topPieceAtDestination.Count == 0
-                    ? null : (PreviousPieceState?)SaveSingleState(topPieceAtDestination[0])
-            };
-
-            return returnValue;
-        }
-
-        private PreviousTowerState? SaveDestinationTowerState(PreviousMoveState previousMoveState, List<PieceEV> allPieces)
-        {
-            PreviousTowerState returnValue = new PreviousTowerState
-            {
-                Pieces = new List<PreviousPieceState>()
-            };
-
-            List<PieceEV> piecesAtDestination = FindPiecesAtLocation(previousMoveState.pieceCaptured.Value.Location, allPieces); // Min size one
-
-            foreach (PieceEV piece in piecesAtDestination)
-            {
-                returnValue.Pieces.Add(SaveSingleState(piece));
-            }
-
-            return returnValue;
-        }
-
         private PreviousPieceState SaveSingleState(PieceEV pieceToSave)
         {
             return new PreviousPieceState
@@ -943,80 +1020,6 @@ namespace Service.Board
                 Tier = pieceToSave.Tier.Tier,
                 TopOfTower = pieceToSave.Tier.TopOfTower
             };
-        }
-
-        private bool MakeTemporaryMove(
-            PieceEV pieceToMove, Vector2 destination, List<PieceEV> allPieces, bool stackMrePieceIfPossible)
-        {
-            List<PieceEV> piecesAtCurrentLocation = FindPiecesAtLocation(pieceToMove.Location.Location, allPieces); // Min size one
-            List<PieceEV> topPieceAtDestination = allPieces.Where(piece => // Size one or zero
-                piece.Location.Location == destination && piece.Tier.TopOfTower).ToList();
-            bool cannotCaptureBecauseBetrayViolatesTwoFileMove =
-                CannotCaptureBecauseBetrayViolatesTwoFileMove(pieceToMove, destination, allPieces);
-
-            if (stackMrePieceIfPossible
-                && !(topPieceAtDestination.Count > 0
-                    && topPieceAtDestination.Last().PlayerOwner.PlayerColor != pieceToMove.PlayerOwner.PlayerColor
-                    && topPieceAtDestination.Last().Tier.Tier < 3
-                    && IsMrePiece(topPieceAtDestination.Last())))
-            {
-                return false;
-            }
-
-            pieceToMove.Location.Location = destination;
-
-            if (piecesAtCurrentLocation.Count > 1)
-            {
-                piecesAtCurrentLocation[piecesAtCurrentLocation.Count - 2].Tier.TopOfTower = true;
-            }
-
-            if (topPieceAtDestination.Count > 0)
-            {
-                topPieceAtDestination[0].Tier.TopOfTower = false;
-
-                if (topPieceAtDestination[0].PlayerOwner.PlayerColor == pieceToMove.PlayerOwner.PlayerColor
-                    || cannotCaptureBecauseBetrayViolatesTwoFileMove
-                    || stackMrePieceIfPossible)
-                {
-                    pieceToMove.Tier.Tier = topPieceAtDestination[0].Tier.Tier + 1;
-                }
-                else
-                {
-                    pieceToMove.Tier.Tier = topPieceAtDestination[0].Tier.Tier;
-                    topPieceAtDestination[0].Location.Location = BoardConst.HAND_LOCATION;
-
-                    if (BetrayalInEffect(pieceToMove))
-                    {
-                        List<PieceEV> piecesAtDestination = FindPiecesAtLocation(destination, allPieces); // Min size one
-                        BetrayalEffectOnTower(piecesAtDestination, pieceToMove.PlayerOwner.PlayerColor);
-                    }
-                }
-            }
-
-            return true;
-        }
-
-        private void RestorePreviousState(PreviousMoveState previousState, PreviousTowerState? previousDestinationTowerState)
-        {
-            if (previousDestinationTowerState.HasValue)
-            {
-                foreach (PreviousPieceState previousTowerPieceState in previousDestinationTowerState.Value.Pieces)
-                {
-                    RestoreSingleState(previousTowerPieceState);
-                }
-            }
-
-            RestoreSingleState(previousState.pieceToMove);
-
-            if (previousState.pieceBelow.HasValue)
-            {
-                RestoreSingleState(previousState.pieceBelow.Value);
-            }
-
-            if (previousState.pieceCaptured.HasValue)
-            {
-                RestoreSingleState(previousState.pieceCaptured.Value);
-            }
         }
 
         private void RestoreSingleState(PreviousPieceState previousState)
@@ -1199,12 +1202,6 @@ namespace Service.Board
         #endregion
 
         #region Betrayal
-        private bool BetrayalInEffect(PieceEV pieceToMove)
-        {
-            return pieceToMove.Tier.TopOfTower
-                && AbilityToPiece.HasAbility(PostMoveAbility.BETRAYAL, pieceToMove.Piece.PieceType);
-        }
-
         private void BetrayalEffectOnTower(List<PieceEV> towerPieces, PlayerColor betrayalColor)
         {
             foreach (PieceEV piece in towerPieces)
