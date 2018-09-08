@@ -1,5 +1,6 @@
 ﻿using Data.Check.PreviousMove;
 using Data.Constants.Board;
+using Data.Enums.Piece;
 using Data.Enums.Piece.PostMove;
 using Data.Enums.Piece.PreMove;
 using Data.Enums.Piece.Side;
@@ -266,7 +267,9 @@ namespace Service.Piece.ImmobileCapture
         {
             foreach (PieceEV piece in towerPieces)
             {
-                if (piece.PlayerOwner.PlayerColor != betrayalColor)
+                // Only flip enemy pieces that are NOT the commander
+                if (piece.PlayerOwner.PlayerColor != betrayalColor
+                    && piece.Piece.PieceType != PieceType.COMMANDER)
                 {
                     pieceSetService.SetPiecePlayerOwner(piece, betrayalColor, entitiesDB);
                     pieceSetService.SetPieceSide(piece, piece.Piece.PieceType == piece.Piece.Front ? PieceSide.BACK : PieceSide.FRONT, entitiesDB);

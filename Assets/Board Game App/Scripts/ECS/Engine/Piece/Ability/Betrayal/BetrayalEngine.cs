@@ -1,21 +1,14 @@
 ﻿using Data.Enums.Piece;
-using Data.Enums.Piece.PostMove;
 using Data.Enums.Piece.Side;
 using Data.Enums.Player;
-using Data.Piece.Map;
-using Data.Step.Piece.Ability;
 using Data.Step.Piece.Ability.Betrayal;
 using Data.Step.Piece.Ability.ForcedRearrangement;
-using Data.Step.Piece.Move;
-using Data.Step.Turn;
 using ECS.EntityView.Piece;
 using ECS.EntityView.Turn;
-using Service.Piece.Factory;
 using Service.Piece.Find;
 using Service.Piece.Set;
 using Service.Turn;
 using Svelto.ECS;
-using System;
 using System.Collections.Generic;
 
 namespace ECS.Engine.Piece.Ability.Betrayal
@@ -45,7 +38,9 @@ namespace ECS.Engine.Piece.Ability.Betrayal
 
             foreach (PieceEV piece in towerPieces)
             {
-                if (piece.PlayerOwner.PlayerColor != currentTurn.TurnPlayer.PlayerColor)
+                // Only flip enemy pieces that are NOT the commander
+                if (piece.PlayerOwner.PlayerColor != currentTurn.TurnPlayer.PlayerColor
+                    && piece.Piece.PieceType != PieceType.COMMANDER)
                 {
                     FlipPiece(piece, currentTurn.TurnPlayer.PlayerColor);
                 }

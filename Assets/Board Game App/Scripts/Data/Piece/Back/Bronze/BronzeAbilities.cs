@@ -20,7 +20,11 @@ namespace Data.Piece.Back.Bronze
         {
             get
             {
-                return new List<PreMoveAbility>(new PreMoveAbility[] { PreMoveAbility.TWO_FILE_MOVE });
+                return new List<PreMoveAbility>(new PreMoveAbility[]
+                {
+                    PreMoveAbility.CANNOT_CAPTURE_COMMANDER,
+                    PreMoveAbility.TWO_FILE_MOVE
+                });
             }
         }
 

@@ -209,8 +209,16 @@ namespace Service.Board
             List<PieceEV> piecesAtCurrentLocation = FindPiecesAtLocation(pieceToMove.Location.Location, allPieces); // Min size one
             List<PieceEV> topPieceAtDestination = allPieces.Where(piece => // Size one or zero
                 piece.Location.Location == destination && piece.Tier.TopOfTower).ToList();
-            bool cannotCaptureBecauseBetrayViolatesTwoFileMove =
-                CannotCaptureBecauseBetrayViolatesTwoFileMove(pieceToMove, destination, allPieces);
+            bool cannotCaptureBecauseBetrayalViolations =
+                CannotCaptureBecauseBetrayViolatesTwoFileMove(pieceToMove, destination, allPieces)
+                || CannotCaptureBecauseBetrayCannotCaptureCommander(pieceToMove, destination, allPieces);
+
+            if (topPieceAtDestination.Count > 0
+                && topPieceAtDestination[0].Tier.Tier == 3
+                && cannotCaptureBecauseBetrayalViolations)
+            {
+                return false; // This move cannot happen, so deny it
+            }
 
             pieceToMove.Location.Location = destination;
 
@@ -224,7 +232,7 @@ namespace Service.Board
                 topPieceAtDestination[0].Tier.TopOfTower = false;
 
                 if (topPieceAtDestination[0].PlayerOwner.PlayerColor == pieceToMove.PlayerOwner.PlayerColor
-                    || cannotCaptureBecauseBetrayViolatesTwoFileMove
+                    || cannotCaptureBecauseBetrayalViolations
                     || stackEnemyPieceIfPossible)
                 {
                     pieceToMove.Tier.Tier = topPieceAtDestination[0].Tier.Tier + 1;
@@ -864,11 +872,11 @@ namespace Service.Board
             PreviousTowerState? previousDestinationTowerState = previousMoveState.pieceCaptured.HasValue
                 && BetrayalInEffect(previousMoveState.pieceToMove.Piece)
                 ? SaveDestinationTowerState(previousMoveState, allPieces) : null;
-            bool wasMrePieceStacked = MakeTemporaryMove(pieceEV, destination, allPieces, stackMrePieceIfPossible);
+            bool wasTempMoveCompleted = MakeTemporaryMove(pieceEV, destination, allPieces, stackMrePieceIfPossible);
 
-            if (!wasMrePieceStacked)
+            if (!wasTempMoveCompleted)
             {
-                return false;
+                return true;
             }
 
             // If piece covers Commander, no threat to Commander
@@ -1206,7 +1214,9 @@ namespace Service.Board
         {
             foreach (PieceEV piece in towerPieces)
             {
-                if (piece.PlayerOwner.PlayerColor != betrayalColor)
+                // Only flip enemy pieces that are NOT the commander
+                if (piece.PlayerOwner.PlayerColor != betrayalColor
+                    && piece.Piece.PieceType != PieceType.COMMANDER)
                 {
                     piece.PlayerOwner.PlayerColor = betrayalColor;
                     piece.Piece.PieceType = piece.Piece.PieceType == piece.Piece.Front ? piece.Piece.Back : piece.Piece.Front;
@@ -1237,6 +1247,18 @@ namespace Service.Board
             }
 
             return returnValue;
+        }
+
+        private bool CannotCaptureBecauseBetrayCannotCaptureCommander(PieceEV pieceToMove, Vector2 destination, List<PieceEV> allPieces)
+        {
+            List<PieceEV> towerPieces = FindPiecesAtLocation(destination, allPieces);
+
+            return towerPieces.Count == 3
+                && AbilityToPiece.HasAbility(PreMoveAbility.CANNOT_CAPTURE_COMMANDER, pieceToMove.Piece.PieceType)
+                && AbilityToPiece.HasAbility(PostMoveAbility.BETRAYAL, pieceToMove.Piece.PieceType)
+                && towerPieces.Where(piece =>
+                    piece.PlayerOwner.PlayerColor != pieceToMove.PlayerOwner.PlayerColor
+                    && piece.Piece.PieceType == PieceType.COMMANDER).ToList().Count > 0;
         }
         #endregion
 

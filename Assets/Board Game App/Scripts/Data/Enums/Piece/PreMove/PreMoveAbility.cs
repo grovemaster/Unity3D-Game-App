@@ -3,6 +3,7 @@
     public enum PreMoveAbility
     {
         CANNOT_BE_STACKED,
+        CANNOT_CAPTURE_COMMANDER,
         CANNOT_IMMOBILE_CAPTURE,
         CANNOT_MOBILE_RANGE_EXPANSION,
         MOBILE_RANGE_EXPANSION_LINE,
