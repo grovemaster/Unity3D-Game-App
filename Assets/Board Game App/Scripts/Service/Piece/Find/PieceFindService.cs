@@ -1,6 +1,8 @@
 ﻿using Data.Constants.Board;
 using Data.Enums.Piece;
+using Data.Enums.Piece.PreMove;
 using Data.Enums.Player;
+using Data.Piece.Map;
 using ECS.EntityView.Piece;
 using Service.Common;
 using Svelto.ECS;
@@ -74,6 +76,14 @@ namespace Service.Piece.Find
         {
             return FindAllBoardPieces(entitiesDB)
                 .Where(piece => piece.PlayerOwner.PlayerColor == team && piece.Tier.TopOfTower).ToArray();
+        }
+
+        public List<PieceEV> FindPiecesByTeamAndAbility(PreMoveAbility preMoveAbility, PlayerColor teamColor, IEntitiesDB entitiesDB)
+        {
+            return FindAllBoardPieces(entitiesDB).Where(piece =>
+                piece.PlayerOwner.PlayerColor == teamColor
+                && piece.Tier.TopOfTower
+                && AbilityToPiece.HasAbility(preMoveAbility, piece.Piece.PieceType)).ToList();
         }
 
         public PieceEV FindFirstPieceByLocationAndType(

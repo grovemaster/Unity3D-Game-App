@@ -13,6 +13,7 @@ using Service.Piece.Find;
 using Service.Piece.Set;
 using Service.Turn;
 using Svelto.ECS;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -240,12 +241,15 @@ namespace Service.Piece.ImmobileCapture
                 if (towerPiece.ID.entityID != pieceToCapture.Value.ID.entityID)
                 {
                     pieceSetService.SetPieceLocationAndTier(towerPiece, towerPiece.Location.Location, currentTier++, entitiesDB);
+                    pieceSetService.SetTopOfTowerToFalse(towerPiece, entitiesDB);
                 }
             }
 
             List<PieceEV> newTowerPieces = new List<PieceEV>(towerPieces);
             newTowerPieces.Sort(delegate (PieceEV p1, PieceEV p2)
             { return p1.Tier.Tier.CompareTo(p2.Tier.Tier); });
+
+            pieceSetService.SetTopOfTower(newTowerPieces.Last(), entitiesDB);
 
             isBetrayalPossible = isBetrayalPossible && IsFriendlyBetrayalTopOfTower(newTowerPieces, currentTurnColor, entitiesDB);
 
@@ -258,6 +262,11 @@ namespace Service.Piece.ImmobileCapture
                 {
                     pieceToCapture = null;
                 }
+            }
+
+            if (pieceToCapture.HasValue && CannotCaptureCommanderViolated(newTowerPieces, currentTurnColor, entitiesDB))
+            {
+                pieceToCapture = null;
             }
 
             return pieceToCapture;
@@ -284,6 +293,18 @@ namespace Service.Piece.ImmobileCapture
                 && piece.Location.Location != BoardConst.HAND_LOCATION
                 && AbilityToPiece.HasAbility(PreMoveAbility.TWO_FILE_MOVE, piece.Piece.PieceType))
                 .ToList().Count > 1;
+        }
+
+        private bool CannotCaptureCommanderViolated(List<PieceEV> towerPieces, PlayerColor currentTurnColor, IEntitiesDB entitiesDB)
+        {
+            List<PieceEV> newTowerPieces = towerPieces.Where(piece => piece.Location.Location != BoardConst.HAND_LOCATION).ToList();
+
+            return newTowerPieces.Count > 1
+                && newTowerPieces[newTowerPieces.Count - 2].PlayerOwner.PlayerColor != currentTurnColor
+                && newTowerPieces[newTowerPieces.Count - 2].Piece.PieceType == PieceType.COMMANDER
+                && AbilityToPiece.HasAbility(PreMoveAbility.CANNOT_CAPTURE_COMMANDER, newTowerPieces.Last().Piece.PieceType)
+                && checkService.FindCheckmateFoulThreatsToLocation(newTowerPieces[0].Location.Location, currentTurnColor, entitiesDB).Count > 0
+                && checkService.FindThreatsToLocation(newTowerPieces[0].Location.Location, currentTurnColor, entitiesDB).Count == 0;
         }
     }
 }

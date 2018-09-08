@@ -62,6 +62,23 @@ namespace Service.Board
             return returnValue;
         }
 
+        public HashSet<Vector2> CalcSingleDestinationTileLocationsWithoutFullAdjustment(
+            PieceEV pieceToCalc, List<PieceEV> allPieces, IEntitiesDB entities)
+        {
+            HashSet<Vector2> returnValue = new HashSet<Vector2>();
+
+            bool useGoldMovement = IsOpponentPieceDirectlyBelow(pieceToCalc, allPieces);
+            IPieceData pieceData = CreatePieceData(pieceToCalc, useGoldMovement);
+
+            int tier = CalcTierToUse(pieceToCalc, allPieces);
+            List<Vector2> destinations = pieceData.Tiers[tier - 1].Single;
+            AdjustRawDataWithPieceLocationAndDirection(pieceToCalc, destinations);
+            ExcludeOutOfBoard(destinations);
+            returnValue.UnionWith(destinations);
+
+            return returnValue;
+        }
+
         #region In Check
         public int CalcNumCommanderThreats(PlayerColor commanderColor, IEntitiesDB entitiesDB)
         {
