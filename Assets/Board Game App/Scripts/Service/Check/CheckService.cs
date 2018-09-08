@@ -1,4 +1,6 @@
-﻿using Data.Enums.Piece.OtherMove;
+﻿using Data.Constants.Board;
+using Data.Enums.Piece;
+using Data.Enums.Piece.OtherMove;
 using Data.Enums.Piece.PostMove;
 using Data.Enums.Piece.PreMove;
 using Data.Enums.Player;
@@ -79,34 +81,23 @@ namespace Service.Check
             return returnValue;
         }
 
-        public List<PieceEV> FindThreatsToLocation(Vector2 location, PlayerColor playerColor, IEntitiesDB entitiesDB)
+        public bool CannotCaptureCommanderViolated(Vector2 location, PlayerColor currentTurnColor, IEntitiesDB entitiesDB)
         {
-            List<PieceEV> returnValue = new List<PieceEV>();
-            List<PieceEV> teamPieces = pieceFindService.FindPiecesByTeam(playerColor, entitiesDB).ToList();
-            List<PieceEV> allPieces = pieceFindService.FindAllBoardPieces(entitiesDB).ToList();
+            List<PieceEV> towerPieces = pieceFindService.FindPiecesByLocation(location, entitiesDB);
 
-            foreach (PieceEV teamPiece in teamPieces)
-            {
-                List<Vector2> destinations = destinationTileService.CalcDestinationTileLocations(teamPiece, entitiesDB, allPieces, false);
-
-                if (destinations.Contains(location))
-                {
-                    returnValue.Add(teamPiece);
-                }
-            }
-
-            return returnValue;
+            return CannotCaptureCommanderViolated(towerPieces, currentTurnColor, entitiesDB);
         }
 
-        public List<PieceEV> FindCheckmateFoulThreatsToLocation(Vector2 location, PlayerColor teamColor, IEntitiesDB entitiesDB)
+        public bool CannotCaptureCommanderViolated(List<PieceEV> towerPieces, PlayerColor currentTurnColor, IEntitiesDB entitiesDB)
         {
-            List<PieceEV> allPieces = pieceFindService.FindAllBoardPieces(entitiesDB).ToList();
+            List<PieceEV> newTowerPieces = towerPieces.Where(piece => piece.Location.Location != BoardConst.HAND_LOCATION).ToList();
 
-            // Cannot stack 2 pieces of same type and team in a tower, BUT we're doing predictive modeling:
-            // A topOfTower Bronze checkmates Commander underneath while there's an adjacent Bronze to capture Commander on next turn
-            // (and no other pieces to also capture Commander)
-            return pieceFindService.FindPiecesByTeamAndAbility(PreMoveAbility.CANNOT_CAPTURE_COMMANDER, teamColor, entitiesDB).Where(piece =>
-                destinationTileService.CalcSingleDestinationTileLocationsWithoutFullAdjustment(piece, allPieces, entitiesDB).Contains(location)).ToList();
+            return newTowerPieces.Count > 1
+                && newTowerPieces[newTowerPieces.Count - 2].PlayerOwner.PlayerColor != currentTurnColor
+                && newTowerPieces[newTowerPieces.Count - 2].Piece.PieceType == PieceType.COMMANDER
+                && AbilityToPiece.HasAbility(PreMoveAbility.CANNOT_CAPTURE_COMMANDER, newTowerPieces.Last().Piece.PieceType)
+                && FindCheckmateFoulThreatsToLocation(newTowerPieces[0].Location.Location, currentTurnColor, entitiesDB).Count > 0
+                && FindThreatsToLocation(newTowerPieces[0].Location.Location, currentTurnColor, entitiesDB).Count == 0;
         }
 
         #region Forced Rearrangement
@@ -194,6 +185,36 @@ namespace Service.Check
         {
             return commander.Location.Location == enemyPiece.Location.Location
                 && Math.Abs(commander.Tier.Tier - enemyPiece.Tier.Tier) == 1;
+        }
+
+        private List<PieceEV> FindThreatsToLocation(Vector2 location, PlayerColor playerColor, IEntitiesDB entitiesDB)
+        {
+            List<PieceEV> returnValue = new List<PieceEV>();
+            List<PieceEV> teamPieces = pieceFindService.FindPiecesByTeam(playerColor, entitiesDB).ToList();
+            List<PieceEV> allPieces = pieceFindService.FindAllBoardPieces(entitiesDB).ToList();
+
+            foreach (PieceEV teamPiece in teamPieces)
+            {
+                List<Vector2> destinations = destinationTileService.CalcDestinationTileLocations(teamPiece, entitiesDB, allPieces, false);
+
+                if (destinations.Contains(location))
+                {
+                    returnValue.Add(teamPiece);
+                }
+            }
+
+            return returnValue;
+        }
+
+        private List<PieceEV> FindCheckmateFoulThreatsToLocation(Vector2 location, PlayerColor teamColor, IEntitiesDB entitiesDB)
+        {
+            List<PieceEV> allPieces = pieceFindService.FindAllBoardPieces(entitiesDB).ToList();
+
+            // Cannot stack 2 pieces of same type and team in a tower, BUT we're doing predictive modeling:
+            // A topOfTower Bronze checkmates Commander underneath while there's an adjacent Bronze to capture Commander on next turn
+            // (and no other pieces to also capture Commander)
+            return pieceFindService.FindPiecesByTeamAndAbility(PreMoveAbility.CANNOT_CAPTURE_COMMANDER, teamColor, entitiesDB).Where(piece =>
+                destinationTileService.CalcSingleDestinationTileLocationsWithoutFullAdjustment(piece, allPieces, entitiesDB).Contains(location)).ToList();
         }
     }
 }

@@ -39,6 +39,11 @@ namespace Service.Move
 
             bool returnValue = !checkService.IsCommanderInCheck(pieceToCalc.PlayerOwner.PlayerColor, entitiesDB);
 
+            if (returnValue)
+            {
+                returnValue = !checkService.CannotCaptureCommanderViolated(destination, pieceToCalc.PlayerOwner.PlayerColor, entitiesDB);
+            }
+
             destinationTileService.RestorePreviousState(previousMoveState, previousDestinationTowerState);
 
             return returnValue;
