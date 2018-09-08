@@ -1,7 +1,5 @@
-﻿using Data.Enums.Piece;
-using Data.Enums.Piece.OtherMove;
+﻿using Data.Enums.Piece.OtherMove;
 using Data.Enums.Piece.PostMove;
-using Data.Enums.Piece.Side;
 using Data.Enums.Player;
 using Data.Piece.Map;
 using ECS.EntityView.Board.Tile;
@@ -34,35 +32,6 @@ namespace Service.Check
         public bool IsCommanderInCheck(PlayerColor turnPlayer, IEntitiesDB entitiesDB)
         {
             return destinationTileService.CalcNumCommanderThreats(turnPlayer, entitiesDB) > 0;
-        }
-
-        public bool DropReleasesCheck(
-            PieceEV pieceToDrop,
-            Vector2 location,
-            TurnEV turn,
-            PieceSide side,
-            IEntitiesDB entitiesDB)
-        {
-            bool returnValue = false;
-
-            PieceEV? topPieceAtLocation = pieceFindService.FindTopPieceByLocation(location, entitiesDB);
-            pieceSetService.SetTopOfTowerToFalse(topPieceAtLocation, entitiesDB);
-
-            int tier = topPieceAtLocation.HasValue ? topPieceAtLocation.Value.Tier.Tier + 1 : 1;
-            pieceSetService.SetPieceLocationAndTier(pieceToDrop, location, tier, entitiesDB);
-            pieceSetService.SetPiecePlayerOwner(pieceToDrop, turn.TurnPlayer.PlayerColor, entitiesDB);
-            pieceSetService.SetPieceSide(pieceToDrop, side, entitiesDB);
-
-            returnValue = !IsCommanderInCheck(turn.TurnPlayer.PlayerColor, entitiesDB);
-
-            pieceSetService.SetPieceLocationToHandLocation(pieceToDrop, entitiesDB);
-
-            if (topPieceAtLocation.HasValue)
-            {
-                pieceSetService.SetTopOfTower(topPieceAtLocation.Value, entitiesDB);
-            }
-
-            return returnValue;
         }
 
         public bool ForcedRecoveryResolvesOrDoesNotCreateCheck(PieceEV pieceMoved, TurnEV turn, IEntitiesDB entitiesDB)

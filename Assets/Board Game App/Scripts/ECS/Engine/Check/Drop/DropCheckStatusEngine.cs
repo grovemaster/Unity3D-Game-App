@@ -1,12 +1,13 @@
 ﻿using Data.Constants.Board;
 using Data.Enums.AB;
+using Data.Enums.Drop;
 using Data.Enums.Piece.Side;
 using Data.Step.Drop;
 using ECS.EntityView.Board.Tile;
 using ECS.EntityView.Hand;
 using ECS.EntityView.Piece;
 using ECS.EntityView.Turn;
-using Service.Check;
+using Service.Checkmate;
 using Service.Piece.Find;
 using Service.Turn;
 using Svelto.ECS;
@@ -15,7 +16,7 @@ namespace Engine.Check.Drop
 {
     class DropCheckStatusEngine : IStep<DropPrepStepState>, IStep<DropStepState>, IQueryingEntitiesEngine
     {
-        private CheckService checkService = new CheckService();
+        private CheckmateService checkmateService = new CheckmateService();
         private PieceFindService pieceFindService = new PieceFindService();
         private TurnService turnService = new TurnService();
 
@@ -33,54 +34,85 @@ namespace Engine.Check.Drop
 
         public void Step(ref DropPrepStepState token, int condition)
         {
-            if (CheckDropToken(ref token.HandPiece, ref token.DestinationTile, null))
+            // TODO CheckDropToken needs to return a state that allows a single-sided drop token
+            PieceSideState resultState = CheckDropToken(ref token.HandPiece, ref token.DestinationTile, null);
+
+            if (resultState == PieceSideState.BOTH)
             {
                 NextAction(ref token);
+            }
+            else if (resultState == PieceSideState.FRONT || resultState == PieceSideState.BACK)
+            {
+                var dropToken = new DropStepState
+                {
+                    DestinationTile = token.DestinationTile,
+                    HandPiece = token.HandPiece,
+                    Side = resultState == PieceSideState.FRONT ? PieceSide.FRONT : PieceSide.BACK
+                };
+
+                NextAction(ref dropToken);
             }
         }
 
         public void Step(ref DropStepState token, int condition)
         {
-            if (CheckDropToken(ref token.HandPiece, ref token.DestinationTile, token.Side))
+            if (CheckDropToken(ref token.HandPiece, ref token.DestinationTile, token.Side) != PieceSideState.NONE)
             {
                 NextAction(ref token);
             }
         }
 
-        private bool CheckDropToken(ref HandPieceEV handPiece, ref TileEV destinationTile, PieceSide? sideToCheck)
+        private PieceSideState CheckDropToken(ref HandPieceEV handPiece, ref TileEV destinationTile, PieceSide? sideToCheck)
         {
             TurnEV currentTurn = turnService.GetCurrentTurnEV(entitiesDB);
             PieceEV pieceToDrop = pieceFindService.FindFirstPieceByLocationAndType(
                 BoardConst.HAND_LOCATION, handPiece.HandPiece.PieceType, handPiece.HandPiece.Back, entitiesDB);
-            bool returnValue = !currentTurn.Check.CommanderInCheck;
 
-            if (!returnValue) // Commander is in check
-            {
-                bool singleSideValid = sideToCheck.HasValue && checkService.DropReleasesCheck(
+            bool singleSideValid = sideToCheck.HasValue && checkmateService.DropReleasesCheck(
+                pieceToDrop,
+                destinationTile.Location.Location,
+                currentTurn.TurnPlayer.PlayerColor,
+                sideToCheck.Value,
+                handPiece,
+                entitiesDB);
+
+            bool frontSideValid = !sideToCheck.HasValue
+                && checkmateService.DropReleasesCheck(
                     pieceToDrop,
                     destinationTile.Location.Location,
-                    currentTurn,
-                    sideToCheck.Value,
+                    currentTurn.TurnPlayer.PlayerColor,
+                    PieceSide.FRONT,
+                    handPiece,
+                    entitiesDB);
+            bool backSideValid = !sideToCheck.HasValue
+                && checkmateService.DropReleasesCheck(
+                    pieceToDrop,
+                    destinationTile.Location.Location,
+                    currentTurn.TurnPlayer.PlayerColor,
+                    PieceSide.BACK,
+                    handPiece,
                     entitiesDB);
 
-                bool eitherSideValid = !sideToCheck.HasValue && (
-                    checkService.DropReleasesCheck(
-                        pieceToDrop,
-                        destinationTile.Location.Location,
-                        currentTurn,
-                        PieceSide.FRONT,
-                        entitiesDB)
-                    || checkService.DropReleasesCheck(
-                        pieceToDrop,
-                        destinationTile.Location.Location,
-                        currentTurn,
-                        PieceSide.BACK,
-                        entitiesDB));
-
-                returnValue = singleSideValid || eitherSideValid;
+            if (singleSideValid)
+            {
+                return sideToCheck.Value == PieceSide.FRONT ? PieceSideState.FRONT : PieceSideState.BACK;
             }
-
-            return returnValue;
+            else if (frontSideValid && backSideValid)
+            {
+                return PieceSideState.BOTH;
+            }
+            else if (frontSideValid)
+            {
+                return PieceSideState.FRONT;
+            }
+            else if (backSideValid)
+            {
+                return PieceSideState.BACK;
+            }
+            else
+            {
+                return PieceSideState.NONE;
+            }
         }
 
         private void NextAction(ref DropPrepStepState token)

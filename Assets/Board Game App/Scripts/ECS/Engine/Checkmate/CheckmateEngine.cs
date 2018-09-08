@@ -21,7 +21,7 @@ namespace ECS.Engine.Checkmate
         {
             TurnEV turn = turnService.GetCurrentTurnEV(entitiesDB);
 
-            if (turn.Check.CommanderInCheck && !checkmateService.AnyValidMoves(turn, entitiesDB))
+            if (turn.Check.CommanderInCheck && !checkmateService.AnyValidMoves(turn.TurnPlayer.PlayerColor, entitiesDB))
             {
                 Debug.Log("CHECKMATED PLAYER: " + turn.TurnPlayer.PlayerColor.ToString());
             }

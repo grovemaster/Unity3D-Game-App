@@ -78,7 +78,7 @@ namespace ECS.Engine.Modal
             PieceEV? pieceTier3 = modalType == ModalType.TOWER_3RD_TIER ? (PieceEV?)piecesAtLocation[2] : null;
             PlayerColor topPlayerColor = pieceTier3.HasValue ?
                 pieceTier3.Value.PlayerOwner.PlayerColor : pieceTier2.PlayerOwner.PlayerColor;
-            bool immobileCapturePossible = immobileCaptureService.ImmobileCapturePossible(piecesAtLocation, currentTurn, entitiesDB);
+            bool immobileCapturePossible = immobileCaptureService.ImmobileCapturePossible(piecesAtLocation, currentTurn.TurnPlayer.PlayerColor, entitiesDB);
             bool noCheckViolationsExist = immobileCaptureService.NoCheckViolationsExist(piecesAtLocation, immobileCapturePossible, entitiesDB);
 
             entitiesDB.ExecuteOnEntity(

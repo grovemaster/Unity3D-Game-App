@@ -28,7 +28,11 @@ namespace Data.Piece.Front.Pawn
         {
             get
             {
-                return new List<DropAbility>(new DropAbility[] { DropAbility.DOUBLE_FILE_DROP });
+                return new List<DropAbility>(new DropAbility[]
+                {
+                    DropAbility.CANNOT_DROP_CHECKMATE,
+                    DropAbility.DOUBLE_FILE_DROP
+                });
             }
         }
 

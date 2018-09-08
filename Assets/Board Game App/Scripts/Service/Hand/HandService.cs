@@ -98,7 +98,12 @@ namespace Service.Hand
                 pieceToCapture.Piece.Back,
                 handOwner.Value,
                 entitiesDB);
-            handHoldingCapturedPiece.HandPiece.NumPieces.value++;
+            IncrementHandPiece(ref handHoldingCapturedPiece);
+        }
+
+        public void IncrementHandPiece(ref HandPieceEV handPieceEV)
+        {
+            handPieceEV.HandPiece.NumPieces.value++;
         }
 
         public void DecrementHandPiece(ref HandPieceEV handPiece)
