@@ -810,7 +810,9 @@ namespace Service.Board
             List<PieceEV> commanderTowerPieces = FindPiecesAtLocation(commander.Location.Location, allPieces);
 
             // If Commander safely buried in a tower whose adjacent piece(s) are not changing, Commander cannot be in check this turn
-            if (pieceEV.Location.Location != commander.Location.Location && IsCommanderBuried(commander, commanderTowerPieces))
+            // Two ways of this occurring: Tier 3 pieceToMove w/Commander on Tier 1 OR static Tier 2 tower and moving another piece
+            if ((pieceEV.Location.Location != commander.Location.Location || pieceEV.Tier.Tier == 3)
+                && IsCommanderBuried(commander, commanderTowerPieces))
             {
                 return;
             }
