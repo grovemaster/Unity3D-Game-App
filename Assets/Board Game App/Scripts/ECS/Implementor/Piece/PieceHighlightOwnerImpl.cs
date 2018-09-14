@@ -49,7 +49,7 @@ namespace ECS.Implementor.Piece
 
         private void ChangeColor()
         {
-            var sprite = GetComponentInChildren<SpriteRenderer>();
+            var sprite = transform.Find("Background").GetComponentInChildren<SpriteRenderer>();
 
             bool hasBlackClick = CurrentColorStates.Contains(HighlightState.PLAYER_BLACK_CLICK_HIGHLIGHT);
             bool hasWhiteClick = CurrentColorStates.Contains(HighlightState.PLAYER_WHITE_CLICK_HIGHLIGHT);
@@ -68,8 +68,17 @@ namespace ECS.Implementor.Piece
             }
             else // HighlightState.DEFAULT or nothing
             {
-                sprite.color = PlayerColor == PlayerColor.BLACK ? ColorConst.LightRed : ColorConst.VeryLightRed;
+                sprite.color = PlayerColor == PlayerColor.BLACK ? ColorConst.LightGray : ColorConst.VeryLightRed;
+                ChangePlayerBorder();
             }
+        }
+
+        private void ChangePlayerBorder()
+        {
+            var sprite = transform.Find("Sprite").GetComponentInChildren<SpriteRenderer>();
+            sprite.sprite = PlayerColor == PlayerColor.BLACK
+                ? Resources.Load<Sprite>("Images/Piece/Black Piece Border")
+                : Resources.Load<Sprite>("Images/Piece/White Piece Border");
         }
     }
 }

@@ -81,7 +81,7 @@ namespace ECS.Implementor.Board.Tile
             }
             else // HighlightState.DEFAULT or nothing
             {
-                sprite.color = Color.gray;
+                sprite.color = ColorConst.Wood;
             }
         }
     }
