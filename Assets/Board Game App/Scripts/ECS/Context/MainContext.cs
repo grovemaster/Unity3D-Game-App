@@ -103,6 +103,43 @@ namespace ECS.Context
             //but the HealthEntityStruct does. Here I show the official method to do it
             //var initializer = entityFactory.BuildEntity<PieceED>(pawn.GetInstanceID(), pawn.GetComponents<IImplementor>());
             var pieceCreateService = new PieceCreateService(entityFactory);
+
+            // Double Pawn Drop Checkmate
+            /*
+            pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.COMMANDER, PieceType.COMMANDER, PieceSide.FRONT, 8, 0);
+            pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.COMMANDER, PieceType.COMMANDER, PieceSide.FRONT, 6, 1);
+
+            pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.PAWN, PieceType.BRONZE, PieceSide.FRONT, 1, 8);
+            pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.PAWN, PieceType.BRONZE, PieceSide.FRONT, 1, 7);
+            pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.PAWN, PieceType.BRONZE, PieceSide.FRONT, 1, 3);
+
+            pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.HIDDEN_DRAGON, PieceType.DRAGON_KING, PieceSide.FRONT, 5, 2);
+            pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.HIDDEN_DRAGON, PieceType.DRAGON_KING, PieceSide.FRONT, 8, 2);
+
+            pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.SPY, PieceType.CLANDESTINITE, PieceSide.BACK, 8, 1);
+            pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.SPY, PieceType.CLANDESTINITE, PieceSide.BACK, 6, 0);
+
+            pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.FORTRESS, PieceType.LANCE, PieceSide.FRONT, 7, 0);//*/
+
+            // Bronze Checkmate Foul
+            /*
+            pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.COMMANDER, PieceType.COMMANDER, PieceSide.FRONT, 0, 1);
+            pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.COMMANDER, PieceType.COMMANDER, PieceSide.FRONT, 6, 8);
+
+            pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.PAWN, PieceType.BRONZE, PieceSide.FRONT, 1, 8);
+            pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.PAWN, PieceType.BRONZE, PieceSide.FRONT, 2, 8);
+            pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.PAWN, PieceType.BRONZE, PieceSide.FRONT, 1, 7);
+            pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.PAWN, PieceType.BRONZE, PieceSide.FRONT, 2, 3);
+
+            pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.PAWN, PieceType.BRONZE, PieceSide.BACK, 7, 7);
+            pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.PAWN, PieceType.BRONZE, PieceSide.BACK, 5, 7);
+
+            pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.FORTRESS, PieceType.LANCE, PieceSide.FRONT, 8, 7);
+            pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.FORTRESS, PieceType.LANCE, PieceSide.FRONT, 6, 7);
+            pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.FORTRESS, PieceType.LANCE, PieceSide.FRONT, 4, 7);//*/
+
+            // Regular
+            /*
             pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.COMMANDER, PieceType.COMMANDER, PieceSide.FRONT, 4, 1);
             pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.COMMANDER, PieceType.COMMANDER, PieceSide.FRONT, 6, 5);
 
@@ -151,7 +188,67 @@ namespace ECS.Context
             pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.SAMURAI, PieceType.PIKE, PieceSide.FRONT, 2, 6);
 
             pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.CAPTAIN, PieceType.PISTOL, PieceSide.FRONT, 4, 3);
-            pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.CAPTAIN, PieceType.PISTOL, PieceSide.FRONT, 4, 5);
+            pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.CAPTAIN, PieceType.PISTOL, PieceSide.FRONT, 4, 5);//*/
+
+            // Real Game
+            //*
+            pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.COMMANDER, PieceType.COMMANDER, PieceSide.FRONT, 4, 0);
+            pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.COMMANDER, PieceType.COMMANDER, PieceSide.FRONT, 4, 8);
+
+            pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.CAPTAIN, PieceType.PISTOL, PieceSide.FRONT, 3, 1);
+            pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.CAPTAIN, PieceType.PISTOL, PieceSide.FRONT, 5, 0);
+            pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.CAPTAIN, PieceType.PISTOL, PieceSide.FRONT, 3, 7);
+            pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.CAPTAIN, PieceType.PISTOL, PieceSide.FRONT, 5, 8);
+
+            pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.SAMURAI, PieceType.PIKE, PieceSide.FRONT, 2, 0);
+            pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.SAMURAI, PieceType.PIKE, PieceSide.FRONT, 6, 0);
+            pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.SAMURAI, PieceType.PIKE, PieceSide.FRONT, 2, 8);
+            pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.SAMURAI, PieceType.PIKE, PieceSide.FRONT, 6, 8);
+
+            pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.SPY, PieceType.CLANDESTINITE, PieceSide.FRONT, 2, 1);
+            pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.SPY, PieceType.CLANDESTINITE, PieceSide.FRONT, 5, 1);
+            pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.SPY, PieceType.CLANDESTINITE, PieceSide.FRONT, 7, 1);
+            pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.SPY, PieceType.CLANDESTINITE, PieceSide.FRONT, 2, 7);
+            pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.SPY, PieceType.CLANDESTINITE, PieceSide.FRONT, 5, 7);
+            pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.SPY, PieceType.CLANDESTINITE, PieceSide.FRONT, 7, 7);
+
+            pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.CATAPULT, PieceType.LANCE, PieceSide.FRONT, 4, 1);
+            pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.CATAPULT, PieceType.LANCE, PieceSide.FRONT, 4, 7);
+
+            pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.FORTRESS, PieceType.LANCE, PieceSide.FRONT, 3, 0);
+            pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.FORTRESS, PieceType.LANCE, PieceSide.FRONT, 3, 8);
+
+            pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.HIDDEN_DRAGON, PieceType.DRAGON_KING, PieceSide.FRONT, 1, 0);
+            pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.HIDDEN_DRAGON, PieceType.DRAGON_KING, PieceSide.FRONT, 1, 8);
+
+            pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.PRODIGY, PieceType.PHOENIX, PieceSide.FRONT, 7, 0);
+            pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.PRODIGY, PieceType.PHOENIX, PieceSide.FRONT, 7, 8);
+
+            pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.BOW, PieceType.ARROW, PieceSide.FRONT, 0, 0);
+            pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.BOW, PieceType.ARROW, PieceSide.FRONT, 8, 0);
+            pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.BOW, PieceType.ARROW, PieceSide.FRONT, 0, 8);
+            pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.BOW, PieceType.ARROW, PieceSide.FRONT, 8, 8);
+
+            pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.PAWN, PieceType.BRONZE, PieceSide.FRONT, 0, 2);
+            pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.PAWN, PieceType.BRONZE, PieceSide.FRONT, 1, 2);
+            pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.PAWN, PieceType.BRONZE, PieceSide.FRONT, 2, 2);
+            pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.PAWN, PieceType.BRONZE, PieceSide.FRONT, 3, 2);
+            pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.PAWN, PieceType.BRONZE, PieceSide.FRONT, 4, 2);
+            pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.PAWN, PieceType.BRONZE, PieceSide.FRONT, 5, 2);
+            pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.PAWN, PieceType.BRONZE, PieceSide.FRONT, 6, 2);
+            pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.PAWN, PieceType.SILVER, PieceSide.FRONT, 7, 2);
+            pieceCreateService.CreatePiece(PlayerColor.BLACK, PieceType.PAWN, PieceType.GOLD, PieceSide.FRONT, 8, 2);
+
+            pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.PAWN, PieceType.BRONZE, PieceSide.FRONT, 0, 6);
+            pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.PAWN, PieceType.BRONZE, PieceSide.FRONT, 1, 6);
+            pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.PAWN, PieceType.BRONZE, PieceSide.FRONT, 2, 6);
+            pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.PAWN, PieceType.BRONZE, PieceSide.FRONT, 3, 6);
+            pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.PAWN, PieceType.BRONZE, PieceSide.FRONT, 4, 6);
+            pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.PAWN, PieceType.BRONZE, PieceSide.FRONT, 5, 6);
+            pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.PAWN, PieceType.BRONZE, PieceSide.FRONT, 6, 6);
+            pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.PAWN, PieceType.SILVER, PieceSide.FRONT, 7, 6);
+            pieceCreateService.CreatePiece(PlayerColor.WHITE, PieceType.PAWN, PieceType.GOLD, PieceSide.FRONT, 8, 6);
+            //*/
         }
 
         private void BuildTileEntities()
