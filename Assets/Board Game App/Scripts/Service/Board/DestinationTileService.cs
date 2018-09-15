@@ -725,10 +725,7 @@ namespace Service.Board
                 int numPiecesBarringPath = allPieces.Where(piece =>
                     evalLocation == piece.Location.Location
                     && (!canIgnoreFriendlyPieces
-                        || (piece.PlayerOwner.PlayerColor != pieceToCalc.PlayerOwner.PlayerColor
-                            || (piece.Tier.TopOfTower
-                                && piece.PlayerOwner.PlayerColor == pieceToCalc.PlayerOwner.PlayerColor
-                                && AbilityToPiece.HasAbility(PreMoveAbility.CANNOT_BE_STACKED, piece.Piece.PieceType)))
+                        || (piece.PlayerOwner.PlayerColor != pieceToCalc.PlayerOwner.PlayerColor)
                     )).Count();
 
                 if (numPiecesBarringPath > 0)
