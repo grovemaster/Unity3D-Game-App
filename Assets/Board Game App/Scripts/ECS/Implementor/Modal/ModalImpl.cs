@@ -32,6 +32,7 @@ namespace ECS.Implementor.Modal
         private ModalQuestionImpl questionAnswer;
         private ModalDropFrontBackImpl dropFrontBack;
         private ModalConfirmImpl confirm;
+        private IModalVictoriousPlayerImpl victoriousPlayer;
         private ModalVisibilityImpl visibility;
 
         // Services
@@ -60,6 +61,7 @@ namespace ECS.Implementor.Modal
             questionAnswer = gameObject.GetComponentInChildren<ModalQuestionImpl>();
             dropFrontBack = gameObject.GetComponentInChildren<ModalDropFrontBackImpl>();
             confirm = gameObject.GetComponentInChildren<ModalConfirmImpl>();
+            victoriousPlayer = gameObject.GetComponentInChildren<IModalVictoriousPlayerImpl>();
             visibility = gameObject.GetComponentInChildren<ModalVisibilityImpl>();
 
             visibility.IsVisible.NotifyOnValueSet(OnVisibilityChanged);
@@ -145,6 +147,13 @@ namespace ECS.Implementor.Modal
                     modalViewService.DeactivateButton(Button1);
                     modalViewService.SetupButton(Button2, questionAnswer, ModalQuestionAnswer.TIER_1_3_EXCHANGE);
                     modalViewService.SetupButton(Button3, questionAnswer, ModalQuestionAnswer.CLICK);
+                    break;
+                case ModalType.CHECKMATE:
+                    SetTitle("Game Over");
+                    SetQuestion("Winner: " + victoriousPlayer.PlayerColor.ToString());
+                    modalViewService.DeactivateButton(Button1);
+                    modalViewService.DeactivateButton(Button2);
+                    modalViewService.SetupReloadSceneButton(Button3);
                     break;
                 default:
                     throw new InvalidOperationException("Unsupported ModalType");

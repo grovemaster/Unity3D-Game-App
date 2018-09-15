@@ -214,6 +214,13 @@ namespace ECS.Context.EngineStep.Create
                         {
                             steps["turnEnd"]
                         }
+                    },
+                    {
+                        engines["checkmate"],
+                        new To
+                        {
+                            steps["checkmateModal"]
+                        }
                     }
                 });
         }

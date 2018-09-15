@@ -3,6 +3,7 @@ using Data.Step.Board;
 using Data.Step.Drop;
 using Data.Step.Hand;
 using Data.Step.Modal;
+using Data.Step.Modal.Checkmate;
 using Data.Step.Piece.Ability;
 using Data.Step.Piece.Ability.Betrayal;
 using Data.Step.Piece.Ability.ForcedRearrangement;
@@ -92,6 +93,11 @@ namespace ECS.Context.EngineStep.Create
                 (IStep<ForcedRecoveryStepState>)engines["confirmModal"]
             });
 
+            steps.Add("checkmateModal", new IStep<CheckmateModalStepState>[]
+            {
+                (IStep<CheckmateModalStepState>)engines["checkmateModal"]
+            });
+
             #region Drop Modal
             steps.Add("dropModal", new IStep<DropPrepStepState>[]
             {
@@ -120,7 +126,6 @@ namespace ECS.Context.EngineStep.Create
                 (IStep<CancelModalStepState>)engines["deHighlightTeamPieces"]
             });
             #endregion
-
 
             #region Drop
             steps.Add("drop", new IStep<DropStepState>[]

@@ -3,6 +3,7 @@ using Data.Enums.Piece.Side;
 using ECS.Component.Modal;
 using Svelto.ECS;
 using UnityEngine.Events;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace View.Modal
@@ -89,10 +90,22 @@ namespace View.Modal
             button.gameObject.SetActive(false);
         }
 
+        internal void SetupReloadSceneButton(Button button)
+        {
+            button.GetComponentInChildren<Text>().text = "New Game";
+            button.onClick.AddListener(ReloadScene);
+            ActivateButton(button);
+        }
+
         private void ActivateButton(Button button)
         {
             button.gameObject.SetActive(true);
             button.interactable = true;
+        }
+
+        private void ReloadScene()
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
     }
 }

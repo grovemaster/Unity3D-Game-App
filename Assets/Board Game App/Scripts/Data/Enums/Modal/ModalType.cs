@@ -7,6 +7,7 @@
         FRONT_BACK,
         CONFIRM,
         SUBSTITUTION_CLICK,
-        TIER_1_3_EXCHANGE_CLICK
+        TIER_1_3_EXCHANGE_CLICK,
+        CHECKMATE
     }
 }

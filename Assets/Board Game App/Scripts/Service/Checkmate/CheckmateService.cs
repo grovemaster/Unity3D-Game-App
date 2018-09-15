@@ -66,9 +66,9 @@ namespace Service.Checkmate
             PieceEV[] teamPieces = pieceFindService.FindPiecesByTeam(playerColor, entitiesDB);
 
             HashSet<Vector2> destinationLocations =
-                destinationTileService.CalcDestinationTileLocations(teamPieces, false, entitiesDB);
+                destinationTileService.CalcDestinationTileLocations(teamPieces, true, entitiesDB);
 
-            return destinationLocations.Count == 0;
+            return destinationLocations.Count > 0;
         }
 
         private bool AnyValidImmobileMoves(PlayerColor playerColor, IEntitiesDB entitiesDB)

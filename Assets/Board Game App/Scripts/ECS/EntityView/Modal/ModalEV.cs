@@ -1,4 +1,5 @@
 ﻿using ECS.Component.Modal;
+using ECS.Component.Player;
 using ECS.Component.Visibility;
 using Svelto.ECS;
 
@@ -18,6 +19,7 @@ namespace ECS.EntityView.Modal
         public ICancelComponent Cancel;
         public IConfirmComponent Confirm;
         public IImmobileCaptureStateComponent ImmobileCaptureState;
+        public IPlayerComponent VictoriousPlayer;
         public IVisibilityComponent Visibility;
     }
 }

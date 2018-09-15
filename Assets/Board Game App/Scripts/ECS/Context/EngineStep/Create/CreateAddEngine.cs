@@ -10,6 +10,7 @@ using ECS.Engine.Modal;
 using ECS.Engine.Modal.CaptureStack;
 using ECS.Engine.Modal.CaptureStack.Substitution;
 using ECS.Engine.Modal.CaptureStack.TierExchange;
+using ECS.Engine.Modal.Checkmate;
 using ECS.Engine.Modal.Confirm;
 using ECS.Engine.Modal.Drop;
 using ECS.Engine.Modal.ImmobileCapture;
@@ -68,7 +69,7 @@ namespace ECS.Context.EngineStep.Create
 
             engines.Add("commanderCheck", new CommanderCheckEngine());
             engines.Add("highlightAllDestinationTiles", new HighlightAllDestinationTilesEngine());
-            engines.Add("checkmate", new CheckmateEngine());
+            engines.Add("checkmate", new CheckmateEngine(sequences["boardPress"]));
 
             engines.Add("mobileCapturePiece", new MobileCapturePieceEngine());
             engines.Add("addPieceToHand", new AddPieceToHandEngine(sequences["boardPress"]));
@@ -104,6 +105,7 @@ namespace ECS.Context.EngineStep.Create
             engines.Add("dropModalAnswer", new DropModalAnswerEngine(sequences["dropModalAnswer"]));
             engines.Add("confirmModal", new ConfirmModalEngine());
             engines.Add("confirmModalAnswer", new ConfirmModalAnswerEngine(sequences["confirmModalAnswer"]));
+            engines.Add("checkmateModal", new CheckmateModalEngine());
 
             engines.Add("captureStackModal", new CaptureStackModalEngine());
             engines.Add("captureStackModalAnswer", new CaptureStackModalAnswerEngine(sequences["captureStackModalAnswer"]));
@@ -170,6 +172,7 @@ namespace ECS.Context.EngineStep.Create
             enginesRoot.AddEngine(engines["dropModalAnswer"]);
             enginesRoot.AddEngine(engines["confirmModal"]);
             enginesRoot.AddEngine(engines["confirmModalAnswer"]);
+            enginesRoot.AddEngine(engines["checkmateModal"]);
 
             enginesRoot.AddEngine(engines["captureStackModal"]);
             enginesRoot.AddEngine(engines["captureStackModalAnswer"]);
