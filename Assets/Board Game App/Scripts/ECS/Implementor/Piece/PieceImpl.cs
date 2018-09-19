@@ -33,7 +33,7 @@ namespace ECS.Implementor.Piece
             pieceViewService.ChangePieceUpSideText(gameObject, PieceType);
             pieceViewService.ChangePieceDownSideText(gameObject, PieceType == Front ? Back : Front);
 
-            pieceViewService.ChangeIcon(gameObject, PieceType);
+            pieceViewService.ChangeIcon(gameObject, PieceType, Back);
         }
     }
 }

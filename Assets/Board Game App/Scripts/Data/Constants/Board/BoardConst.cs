@@ -12,7 +12,7 @@ namespace Data.Constants.Board
         public const float TILE_SIZE = 8.3f; // Should determine size of board tiles more effectively once I learn more about Unity3D
         public const int NUM_FILES_RANKS = 9;
         public const float HAND_PIECE_X_SPACE = 10f;
-        public const float HAND_PIECE_Y_SPACE = 10f;
+        public const float HAND_PIECE_Y_SPACE = 9f;
         public const int NUM_HAND_PIECES_IN_ROW = 7;
     }
 }

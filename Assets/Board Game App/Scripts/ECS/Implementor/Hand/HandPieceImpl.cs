@@ -1,4 +1,5 @@
-﻿using Data.Enums.Piece;
+﻿using System;
+using Data.Enums.Piece;
 using Data.Enums.Player;
 using ECS.Component.Hand;
 using ECS.Component.Player;
@@ -25,6 +26,7 @@ namespace ECS.Implementor.Hand
             {
                 pieceType = value;
                 ChangeFrontPieceText();
+                ChangePieceIcon();
             }
         }
 
@@ -71,6 +73,11 @@ namespace ECS.Implementor.Hand
         private void ChangeBackPieceText()
         {
             handViewService.ChangePieceDownSideText(gameObject, Back);
+        }
+
+        private void ChangePieceIcon()
+        {
+            handViewService.ChangePieceIcon(gameObject, PieceType, Back);
         }
     }
 }

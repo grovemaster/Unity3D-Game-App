@@ -35,16 +35,15 @@ namespace View.Piece
             upSideText.text = "";
         }
 
-        internal void ChangeIcon(GameObject pieceObject, PieceType pieceType)
+        internal void ChangeIcon(GameObject pieceGameObject, PieceType pieceType, PieceType back)
         {
-            string resourcesPath = CalcResourcesPath(pieceType);
-            SpriteRenderer spriteRenderer = pieceObject.transform.Find("Icon").GetComponent<SpriteRenderer>();
+            string resourcesPath = CalcResourcesPath(pieceType, back);
+            SpriteRenderer spriteRenderer = pieceGameObject.transform.Find("Icon").GetComponent<SpriteRenderer>();
             spriteRenderer.sprite = Resources.Load<Sprite>(resourcesPath);
         }
 
-        private string CalcResourcesPath(PieceType pieceType)
+        internal string CalcResourcesPath(PieceType pieceType, PieceType back)
         {
-
             switch (pieceType)
             {
                 // Front-Back Combos
@@ -89,7 +88,17 @@ namespace View.Piece
                     return PIECE_ICON_PATH_BASE + "Arrow/Arrow";
 
                 case PieceType.PAWN:
-                    return PIECE_ICON_PATH_BASE + "Pawn/Pawn";
+                    switch (back)
+                    {
+                        case PieceType.BRONZE:
+                            return PIECE_ICON_PATH_BASE + "Pawn/Pawn Bronze";
+                        case PieceType.SILVER:
+                            return PIECE_ICON_PATH_BASE + "Pawn/Pawn Silver";
+                        case PieceType.GOLD:
+                            return PIECE_ICON_PATH_BASE + "Pawn/Pawn Gold";
+                        default:
+                            throw new InvalidOperationException("Invalid back PieceType for Pawn when locating Piece sprite");
+                    }
                 case PieceType.BRONZE:
                     return PIECE_ICON_PATH_BASE + "Bronze/Bronze";
                 case PieceType.SILVER:
@@ -97,10 +106,8 @@ namespace View.Piece
                 case PieceType.GOLD:
                     return PIECE_ICON_PATH_BASE + "Gold/Gold";
                 default:
-                    throw new InvalidOperationException("Invalid PieceType when creating IPieceData");
+                    throw new InvalidOperationException("Invalid PieceType when locating Piece sprite");
             }
-
-            return PIECE_ICON_PATH_BASE + "Pawn/icons8-pawn"; ;
         }
     }
 }

@@ -48,7 +48,7 @@ namespace ECS.Implementor.Hand
 
         private void ChangeColor()
         {
-            var sprite = GetComponentInChildren<SpriteRenderer>();
+            var sprite = gameObject.transform.Find("Background").GetComponentInChildren<SpriteRenderer>();
 
             if (CurrentColorStates.Any())
             {
@@ -56,7 +56,7 @@ namespace ECS.Implementor.Hand
             }
             else // HighlightState.DEFAULT or nothing
             {
-                sprite.color = ColorConst.LightOrangeBrown;
+                sprite.color = Color.white;
             }
         }
     }
