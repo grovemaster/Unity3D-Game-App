@@ -1,4 +1,5 @@
-﻿using Svelto.ECS;
+﻿using Data.Enums.Piece;
+using Data.Enums.Player;
 
 namespace ECS.Component.Modal
 {
@@ -16,6 +17,9 @@ namespace ECS.Component.Modal
         string Name { get; set; }
         bool Enabled { get; set; }
         int ReferencedPieceId { get; set; } // Piece of tower tier, clicked value is set as Answer
+        PlayerColor Team { get; set; } // Piece's team, required for visual display of piece
+        PieceType PieceType { get; set; } // Piece's type, required for visual display of piece
+        PieceType Back { get; set; } // Piece's back type, required for visual display of piece
     }
 
     public interface ITier1OptionComponent: IComponent, ITowerOptionBase

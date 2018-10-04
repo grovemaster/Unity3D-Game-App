@@ -10,7 +10,7 @@ using View.Modal;
 
 namespace ECS.Implementor.Modal
 {
-    class ModalImpl : MonoBehaviour, IImplementor, IModalTypeComponent, IAnswerComponent, IImmobileCaptureStateComponent
+    class ModalImpl : MonoBehaviour, IImplementor, IModalTypeComponent, IAnswerComponent
     {
         public GameObject Overlay;                // Need overlay to hide/show modal, since it contains modal
         private TrackIsModalOpen isModalOpen;
@@ -26,9 +26,6 @@ namespace ECS.Implementor.Modal
 
         // Other Impls contained here so values may be used in logic
         // Value set through Unity3D Editor
-        private Tier1OptionImpl tier1Option;
-        private Tier2OptionImpl tier2Option;
-        private Tier3OptionImpl tier3Option;
         private ModalQuestionImpl questionAnswer;
         private ModalDropFrontBackImpl dropFrontBack;
         private ModalConfirmImpl confirm;
@@ -43,7 +40,6 @@ namespace ECS.Implementor.Modal
 
         public ModalType Type { get; set; }
         public DispatchOnSet<int> Answer { get; set; }
-        public bool ImmobileCaptureDesignated { get; set; }
 
         void Awake()
         {
@@ -55,9 +51,6 @@ namespace ECS.Implementor.Modal
         {
             isModalOpen = FindObjectOfType<TrackIsModalOpen>();
 
-            tier1Option = gameObject.GetComponentInChildren<Tier1OptionImpl>();
-            tier2Option = gameObject.GetComponentInChildren<Tier2OptionImpl>();
-            tier3Option = gameObject.GetComponentInChildren<Tier3OptionImpl>();
             questionAnswer = gameObject.GetComponentInChildren<ModalQuestionImpl>();
             dropFrontBack = gameObject.GetComponentInChildren<ModalDropFrontBackImpl>();
             confirm = gameObject.GetComponentInChildren<ModalConfirmImpl>();
@@ -101,18 +94,6 @@ namespace ECS.Implementor.Modal
         {
             switch(Type)
             {
-                case ModalType.TOWER_2ND_TIER:
-                    SetTitle();
-                    SetQuestion();
-                    modalViewService.DeactivateButton(Button1);
-                    modalViewService.SetupButton(Button2, tier1Option, Answer, ImmobileCaptureDesignated);
-                    modalViewService.SetupButton(Button3, tier2Option, Answer, true);
-                    break;
-                case ModalType.TOWER_3RD_TIER:
-                    modalViewService.SetupButton(Button1, tier1Option, Answer, ImmobileCaptureDesignated);
-                    modalViewService.SetupButton(Button2, tier2Option, Answer, ImmobileCaptureDesignated);
-                    modalViewService.SetupButton(Button3, tier3Option, Answer, true);
-                    break;
                 case ModalType.CAPTURE_STACK:
                     SetTitle("Capture Or Stack");
                     SetQuestion("Capture piece or stack on top of it?");

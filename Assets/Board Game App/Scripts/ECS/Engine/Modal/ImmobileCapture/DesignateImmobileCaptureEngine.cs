@@ -13,7 +13,7 @@ namespace ECS.Engine.Modal.ImmobileCapture
     class DesignateImmobileCaptureEngine : IStep<ImmobileCaptureStepState>, IQueryingEntitiesEngine
     {
         private ImmobileCaptureService immobileCaptureService = new ImmobileCaptureService();
-        private ModalService modalService = new ModalService();
+        private TowerModalService towerModalService = new TowerModalService();
         private PieceFindService pieceFindService = new PieceFindService();
 
         public IEntitiesDB entitiesDB { private get; set; }
@@ -23,12 +23,12 @@ namespace ECS.Engine.Modal.ImmobileCapture
 
         public void Step(ref ImmobileCaptureStepState token, int condition)
         {
-            ModalEV modal = modalService.FindModalEV(entitiesDB);
+            TowerModalEV modal = towerModalService.FindModalEV(entitiesDB);
             SetModalOptions(modal);
             UpdateModalView(modal);
         }
 
-        private void SetModalOptions(ModalEV modal)
+        private void SetModalOptions(TowerModalEV modal)
         {
             PieceEV pieceTier1 = pieceFindService.FindPieceEVById(modal.Tier1.ReferencedPieceId, entitiesDB).Value;
             List<PieceEV> piecesAtLocation = pieceFindService.FindPiecesByLocation(pieceTier1.Location.Location, entitiesDB);
@@ -45,7 +45,7 @@ namespace ECS.Engine.Modal.ImmobileCapture
 
             entitiesDB.ExecuteOnEntity(
                 modal.ID,
-                (ref ModalEV modalToChange) =>
+                (ref TowerModalEV modalToChange) =>
                 {
                     modalToChange.ImmobileCaptureState.ImmobileCaptureDesignated = true;
 
@@ -70,7 +70,7 @@ namespace ECS.Engine.Modal.ImmobileCapture
                 });
         }
 
-        private void UpdateModalView(ModalEV modal)
+        private void UpdateModalView(TowerModalEV modal)
         {
             modal.Visibility.IsVisible.value = true;
         }

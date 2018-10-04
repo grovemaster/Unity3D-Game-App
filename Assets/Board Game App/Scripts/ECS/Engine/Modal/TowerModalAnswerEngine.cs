@@ -16,10 +16,10 @@ using System.Collections.Generic;
 
 namespace ECS.Engine.Modal
 {
-    class TowerModalAnswerEngine : SingleEntityEngine<ModalEV>, IQueryingEntitiesEngine
+    class TowerModalAnswerEngine : SingleEntityEngine<TowerModalEV>, IQueryingEntitiesEngine
     {
         private DestinationTileService destinationTileService = new DestinationTileService();
-        private ModalService modalService = new ModalService();
+        private TowerModalService towerModalService = new TowerModalService();
         private PieceFindService pieceFindService = new PieceFindService();
         private TurnService turnService = new TurnService();
 
@@ -35,12 +35,12 @@ namespace ECS.Engine.Modal
         public void Ready()
         { }
 
-        protected override void Add(ref ModalEV entityView)
+        protected override void Add(ref TowerModalEV entityView)
         {
             entityView.Answer.Answer.NotifyOnValueSet(OnPressed);
         }
 
-        protected override void Remove(ref ModalEV entityView)
+        protected override void Remove(ref TowerModalEV entityView)
         {
             entityView.Answer.Answer.StopNotify(OnPressed);
         }
@@ -60,7 +60,7 @@ namespace ECS.Engine.Modal
         private TowerAnswerState DecideNextAction(PieceEV piece)
         {
             TowerAnswerState returnValue = TowerAnswerState.CLICK_HIGHLIGHT;
-            ModalEV modal = modalService.FindModalEV(entitiesDB);
+            TowerModalEV modal = towerModalService.FindModalEV(entitiesDB);
             
             if (!piece.Tier.TopOfTower)
             {

@@ -10,7 +10,7 @@ namespace ECS.Implementor.Board.Tile
 {
     class TileHighlightImpl : MonoBehaviour, IImplementor, IHighlightComponent, IChangeColorComponent
     {
-        private TrackIsModalOpen isModalOpen;
+        private TrackIsModalOpen[] isModalOpen;
 
         public DispatchOnSet<bool> IsPressed { get; set; }
 
@@ -30,7 +30,7 @@ namespace ECS.Implementor.Board.Tile
 
         void Awake()
         {
-            isModalOpen = FindObjectOfType<TrackIsModalOpen>();
+            isModalOpen = FindObjectsOfType<TrackIsModalOpen>();
 
             IsPressed = new DispatchOnSet<bool>(gameObject.GetInstanceID());
             IsHighlighted = false;
@@ -39,7 +39,7 @@ namespace ECS.Implementor.Board.Tile
 
         void OnMouseDown()
         {
-            if (!isModalOpen.IsModalOpen)
+            if (!isModalOpen[0].IsModalOpen && !isModalOpen[1].IsModalOpen)
             {
                 IsPressed.value = true;
             }

@@ -32,6 +32,7 @@ namespace ECS.Context.EngineStep.Create
             sequences.Add("boardPress", new Sequencer());
             sequences.Add("handPiecePress", new Sequencer());
             sequences.Add("cancelModal", new Sequencer());
+            sequences.Add("cancelTowerModal", new Sequencer());
             sequences.Add("towerModalAnswer", new Sequencer());
             sequences.Add("captureStackModalAnswer", new Sequencer());
             sequences.Add("confirmModalAnswer", new Sequencer());
@@ -43,6 +44,7 @@ namespace ECS.Context.EngineStep.Create
             SetBoardPressSequence();
             SetSequenceHandPress();
             SetSequenceCancelModal();
+            SetSequenceCancelTowerModal();
             SetSequenceTowerModalAnswer();
             SetSequenceCaptureStackModal();
             SetSequenceConfirmModal();
@@ -247,6 +249,22 @@ namespace ECS.Context.EngineStep.Create
                 {
                     {
                         engines["cancelModal"],
+                        new To
+                        {
+                            { (int)StepAB.A, steps["deHighlight"] },
+                            { (int)StepAB.B, steps["gotoTurnEndCancelModalStepState"] }
+                        }
+                    }
+                });
+        }
+
+        private void SetSequenceCancelTowerModal()
+        {
+            sequences["cancelTowerModal"].SetSequence(
+                new Steps
+                {
+                    {
+                        engines["cancelTowerModal"],
                         new To
                         {
                             { (int)StepAB.A, steps["deHighlight"] },

@@ -16,7 +16,7 @@ namespace ECS.Engine.Modal
     class TowerModalEngine : IStep<ClickPieceStepState>, IQueryingEntitiesEngine
     {
         private ImmobileCaptureService immobileCaptureService = new ImmobileCaptureService();
-        private ModalService modalService = new ModalService();
+        private TowerModalService towerModalService = new TowerModalService();
         private PieceFindService pieceFindService = new PieceFindService();
         private TurnService turnService = new TurnService();
 
@@ -27,15 +27,15 @@ namespace ECS.Engine.Modal
 
         public void Step(ref ClickPieceStepState token, int condition)
         {
-            ModalEV modal = modalService.FindModalEV(entitiesDB);
+            TowerModalEV modal = towerModalService.FindModalEV(entitiesDB);
             List<PieceEV> piecesAtLocation = pieceFindService.FindPiecesByLocation(
                 token.ClickedPiece.Location.Location, entitiesDB);
 
             SetModalOptions(modal, piecesAtLocation);
-            modalService.DisplayModal(modal);
+            towerModalService.DisplayModal(modal);
         }
 
-        private void SetModalOptions(ModalEV modal, List<PieceEV> piecesAtLocation)
+        private void SetModalOptions(TowerModalEV modal, List<PieceEV> piecesAtLocation)
         {
             ModalType modalType = CalcModalType(piecesAtLocation);
 
@@ -60,17 +60,17 @@ namespace ECS.Engine.Modal
             return returnValue;
         }
 
-        private void SetModalType(ModalEV modal, ModalType modalType)
+        private void SetModalType(TowerModalEV modal, ModalType modalType)
         {
             entitiesDB.ExecuteOnEntity(
                 modal.ID,
-                (ref ModalEV modalToChange) =>
+                (ref TowerModalEV modalToChange) =>
                 {
                     modalToChange.Type.Type = modalType;
                 });
         }
 
-        private void SetTierOptions(ModalEV modal, ModalType modalType, List<PieceEV> piecesAtLocation)
+        private void SetTierOptions(TowerModalEV modal, ModalType modalType, List<PieceEV> piecesAtLocation)
         {
             TurnEV currentTurn = turnService.GetCurrentTurnEV(entitiesDB);
             PieceEV pieceTier1 = piecesAtLocation[0];
@@ -83,7 +83,7 @@ namespace ECS.Engine.Modal
 
             entitiesDB.ExecuteOnEntity(
                 modal.ID,
-                (ref ModalEV modalToChange) =>
+                (ref TowerModalEV modalToChange) =>
                 {
                     modalToChange.ImmobileCaptureState.ImmobileCaptureDesignated = false;
 
@@ -93,6 +93,9 @@ namespace ECS.Engine.Modal
                             && pieceTier1.PlayerOwner.PlayerColor != topPlayerColor);
                     modalToChange.Tier1.Name = CalcButtonText(pieceTier1);
                     modalToChange.Tier1.ReferencedPieceId = pieceTier1.ID.entityID;
+                    modalToChange.Tier1.Team = pieceTier1.PlayerOwner.PlayerColor;
+                    modalToChange.Tier1.PieceType = pieceTier1.Piece.PieceType;
+                    modalToChange.Tier1.Back = pieceTier1.Piece.Back;
 
                     modalToChange.Tier2.Enabled = pieceTier2.Tier.TopOfTower
                         || (immobileCapturePossible && noCheckViolationsExist
@@ -101,12 +104,18 @@ namespace ECS.Engine.Modal
                             && pieceTier2.PlayerOwner.PlayerColor != topPlayerColor);
                     modalToChange.Tier2.Name = CalcButtonText(pieceTier2);
                     modalToChange.Tier2.ReferencedPieceId = pieceTier2.ID.entityID;
+                    modalToChange.Tier2.Team = pieceTier2.PlayerOwner.PlayerColor;
+                    modalToChange.Tier2.PieceType = pieceTier2.Piece.PieceType;
+                    modalToChange.Tier2.Back = pieceTier2.Piece.Back;
 
                     if (pieceTier3.HasValue)
                     {
                         modalToChange.Tier3.Enabled = pieceTier3.Value.Tier.TopOfTower;
                         modalToChange.Tier3.Name = CalcButtonText(pieceTier3.Value);
                         modalToChange.Tier3.ReferencedPieceId = pieceTier3.Value.ID.entityID;
+                        modalToChange.Tier3.Team = pieceTier3.Value.PlayerOwner.PlayerColor;
+                        modalToChange.Tier3.PieceType = pieceTier3.Value.Piece.PieceType;
+                        modalToChange.Tier3.Back = pieceTier3.Value.Piece.Back;
                     }
                     else
                     {

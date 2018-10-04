@@ -7,11 +7,14 @@ using ECS.Component.SharedComponent;
 using Svelto.ECS;
 using UI.Modal;
 using UnityEngine;
+using View.Piece;
 
 namespace ECS.Implementor.Piece
 {
     class PieceHighlightOwnerImpl : MonoBehaviour, IImplementor, IHighlightComponent, IPlayerComponent, IChangeColorComponent
     {
+        private PieceViewService pieceViewService = new PieceViewService();
+
         private TrackIsModalOpen isModalOpen;
 
         public DispatchOnSet<bool> IsPressed { get; set; }
@@ -69,16 +72,8 @@ namespace ECS.Implementor.Piece
             else // HighlightState.DEFAULT or nothing
             {
                 sprite.color = PlayerColor == PlayerColor.BLACK ? ColorConst.LightGray : ColorConst.VeryLightRed;
-                ChangePlayerBorder();
+                pieceViewService.ChangePlayerBorder(gameObject, PlayerColor);
             }
-        }
-
-        private void ChangePlayerBorder()
-        {
-            var sprite = transform.Find("Sprite").GetComponentInChildren<SpriteRenderer>();
-            sprite.sprite = PlayerColor == PlayerColor.BLACK
-                ? Resources.Load<Sprite>("Images/Piece/Black Piece Border")
-                : Resources.Load<Sprite>("Images/Piece/White Piece Border");
         }
     }
 }

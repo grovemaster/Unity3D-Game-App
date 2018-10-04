@@ -1,5 +1,6 @@
 ﻿using System;
 using Data.Enums.Piece;
+using Data.Enums.Player;
 using UnityEngine;
 
 namespace View.Piece
@@ -40,6 +41,14 @@ namespace View.Piece
             string resourcesPath = CalcResourcesPath(pieceType, back);
             SpriteRenderer spriteRenderer = pieceGameObject.transform.Find("Icon").GetComponent<SpriteRenderer>();
             spriteRenderer.sprite = Resources.Load<Sprite>(resourcesPath);
+        }
+
+        internal void ChangePlayerBorder(GameObject piece, PlayerColor playerColor)
+        {
+            var sprite = piece.transform.Find("Sprite").GetComponentInChildren<SpriteRenderer>();
+            sprite.sprite = playerColor == PlayerColor.BLACK
+                ? Resources.Load<Sprite>("Images/Piece/Black Piece Border")
+                : Resources.Load<Sprite>("Images/Piece/White Piece Border");
         }
 
         internal string CalcResourcesPath(PieceType pieceType, PieceType back)

@@ -100,6 +100,7 @@ namespace ECS.Context.EngineStep.Create
             engines.Add("determineClickType", new DetermineClickTypeEngine(sequences["boardPress"]));
             engines.Add("towerModal", new TowerModalEngine());
             engines.Add("cancelModal", new CancelModalEngine(sequences["cancelModal"]));
+            engines.Add("cancelTowerModal", new CancelTowerModalEngine(sequences["cancelTowerModal"]));
             engines.Add("towerModalAnswer", new TowerModalAnswerEngine(sequences["towerModalAnswer"]));
             engines.Add("dropModal", new DropModalEngine());
             engines.Add("dropModalAnswer", new DropModalAnswerEngine(sequences["dropModalAnswer"]));
@@ -167,6 +168,7 @@ namespace ECS.Context.EngineStep.Create
             enginesRoot.AddEngine(engines["determineClickType"]);
             enginesRoot.AddEngine(engines["towerModal"]);
             enginesRoot.AddEngine(engines["cancelModal"]);
+            enginesRoot.AddEngine(engines["cancelTowerModal"]);
             enginesRoot.AddEngine(engines["towerModalAnswer"]);
             enginesRoot.AddEngine(engines["dropModal"]);
             enginesRoot.AddEngine(engines["dropModalAnswer"]);
