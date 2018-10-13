@@ -8,6 +8,7 @@
         CONFIRM,
         SUBSTITUTION_CLICK,
         TIER_1_3_EXCHANGE_CLICK,
+        CLICK_IMMOBILE_CAPTURE,
         CHECKMATE
     }
 }

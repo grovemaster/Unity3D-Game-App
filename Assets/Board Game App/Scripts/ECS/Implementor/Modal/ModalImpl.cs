@@ -129,6 +129,13 @@ namespace ECS.Implementor.Modal
                     modalViewService.SetupButton(Button2, questionAnswer, ModalQuestionAnswer.TIER_1_3_EXCHANGE);
                     modalViewService.SetupButton(Button3, questionAnswer, ModalQuestionAnswer.CLICK);
                     break;
+                case ModalType.CLICK_IMMOBILE_CAPTURE:
+                    SetTitle("Click or Immobile Capture");
+                    SetQuestion("Click highlight or immobile capture?");
+                    modalViewService.DeactivateButton(Button1);
+                    modalViewService.SetupButton(Button2, questionAnswer, ModalQuestionAnswer.CLICK);
+                    modalViewService.SetupButton(Button3, questionAnswer, ModalQuestionAnswer.IMMOBILE_CAPTURE);
+                    break;
                 case ModalType.CHECKMATE:
                     SetTitle("Game Over");
                     SetQuestion("Winner: " + victoriousPlayer.PlayerColor.ToString());

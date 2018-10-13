@@ -81,6 +81,7 @@ namespace ECS.Context
             BuildTurnEntity();
             BuildHandPieceEntities();
             BuildModalEntity();
+            BuildTowerModalEntity();
         }
 
         private void BuildPieceEntities()
@@ -279,6 +280,13 @@ namespace ECS.Context
             GameObject modalPanel = GameObject.Find("ModalPanel");
 
             entityFactory.BuildEntity<ModalED>(modalPanel.GetInstanceID(), modalPanel.GetComponents<IImplementor>());
+        }
+
+        private void BuildTowerModalEntity()
+        {
+            GameObject towerModalPanel = GameObject.Find("TowerModalPanel");
+
+            entityFactory.BuildEntity<TowerModalED>(towerModalPanel.GetInstanceID(), towerModalPanel.GetComponents<IImplementor>());
         }
 
         private void CreateTeamHandPieces(HandPieceCreateService handPieceCreateService, PlayerColor playerColor)

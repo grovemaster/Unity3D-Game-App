@@ -73,6 +73,7 @@ namespace ECS.Engine.Modal
         private void SetTierOptions(TowerModalEV modal, ModalType modalType, List<PieceEV> piecesAtLocation)
         {
             TurnEV currentTurn = turnService.GetCurrentTurnEV(entitiesDB);
+            PlayerColor turnColor = currentTurn.TurnPlayer.PlayerColor;
             PieceEV pieceTier1 = piecesAtLocation[0];
             PieceEV pieceTier2 = piecesAtLocation[1];
             PieceEV? pieceTier3 = modalType == ModalType.TOWER_3RD_TIER ? (PieceEV?)piecesAtLocation[2] : null;
@@ -90,7 +91,7 @@ namespace ECS.Engine.Modal
                     modalToChange.Tier1.Enabled = pieceTier1.Tier.TopOfTower
                         || (immobileCapturePossible && noCheckViolationsExist
                             && pieceTier1.PlayerOwner.PlayerColor != pieceTier2.PlayerOwner.PlayerColor
-                            && pieceTier1.PlayerOwner.PlayerColor != topPlayerColor);
+                            && pieceTier1.PlayerOwner.PlayerColor == turnColor);
                     modalToChange.Tier1.Name = CalcButtonText(pieceTier1);
                     modalToChange.Tier1.ReferencedPieceId = pieceTier1.ID.entityID;
                     modalToChange.Tier1.Team = pieceTier1.PlayerOwner.PlayerColor;
@@ -101,7 +102,7 @@ namespace ECS.Engine.Modal
                         || (immobileCapturePossible && noCheckViolationsExist
                             && (pieceTier2.PlayerOwner.PlayerColor != pieceTier1.PlayerOwner.PlayerColor
                             || (!pieceTier3.HasValue || pieceTier2.PlayerOwner.PlayerColor != pieceTier3.Value.PlayerOwner.PlayerColor))
-                            && pieceTier2.PlayerOwner.PlayerColor != topPlayerColor);
+                            && pieceTier2.PlayerOwner.PlayerColor == turnColor);
                     modalToChange.Tier2.Name = CalcButtonText(pieceTier2);
                     modalToChange.Tier2.ReferencedPieceId = pieceTier2.ID.entityID;
                     modalToChange.Tier2.Team = pieceTier2.PlayerOwner.PlayerColor;

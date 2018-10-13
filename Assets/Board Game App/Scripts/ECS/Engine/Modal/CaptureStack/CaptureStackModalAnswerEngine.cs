@@ -1,5 +1,7 @@
-﻿using Data.Enums.Modal;
+﻿using Data.Enums;
+using Data.Enums.Modal;
 using Data.Enums.Move;
+using Data.Step;
 using Data.Step.Piece.Ability.Substitution;
 using Data.Step.Piece.Ability.TierExchange;
 using Data.Step.Piece.Capture;
@@ -8,19 +10,25 @@ using Data.Step.Piece.Move;
 using ECS.EntityView.Board.Tile;
 using ECS.EntityView.Modal;
 using ECS.EntityView.Piece;
+using ECS.EntityView.Turn;
+using Service.Board;
 using Service.Board.Tile;
 using Service.Modal;
 using Service.Piece.Find;
+using Service.Turn;
 using Svelto.ECS;
 using System;
+using System.Collections.Generic;
 
 namespace ECS.Engine.Modal.CaptureStack
 {
     class CaptureStackModalAnswerEngine : SingleEntityEngine<ModalEV>, IQueryingEntitiesEngine
     {
+        private DestinationTileService destinationTileService = new DestinationTileService();
         private ModalService modalService = new ModalService();
         private PieceFindService pieceFindService = new PieceFindService();
         private TileService tileService = new TileService();
+        private TurnService turnService = new TurnService();
 
         private readonly ISequencer captureStackModalAnswerSequence;
 
@@ -62,6 +70,9 @@ namespace ECS.Engine.Modal.CaptureStack
                     break;
                 case ModalQuestionAnswer.CLICK:
                     NextActionClick();
+                    break;
+                case ModalQuestionAnswer.IMMOBILE_CAPTURE:
+                    NextActionImmobileCapture();
                     break;
                 default:
                     throw new InvalidOperationException("Unsupported ModalQuestionAnswer value");
@@ -134,13 +145,36 @@ namespace ECS.Engine.Modal.CaptureStack
             ModalEV modal = modalService.FindModalEV(entitiesDB);
             TileEV clickedTile = FindDestinationTile(modal);
             PieceEV clickedPiece = FindTopPiece(clickedTile);
+            TurnEV currentTurn = turnService.GetCurrentTurnEV(entitiesDB);
 
-            var token = new ClickPieceStepState
+            // Determine PiecePressState, click or un-click, and destination tiles
+            var token = new PressStepState
             {
-                ClickedPiece = clickedPiece
+                PieceEntityId = clickedPiece.ID.entityID,
+                PiecePressState = clickedPiece.Highlight.IsHighlighted ? PiecePressState.UNCLICKED : PiecePressState.CLICKED,
+                AffectedTiles = destinationTileService.CalcDestinationTileLocations(
+                    clickedPiece,
+                    entitiesDB,
+                    null,
+                    currentTurn.TurnPlayer.PlayerColor == clickedPiece.PlayerOwner.PlayerColor)
             };
 
             captureStackModalAnswerSequence.Next(this, ref token, (int)MoveState.CLICK);
+        }
+
+        private void NextActionImmobileCapture()
+        {
+            ModalEV modal = modalService.FindModalEV(entitiesDB);
+            TileEV clickedTile = FindDestinationTile(modal);
+            PieceEV pieceToCapture = FindSecondFromTopPiece(clickedTile);
+
+            var token = new ImmobileCapturePieceStepState
+            {
+                BetrayalPossible = false,
+                PieceToCapture = pieceToCapture
+            };
+
+            captureStackModalAnswerSequence.Next(this, ref token, (int)MoveState.IMMOBILE_CAPTURE);
         }
 
         private TileEV FindDestinationTile(ModalEV modal)
@@ -158,6 +192,13 @@ namespace ECS.Engine.Modal.CaptureStack
         {
             return pieceFindService.FindTopPieceByLocation(
                 destinationTile.Location.Location, entitiesDB).Value;
+        }
+
+        private PieceEV FindSecondFromTopPiece(TileEV destinationTile)
+        {
+            List<PieceEV> piecesAtLocation = pieceFindService.FindPiecesByLocation(destinationTile.Location.Location, entitiesDB);
+
+            return piecesAtLocation[piecesAtLocation.Count - 2];
         }
     }
 }

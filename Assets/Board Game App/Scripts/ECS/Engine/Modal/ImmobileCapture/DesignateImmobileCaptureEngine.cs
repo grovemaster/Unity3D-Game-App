@@ -2,9 +2,11 @@
 using Data.Step.Modal;
 using ECS.EntityView.Modal;
 using ECS.EntityView.Piece;
+using ECS.EntityView.Turn;
 using Service.Modal;
 using Service.Piece.Find;
 using Service.Piece.ImmobileCapture;
+using Service.Turn;
 using Svelto.ECS;
 using System.Collections.Generic;
 
@@ -15,6 +17,7 @@ namespace ECS.Engine.Modal.ImmobileCapture
         private ImmobileCaptureService immobileCaptureService = new ImmobileCaptureService();
         private TowerModalService towerModalService = new TowerModalService();
         private PieceFindService pieceFindService = new PieceFindService();
+        private TurnService turnService = new TurnService();
 
         public IEntitiesDB entitiesDB { private get; set; }
 
@@ -33,8 +36,8 @@ namespace ECS.Engine.Modal.ImmobileCapture
             PieceEV pieceTier1 = pieceFindService.FindPieceEVById(modal.Tier1.ReferencedPieceId, entitiesDB).Value;
             List<PieceEV> piecesAtLocation = pieceFindService.FindPiecesByLocation(pieceTier1.Location.Location, entitiesDB);
 
-            PieceEV topPiece = pieceFindService.FindTopPieceByLocation(pieceTier1.Location.Location, entitiesDB).Value;
-            PlayerColor colorToEnable = topPiece.PlayerOwner.PlayerColor;
+            TurnEV currentTurnEV = turnService.GetCurrentTurnEV(entitiesDB);
+            PlayerColor colorToEnable = TurnService.CalcOtherTurnPlayer(currentTurnEV.TurnPlayer.PlayerColor);
 
             PieceEV pieceTier2 = piecesAtLocation[1];
             PieceEV? pieceTier3 = piecesAtLocation.Count > 2 ? (PieceEV?)piecesAtLocation[2] : null;

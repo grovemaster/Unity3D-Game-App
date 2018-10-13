@@ -223,6 +223,14 @@ namespace ECS.Context.EngineStep.Create
                         {
                             steps["checkmateModal"]
                         }
+                    },
+                    {
+                        engines["decideClickImmobileCapture"],
+                        new To
+                        {
+                            { (int)StepAB.A, steps["clickImmobileCaptureModal"] },
+                            { (int)StepAB.B, steps["click"] }
+                        }
                     }
                 });
         }
@@ -283,7 +291,7 @@ namespace ECS.Context.EngineStep.Create
                         engines["towerModalAnswer"],
                         new To
                         {
-                            { (int)TowerAnswerState.CLICK_HIGHLIGHT, steps["click"] },
+                            { (int)TowerAnswerState.DECIDE_CLICK_HIGHLIGHT_CAPTURE, steps["decideClickImmobileCapture"] },
                             { (int)TowerAnswerState.DESIGNATE_IMMOBILE_CAPTURE, steps["designateImmobileCapture"]},
                             { (int)TowerAnswerState.INITIATE_IMMOBILE_CAPTURE, steps["immobileCapture"]}
                         }
@@ -311,7 +319,8 @@ namespace ECS.Context.EngineStep.Create
                             { (int)MoveState.MOBILE_CAPTURE, steps["capturePiece"] },
                             { (int)MoveState.SUBSTITUTION, steps["substitution"] },
                             { (int)MoveState.TIER_1_3_EXCHANGE, steps["tierExchange"] },
-                            { (int)MoveState.CLICK, steps["determineClickType"] }
+                            { (int)MoveState.CLICK, steps["click"] },
+                            { (int)MoveState.IMMOBILE_CAPTURE, steps["immobileCapture"] }
                         }
                     }
                 });

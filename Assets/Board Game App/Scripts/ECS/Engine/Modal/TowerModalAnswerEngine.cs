@@ -3,6 +3,7 @@ using Data.Enums.Modal;
 using Data.Step;
 using Data.Step.Modal;
 using Data.Step.Piece.Capture;
+using Data.Step.Piece.Click;
 using ECS.EntityView.Modal;
 using ECS.EntityView.Piece;
 using ECS.EntityView.Turn;
@@ -59,7 +60,7 @@ namespace ECS.Engine.Modal
 
         private TowerAnswerState DecideNextAction(PieceEV piece)
         {
-            TowerAnswerState returnValue = TowerAnswerState.CLICK_HIGHLIGHT;
+            TowerAnswerState returnValue = TowerAnswerState.DECIDE_CLICK_HIGHLIGHT_CAPTURE;
             TowerModalEV modal = towerModalService.FindModalEV(entitiesDB);
             
             if (!piece.Tier.TopOfTower)
@@ -79,8 +80,8 @@ namespace ECS.Engine.Modal
         {
             switch(nextAction)
             {
-                case TowerAnswerState.CLICK_HIGHLIGHT:
-                    NextActionClickHighlight(piece);
+                case TowerAnswerState.DECIDE_CLICK_HIGHLIGHT_CAPTURE:
+                    NextActionClickHighlightCapture(piece);
                     break;
                 case TowerAnswerState.DESIGNATE_IMMOBILE_CAPTURE:
                     NextActionDesignateImmobileCapture();
@@ -93,16 +94,14 @@ namespace ECS.Engine.Modal
             }
         }
 
-        private void NextActionClickHighlight(PieceEV piece)
+        private void NextActionClickHighlightCapture(PieceEV piece)
         {
-            var pressState = new PressStepState
+            var clickPieceStepState = new ClickPieceStepState
             {
-                PieceEntityId = piece.ID.entityID,
-                PiecePressState = piece.Highlight.IsHighlighted ? PiecePressState.UNCLICKED : PiecePressState.CLICKED,
-                AffectedTiles = destinationTileService.CalcDestinationTileLocations(piece, entitiesDB)
+                ClickedPiece = piece
             };
 
-            towerModalConfirmSequence.Next(this, ref pressState, (int)TowerAnswerState.CLICK_HIGHLIGHT);
+            towerModalConfirmSequence.Next(this, ref clickPieceStepState, (int)TowerAnswerState.DECIDE_CLICK_HIGHLIGHT_CAPTURE);
         }
 
         private void NextActionDesignateImmobileCapture()

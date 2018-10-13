@@ -6,6 +6,7 @@
         STACK,
         CLICK,
         SUBSTITUTION,
-        TIER_1_3_EXCHANGE
+        TIER_1_3_EXCHANGE,
+        IMMOBILE_CAPTURE
     }
 }

@@ -230,6 +230,16 @@ namespace ECS.Context.EngineStep.Create
                 (IStep<ImmobileCaptureStepState>)engines["designateImmobileCapture"]
             });
 
+            steps.Add("decideClickImmobileCapture", new IStep<ClickPieceStepState>[]
+            {
+                (IStep<ClickPieceStepState>)engines["decideClickImmobileCapture"]
+            });
+
+            steps.Add("clickImmobileCaptureModal", new IStep<ClickImmobileCaptureStepState>[]
+            {
+                (IStep<ClickImmobileCaptureStepState>)engines["clickImmobileCaptureModal"]
+            });
+
             steps.Add("immobileCapture", new IStep<ImmobileCapturePieceStepState>[]
             {
                 (IStep<ImmobileCapturePieceStepState>)engines["immobileCapture"],
