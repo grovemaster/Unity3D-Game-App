@@ -5,14 +5,19 @@ namespace UI.TitleScreen
 {
     public class LoadScreenButtonClick : MonoBehaviour
     {
-        public void LoadNewGameScene()
+        public void LoadTitleScene()
         {
-            SceneManager.LoadScene("BoardGame");
+            SceneManager.LoadScene("Title");
         }
 
         public void LoadRulesScene()
         {
             SceneManager.LoadScene("Rules");
+        }
+
+        public void LoadNewGameScene()
+        {
+            SceneManager.LoadScene("BoardGame");
         }
 
         public void ExitGame()
