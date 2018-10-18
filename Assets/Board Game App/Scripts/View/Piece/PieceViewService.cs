@@ -57,63 +57,63 @@ namespace View.Piece
             {
                 // Front-Back Combos
                 case PieceType.COMMANDER:
-                    return PIECE_ICON_PATH_BASE + "Commander/Commander";
+                    return PIECE_ICON_PATH_BASE + "Commander/Commander_en";
 
                 case PieceType.CAPTAIN:
-                    return PIECE_ICON_PATH_BASE + "Captain/Captain";
+                    return PIECE_ICON_PATH_BASE + "Captain/Captain_en";
                 case PieceType.PISTOL:
-                    return PIECE_ICON_PATH_BASE + "Pistol/Pistol";
+                    return PIECE_ICON_PATH_BASE + "Pistol/Pistol_en";
 
                 case PieceType.SAMURAI:
-                    return PIECE_ICON_PATH_BASE + "Samurai/Samurai";
+                    return PIECE_ICON_PATH_BASE + "Samurai/Samurai_en";
                 case PieceType.PIKE:
-                    return PIECE_ICON_PATH_BASE + "Pike/Pike";
+                    return PIECE_ICON_PATH_BASE + "Pike/Pike_en";
 
                 case PieceType.SPY:
-                    return PIECE_ICON_PATH_BASE + "Spy/Spy";
+                    return PIECE_ICON_PATH_BASE + "Spy/Spy_en";
                 case PieceType.CLANDESTINITE:
-                    return PIECE_ICON_PATH_BASE + "Clandestinite/Clandestinite";
+                    return PIECE_ICON_PATH_BASE + "Clandestinite/Clandestinite_en";
 
                 case PieceType.CATAPULT:
-                    return PIECE_ICON_PATH_BASE + "Catapult/Catapult";
+                    return PIECE_ICON_PATH_BASE + "Catapult/Catapult_en";
                 case PieceType.FORTRESS:
-                    return PIECE_ICON_PATH_BASE + "Fortress/Fortress";
+                    return PIECE_ICON_PATH_BASE + "Fortress/Fortress_en";
                 case PieceType.LANCE:
-                    return PIECE_ICON_PATH_BASE + "Lance/Lance";
+                    return PIECE_ICON_PATH_BASE + "Lance/Lance_en";
 
                 case PieceType.HIDDEN_DRAGON:
-                    return PIECE_ICON_PATH_BASE + "Hidden Dragon/Hidden Dragon";
+                    return PIECE_ICON_PATH_BASE + "Hidden Dragon/Hidden Dragon_en";
                 case PieceType.DRAGON_KING:
-                    return PIECE_ICON_PATH_BASE + "Dragon King/Dragon King";
+                    return PIECE_ICON_PATH_BASE + "Dragon King/Dragon King_en";
 
                 case PieceType.PRODIGY:
-                    return PIECE_ICON_PATH_BASE + "Prodigy/Prodigy";
+                    return PIECE_ICON_PATH_BASE + "Prodigy/Prodigy_en";
                 case PieceType.PHOENIX:
-                    return PIECE_ICON_PATH_BASE + "Phoenix/Phoenix";
+                    return PIECE_ICON_PATH_BASE + "Phoenix/Phoenix_en";
 
                 case PieceType.BOW:
-                    return PIECE_ICON_PATH_BASE + "Bow/Bow";
+                    return PIECE_ICON_PATH_BASE + "Bow/Bow_en";
                 case PieceType.ARROW:
-                    return PIECE_ICON_PATH_BASE + "Arrow/Arrow";
+                    return PIECE_ICON_PATH_BASE + "Arrow/Arrow_en";
 
                 case PieceType.PAWN:
                     switch (back)
                     {
                         case PieceType.BRONZE:
-                            return PIECE_ICON_PATH_BASE + "Pawn/Pawn Bronze";
+                            return PIECE_ICON_PATH_BASE + "Pawn/Pawn Bronze_en";
                         case PieceType.SILVER:
-                            return PIECE_ICON_PATH_BASE + "Pawn/Pawn Silver";
+                            return PIECE_ICON_PATH_BASE + "Pawn/Pawn Silver_en";
                         case PieceType.GOLD:
-                            return PIECE_ICON_PATH_BASE + "Pawn/Pawn Gold";
+                            return PIECE_ICON_PATH_BASE + "Pawn/Pawn Gold_en";
                         default:
                             throw new InvalidOperationException("Invalid back PieceType for Pawn when locating Piece sprite");
                     }
                 case PieceType.BRONZE:
-                    return PIECE_ICON_PATH_BASE + "Bronze/Bronze";
+                    return PIECE_ICON_PATH_BASE + "Bronze/Bronze_en";
                 case PieceType.SILVER:
-                    return PIECE_ICON_PATH_BASE + "Silver/Silver";
+                    return PIECE_ICON_PATH_BASE + "Silver/Silver_en";
                 case PieceType.GOLD:
-                    return PIECE_ICON_PATH_BASE + "Gold/Gold";
+                    return PIECE_ICON_PATH_BASE + "Gold/Gold_en";
                 default:
                     throw new InvalidOperationException("Invalid PieceType when locating Piece sprite");
             }
