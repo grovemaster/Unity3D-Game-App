@@ -140,8 +140,8 @@ namespace ECS.Implementor.Modal
                     SetTitle("Game Over");
                     SetQuestion("Winner: " + victoriousPlayer.PlayerColor.ToString());
                     modalViewService.DeactivateButton(Button1);
-                    modalViewService.DeactivateButton(Button2);
-                    modalViewService.SetupReloadSceneButton(Button3);
+                    modalViewService.SetupReloadSceneButton(Button2);
+                    modalViewService.SetupLoadTitleSceneButton(Button3);
                     break;
                 default:
                     throw new InvalidOperationException("Unsupported ModalType");

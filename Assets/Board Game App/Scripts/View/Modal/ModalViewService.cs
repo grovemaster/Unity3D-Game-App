@@ -97,6 +97,13 @@ namespace View.Modal
             ActivateButton(button);
         }
 
+        internal void SetupLoadTitleSceneButton(Button button)
+        {
+            button.GetComponentInChildren<Text>().text = "Title";
+            button.onClick.AddListener(LoadTitleScene);
+            ActivateButton(button);
+        }
+
         private void ActivateButton(Button button)
         {
             button.gameObject.SetActive(true);
@@ -106,6 +113,11 @@ namespace View.Modal
         private void ReloadScene()
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        }
+
+        private void LoadTitleScene()
+        {
+            SceneManager.LoadScene("Title");
         }
     }
 }
