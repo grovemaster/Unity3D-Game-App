@@ -1,5 +1,4 @@
 ﻿using Data.Enums.Move;
-using Data.Enums.Piece;
 using Data.Enums.Piece.PostMove;
 using Data.Enums.Piece.PreMove;
 using Data.Piece.Map;

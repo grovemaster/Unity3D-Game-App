@@ -1,8 +1,10 @@
-﻿using Data.Enums.Piece;
+﻿using Data.Constants.Board;
+using Data.Enums.Piece;
 using Data.Enums.Piece.Side;
 using Data.Enums.Player;
 using ECS.EntityDescriptor.Piece;
 using ECS.Implementor;
+using ECS.Implementor.Hand;
 using ECS.Implementor.Piece;
 using PrefabUtil;
 using Service.Common;
@@ -37,6 +39,9 @@ namespace Service.Piece.Context
             var pieceHighlightOwnerImpl = piece.GetComponent<PieceHighlightOwnerImpl>();
             entityFactory.BuildEntity<PieceED>(piece.GetInstanceID(), piece.GetComponents<IImplementor>());
 
+            piece.name = "Piece " + front.ToString() + " " + back.ToString();
+            piece.tag = "Piece";
+
             pieceImpl.Front = front;
             pieceImpl.Back = back;
             pieceImpl.PieceType = side == PieceSide.FRONT ? front : back;
@@ -47,6 +52,18 @@ namespace Service.Piece.Context
             piece.transform.position = new Vector3(location.x, location.y, 1);
             pieceLocationMoveImpl.Location = new Vector2(fileNum, rankNum);
             pieceHighlightOwnerImpl.PlayChangeColor = true;
+        }
+
+        public void MovePieceToHand(GameObject piece, GameObject handPiece)
+        {
+            var pieceImpl = piece.GetComponent<PieceImpl>();
+            var pieceLocationMoveImpl = piece.GetComponent<PieceLocationMoveImpl>();
+
+            piece.transform.position = new Vector3(-500, -500, 1);
+            pieceLocationMoveImpl.Location = BoardConst.HAND_LOCATION;
+
+            var handPieceImpl = handPiece.GetComponent<HandPieceImpl>();
+            handPieceImpl.NumPieces.value++;
         }
     }
 }

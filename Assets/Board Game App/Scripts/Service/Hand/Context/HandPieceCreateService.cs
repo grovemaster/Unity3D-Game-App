@@ -27,6 +27,8 @@ namespace Service.Hand.Context
             var handPieceImpl = handPiece.GetComponent<HandPieceImpl>();
             entityFactory.BuildEntity<HandPieceED>(handPiece.GetInstanceID(), handPiece.GetComponents<IImplementor>());
 
+            handPiece.name = playerOwner.ToString() + " Hand Piece " + front.ToString() + " " + back.ToString();
+
             handPieceImpl.Back = back;
             handPieceImpl.PieceType = front;
             handPieceImpl.PlayerColor = playerOwner;

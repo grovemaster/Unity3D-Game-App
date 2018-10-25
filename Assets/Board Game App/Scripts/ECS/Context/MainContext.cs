@@ -1,4 +1,6 @@
-﻿using Data.Enums.Piece;
+﻿using System;
+using System.Linq;
+using Data.Enums.Piece;
 using Data.Enums.Piece.Side;
 using Data.Enums.Player;
 using ECS.Context.EngineStep;
@@ -36,6 +38,7 @@ namespace ECS.Context
             InitAssets();
             SetupEngines();
             SetupEntities();
+            MovePiecesToPosition();
         }
 
         public void OnContextCreated(UnityContext contextHolder)
@@ -52,6 +55,7 @@ namespace ECS.Context
 
         public void OnContextInitialized() {}
 
+        #region InitAssets
         private void InitAssets()
         {
             //Do not copy this. initially I thought it was a good idea to use
@@ -62,7 +66,9 @@ namespace ECS.Context
             //that works until further notice.
             GameObject.Find("PrefabsSerializer").GetComponent<PrefabsSerializer>().Init();
         }
+        #endregion
 
+        #region SetupEngines
         private void SetupEngines()
         {
             enginesRoot = new EnginesRoot(new UnitySumbmissionEntityViewScheduler());
@@ -74,7 +80,9 @@ namespace ECS.Context
 
             new SetupEngines(enginesRoot, entityFactory).Setup();
         }
+        #endregion
 
+        #region SetupEntities
         private void SetupEntities() {
             BuildPieceEntities();
             BuildTileEntities();
@@ -305,5 +313,23 @@ namespace ECS.Context
             handPieceCreateService.CreateHandPiece(playerColor, PieceType.CAPTAIN, PieceType.PISTOL, index++);
             handPieceCreateService.CreateHandPiece(playerColor, PieceType.COMMANDER, PieceType.COMMANDER, index++);
         }
+        #endregion
+
+        #region MovePiecesToPosition
+        private void MovePiecesToPosition()
+        {
+            // TODO Later on, use a service to load save game file to determine piece positions,
+            // or default to Initial Arrangement
+            /*
+            GameObject blackHandPiecePawn = GameObject.Find("BLACK Hand Piece PAWN BRONZE");
+            GameObject[] pieces = GameObject.FindGameObjectsWithTag("Piece");
+            GameObject[] pawns = pieces.Where(x => x.name == "Piece PAWN BRONZE").ToArray();
+
+            // TODO It's null to show this functionality needs to be somewhere else
+            var pieceCreateService = new PieceCreateService(null);
+            pieceCreateService.MovePieceToHand(pawns[0], blackHandPiecePawn);
+            */
+        }
+        #endregion
     }
 }
