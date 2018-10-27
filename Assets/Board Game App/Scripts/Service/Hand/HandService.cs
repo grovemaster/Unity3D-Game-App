@@ -86,6 +86,13 @@ namespace Service.Hand
             return handPieces.Count > 0 ? (HandPieceEV?)handPieces[0] : null;
         }
 
+        public bool AreHandsEmpty(IEntitiesDB entities)
+        {
+            return FindAllHandPieces(entities)
+                .Where(hp => hp.HandPiece.NumPieces.value > 0)
+                .Count() == 0;
+        }
+
         public void AddPieceToHand(PieceEV pieceToCapture, IEntitiesDB entitiesDB, PlayerColor? handOwner = null)
         {
             if (!handOwner.HasValue)

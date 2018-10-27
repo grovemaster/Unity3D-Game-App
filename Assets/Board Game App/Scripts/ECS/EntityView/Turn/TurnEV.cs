@@ -1,5 +1,6 @@
 ﻿using Svelto.ECS;
 using ECS.Component.Player;
+using ECS.Component.InitialArrangement;
 
 namespace ECS.EntityView.Turn
 {
@@ -10,5 +11,6 @@ namespace ECS.EntityView.Turn
         public IPlayerComponent TurnPlayer;
         public ICheckComponent Check;
         public IForcedRearrangementComponent ForcedRearrangementStatus;
+        public IInitialArrangementComponent InitialArrangement;
     }
 }

@@ -1,11 +1,12 @@
 ﻿using Data.Constants.ColorConst;
 using Data.Enums.Player;
+using ECS.Component.InitialArrangement;
 using ECS.Component.Player;
 using UnityEngine;
 
 namespace ECS.Implementor.Turn
 {
-    class TurnImpl : MonoBehaviour, IImplementor, IPlayerComponent, ICheckComponent, IForcedRearrangementComponent
+    class TurnImpl : MonoBehaviour, IImplementor, IPlayerComponent, ICheckComponent, IForcedRearrangementComponent, IInitialArrangementComponent
     {
         private PlayerColor playerColor;
         public PlayerColor PlayerColor
@@ -36,6 +37,7 @@ namespace ECS.Implementor.Turn
         }
 
         public bool ForcedRearrangmentActive { get; set; }
+        public bool IsInitialArrangementInEffect { get; set; }
 
         private void SetTurnVisual(PlayerColor turnPlayer)
         {

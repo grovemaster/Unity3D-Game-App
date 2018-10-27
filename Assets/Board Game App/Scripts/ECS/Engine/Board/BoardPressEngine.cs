@@ -39,10 +39,10 @@ namespace ECS.Engine.Board
         {
             ConstraintCheck(ref token);
 
-            BoardPressStateInfo stateInfo = pieceTileService.FindBoardPressStateInfo(entitiesDB, ref token);
-            bool substitutionPossible = pieceTileService.IsSubstitutionPossible(stateInfo, entitiesDB);
-            bool tierExchangePossible = pieceTileService.IsTierExchangePossible(stateInfo, entitiesDB);
             TurnEV currentTurn = turnService.GetCurrentTurnEV(entitiesDB);
+            BoardPressStateInfo stateInfo = pieceTileService.FindBoardPressStateInfo(entitiesDB, ref token);
+            bool substitutionPossible = pieceTileService.IsSubstitutionPossible(stateInfo, currentTurn, entitiesDB);
+            bool tierExchangePossible = pieceTileService.IsTierExchangePossible(stateInfo, currentTurn, entitiesDB);
 
             BoardPress action = boardPressService.DecideAction(
                 stateInfo,

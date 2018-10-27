@@ -23,6 +23,10 @@ namespace Service.Board
             {
                 returnValue = BoardPress.DROP;
             }
+            else if (currentTurn.InitialArrangement.IsInitialArrangementInEffect)
+            {   // User is not dropping during Initial Arrangement, so deny
+                returnValue = BoardPress.NOTHING;
+            }
             else if (substitutionPossible)
             {
                 returnValue = BoardPress.SUBSTITUTION;

@@ -75,19 +75,19 @@ namespace Service.Board
             return returnValue;
         }
 
-        public bool IsSubstitutionPossible(BoardPressStateInfo stateInfo, IEntitiesDB entitiesDB)
+        public bool IsSubstitutionPossible(BoardPressStateInfo stateInfo, TurnEV currentTurn, IEntitiesDB entitiesDB)
         {
-            return checkService.IsSubstitutionPossible(stateInfo.piece, stateInfo.tile, entitiesDB);
+            return !currentTurn.InitialArrangement.IsInitialArrangementInEffect
+                && checkService.IsSubstitutionPossible(stateInfo.piece, stateInfo.tile, entitiesDB);
         }
 
-        public bool IsTierExchangePossible(BoardPressStateInfo stateInfo, IEntitiesDB entitiesDB)
+        public bool IsTierExchangePossible(BoardPressStateInfo stateInfo, TurnEV currentTurn, IEntitiesDB entitiesDB)
         {
-            if (!stateInfo.tile.HasValue)
+            if (!stateInfo.tile.HasValue || currentTurn.InitialArrangement.IsInitialArrangementInEffect)
             {
                 return false;
             }
 
-            TurnEV currentTurn = turnService.GetCurrentTurnEV(entitiesDB);
             List<PieceEV> towerPieces = pieceFindService.FindPiecesByLocation(stateInfo.tile.Value.Location.Location, entitiesDB);
 
             return IsTier1ExchangePossible(towerPieces, currentTurn.TurnPlayer.PlayerColor)

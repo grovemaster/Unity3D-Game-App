@@ -65,6 +65,12 @@ namespace Engine.Check.Drop
         private PieceSideState CheckDropToken(ref HandPieceEV handPiece, ref TileEV destinationTile, PieceSide? sideToCheck)
         {
             TurnEV currentTurn = turnService.GetCurrentTurnEV(entitiesDB);
+
+            if (currentTurn.InitialArrangement.IsInitialArrangementInEffect)
+            {
+                return PieceSideState.FRONT;
+            }
+
             PieceEV pieceToDrop = pieceFindService.FindFirstPieceByLocationAndType(
                 BoardConst.HAND_LOCATION, handPiece.HandPiece.PieceType, handPiece.HandPiece.Back, entitiesDB);
 

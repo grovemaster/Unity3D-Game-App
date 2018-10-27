@@ -274,6 +274,7 @@ namespace ECS.Context
             entityFactory.BuildEntity<TurnED>(currentTurn.GetInstanceID(), currentTurn.GetComponents<IImplementor>());
 
             currentTurnImpl.PlayerColor = PlayerColor.BLACK;
+            currentTurnImpl.IsInitialArrangementInEffect = true; // TODO Later set based on reading from save game file or new game option
         }
 
         private void BuildHandPieceEntities()
@@ -329,6 +330,38 @@ namespace ECS.Context
             var pieceCreateService = new PieceCreateService(null);
             pieceCreateService.MovePieceToHand(pawns[0], blackHandPiecePawn);
             */
+            GameObject[] pieces = GameObject.FindGameObjectsWithTag("Piece");
+            PieceCreateService pieceCreateService = new PieceCreateService(null);
+
+            MovePieceTypeToHand(pieceCreateService, pieces, PieceType.PAWN, PieceType.BRONZE);
+            MovePieceTypeToHand(pieceCreateService, pieces, PieceType.PAWN, PieceType.SILVER);
+            MovePieceTypeToHand(pieceCreateService, pieces, PieceType.PAWN, PieceType.GOLD);
+            MovePieceTypeToHand(pieceCreateService, pieces, PieceType.SPY, PieceType.CLANDESTINITE);
+            MovePieceTypeToHand(pieceCreateService, pieces, PieceType.CATAPULT, PieceType.LANCE);
+            MovePieceTypeToHand(pieceCreateService, pieces, PieceType.FORTRESS, PieceType.LANCE);
+            MovePieceTypeToHand(pieceCreateService, pieces, PieceType.HIDDEN_DRAGON, PieceType.DRAGON_KING);
+            MovePieceTypeToHand(pieceCreateService, pieces, PieceType.PRODIGY, PieceType.PHOENIX);
+            MovePieceTypeToHand(pieceCreateService, pieces, PieceType.BOW, PieceType.ARROW);
+            MovePieceTypeToHand(pieceCreateService, pieces, PieceType.SAMURAI, PieceType.PIKE);
+            MovePieceTypeToHand(pieceCreateService, pieces, PieceType.CAPTAIN, PieceType.PISTOL);
+            MovePieceTypeToHand(pieceCreateService, pieces, PieceType.COMMANDER, PieceType.COMMANDER);
+        }
+
+        private void MovePieceTypeToHand(
+            PieceCreateService pieceCreateService,
+            GameObject[] allPieces,
+            PieceType front,
+            PieceType back)
+        {
+            GameObject blackHandPiece = GameObject.Find("BLACK Hand Piece " + front.ToString() + " " + back.ToString());
+            GameObject whiteHandPiece = GameObject.Find("WHITE Hand Piece " + front.ToString() + " " + back.ToString());
+            GameObject[] pieces = allPieces.Where(x => x.name == "Piece " + front.ToString() + " " + back.ToString()).ToArray();
+
+            for (int i = 0; i < pieces.Length; i += 2)
+            {
+                pieceCreateService.MovePieceToHand(pieces[i], blackHandPiece);
+                pieceCreateService.MovePieceToHand(pieces[i + 1], whiteHandPiece);
+            }
         }
         #endregion
     }

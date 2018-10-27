@@ -10,6 +10,7 @@ using Service.Piece.Factory;
 using Service.Piece.Find;
 using Service.Turn;
 using Svelto.ECS;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -47,7 +48,8 @@ namespace Service.Drop
             return (IsEmptyTile(piecesAtLocation) || IsValidEarthLinkDrop(piecesAtLocation, side) || IsValidEarthLinkDrop(piecesAtLocation, null))
                 && DoesNotViolateDoubleFileDrop(ref handPiece, ref location, side, entitiesDB)
                 && DoesNotViolateTerritoryDrop(ref handPiece, ref location, side, entitiesDB)
-                && DoesNotViolateForcedRearrangementFrontDrop(side, entitiesDB);
+                && DoesNotViolateForcedRearrangementFrontDrop(side, entitiesDB)
+                && DoesNotViolateInitialArrangement(ref handPiece, ref location, side, entitiesDB);
         }
 
         private bool IsEmptyTile(List<PieceEV> piecesAtLocation)
@@ -116,6 +118,17 @@ namespace Service.Drop
 
             return !HasDropAbility(ref handPiece, side, DropAbility.TERRITORY_DROP)
                 || turnService.IsRankWithinTerritory(turnPlayer, location.y);
+        }
+        #endregion
+
+        #region Initial Arrangement
+        private bool DoesNotViolateInitialArrangement(ref HandPieceEV handPiece, ref Vector2 location, PieceSide side, IEntitiesDB entitiesDB)
+        {
+            TurnEV turnEV = turnService.GetCurrentTurnEV(entitiesDB);
+
+            return !turnEV.InitialArrangement.IsInitialArrangementInEffect
+                || (turnService.IsRankWithinTerritory(turnEV, location.y)
+                    && side == PieceSide.FRONT);
         }
         #endregion
 
