@@ -4,6 +4,7 @@ using Data.Enums.Piece;
 using Data.Enums.Piece.Side;
 using Data.Enums.Player;
 using ECS.Context.EngineStep;
+using ECS.EntityDescriptor.Menu;
 using ECS.EntityDescriptor.Modal;
 using ECS.EntityDescriptor.Turn;
 using ECS.Implementor;
@@ -35,10 +36,8 @@ namespace ECS.Context
 
         public Main()
         {
-            InitAssets();
-            SetupEngines();
-            SetupEntities();
-            MovePiecesToPosition();
+            SetupAssets();
+            SetupGame();
         }
 
         public void OnContextCreated(UnityContext contextHolder)
@@ -53,9 +52,17 @@ namespace ECS.Context
             TaskRunner.StopAndCleanupAllDefaultSchedulers();
         }
 
-        public void OnContextInitialized() {}
+        public void OnContextInitialized() { }
+
+        private void SetupAssets()
+        {
+            InitAssets();
+            SetupEngines();
+            SetupEntities();
+        }
 
         #region InitAssets
+
         private void InitAssets()
         {
             //Do not copy this. initially I thought it was a good idea to use
@@ -90,6 +97,7 @@ namespace ECS.Context
             BuildHandPieceEntities();
             BuildModalEntity();
             BuildTowerModalEntity();
+            BuildTitleEntity();
         }
 
         private void BuildPieceEntities()
@@ -298,6 +306,13 @@ namespace ECS.Context
             entityFactory.BuildEntity<TowerModalED>(towerModalPanel.GetInstanceID(), towerModalPanel.GetComponents<IImplementor>());
         }
 
+        private void BuildTitleEntity()
+        {
+            var gotoTitleScreenButton = GameObject.Find("Goto Title Screen Button");
+
+            entityFactory.BuildEntity<TitleED>(gotoTitleScreenButton.GetInstanceID(), gotoTitleScreenButton.GetComponents<IImplementor>());
+        }
+
         private void CreateTeamHandPieces(HandPieceCreateService handPieceCreateService, PlayerColor playerColor)
         {
             int index = 0;
@@ -316,7 +331,12 @@ namespace ECS.Context
         }
         #endregion
 
-        #region MovePiecesToPosition
+        #region Setup Game
+        private void SetupGame()
+        {
+            MovePiecesToPosition();
+        }
+
         private void MovePiecesToPosition()
         {
             // TODO Later on, use a service to load save game file to determine piece positions,

@@ -670,6 +670,7 @@ GameObject:
   - component: {fileID: 400112892}
   - component: {fileID: 400112891}
   - component: {fileID: 400112890}
+  - component: {fileID: 400112893}
   m_Layer: 5
   m_Name: Goto Title Screen Button
   m_TagString: Untagged
@@ -736,8 +737,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1075347235}
-        m_MethodName: LoadTitleScene
+      - m_Target: {fileID: 400112893}
+        m_MethodName: GotoTitleScreen
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -783,6 +784,17 @@ CanvasRenderer:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 400112888}
   m_CullTransparentMesh: 0
+--- !u!114 &400112893
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 400112888}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3ac4ba810ab558046adb7d5ba26d4e22, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &407846796
 GameObject:
   m_ObjectHideFlags: 0

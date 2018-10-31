@@ -6,6 +6,7 @@ using ECS.Engine.Checkmate;
 using ECS.Engine.Drop;
 using ECS.Engine.Hand;
 using ECS.Engine.Hand.Highlight;
+using ECS.Engine.Menu;
 using ECS.Engine.Modal;
 using ECS.Engine.Modal.CaptureStack;
 using ECS.Engine.Modal.CaptureStack.ClickImmobileCapture;
@@ -119,6 +120,8 @@ namespace ECS.Context.EngineStep.Create
             engines.Add("decideClickImmobileCapture", new DecideClickImmobileCaptureEngine(sequences["boardPress"]));
             engines.Add("immobileCapture", new ImmobileCaptureEngine());
             engines.Add("gotoTurnEnd", new GotoTurnEndEngine(sequences["towerModalAnswer"]));
+
+            engines.Add("saveAndExitGame", new SaveAndExitGameEngine());
         }
 
         public void AddEngines()
@@ -189,6 +192,8 @@ namespace ECS.Context.EngineStep.Create
             enginesRoot.AddEngine(engines["decideClickImmobileCapture"]);
             enginesRoot.AddEngine(engines["immobileCapture"]);
             enginesRoot.AddEngine(engines["gotoTurnEnd"]);
+
+            enginesRoot.AddEngine(engines["saveAndExitGame"]);
         }
     }
 }
