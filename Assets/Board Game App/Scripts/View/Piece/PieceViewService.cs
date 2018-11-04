@@ -36,11 +36,17 @@ namespace View.Piece
             upSideText.text = "";
         }
 
-        internal void ChangeIcon(GameObject pieceGameObject, PieceType pieceType, PieceType back)
+        internal void ChangeIcon(
+            GameObject pieceGameObject, PlayerColor teamColor, PieceType pieceType, PieceType back)
         {
             string resourcesPath = CalcResourcesPath(pieceType, back);
             SpriteRenderer spriteRenderer = pieceGameObject.transform.Find("Icon").GetComponent<SpriteRenderer>();
             spriteRenderer.sprite = Resources.Load<Sprite>(resourcesPath);
+
+            if (teamColor == PlayerColor.WHITE)
+            {
+                spriteRenderer.transform.localRotation = Quaternion.Euler(180, 180, 0);
+            }
         }
 
         internal void ChangePlayerBorder(GameObject piece, PlayerColor playerColor)

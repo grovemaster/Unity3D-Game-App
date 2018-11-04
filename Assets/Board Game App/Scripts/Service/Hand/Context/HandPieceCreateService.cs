@@ -29,9 +29,9 @@ namespace Service.Hand.Context
 
             handPiece.name = playerOwner.ToString() + " Hand Piece " + front.ToString() + " " + back.ToString();
 
+            handPieceImpl.PlayerColor = playerOwner;
             handPieceImpl.Back = back;
             handPieceImpl.PieceType = front;
-            handPieceImpl.PlayerColor = playerOwner;
 
             // TODO Abstract out offset position numbers into BoardConst later -- once I have those numbers.
             // TODO Adjust transform.position based on, well, position of other hand pieces of that player

@@ -1,4 +1,5 @@
-﻿using ECS.Component.Modal;
+﻿using Data.Enums.Player;
+using ECS.Component.Modal;
 using Svelto.ECS;
 using UnityEngine;
 using UnityEngine.Events;
@@ -43,7 +44,8 @@ namespace View.Modal
 
         internal void SetupButtonAppearance(GameObject pieceTier, ITowerOptionBase config)
         {
-            pieceViewService.ChangeIcon(pieceTier, config.PieceType, config.Back);
+            // TODO Hack, since BLACK doesn't activate flip; REFACTOR: Make a 2nd function that doesn't flip the sprite
+            pieceViewService.ChangeIcon(pieceTier, PlayerColor.BLACK, config.PieceType, config.Back);
             pieceViewService.ChangePlayerBorder(pieceTier, config.Team);
         }
 

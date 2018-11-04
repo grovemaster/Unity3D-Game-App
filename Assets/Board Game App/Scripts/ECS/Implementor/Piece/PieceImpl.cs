@@ -10,6 +10,8 @@ namespace ECS.Implementor.Piece
     {
         private PieceViewService pieceViewService = new PieceViewService();
 
+        private PieceHighlightOwnerImpl pieceHighlightOwnerImpl;
+
         private PieceType pieceType;
         public PieceType PieceType
         {
@@ -30,10 +32,14 @@ namespace ECS.Implementor.Piece
 
         private void ChangePieceUpSideText()
         {
+            if (pieceHighlightOwnerImpl == null)
+            {
+                pieceHighlightOwnerImpl = gameObject.GetComponentInChildren<PieceHighlightOwnerImpl>();
+            }
             pieceViewService.ChangePieceUpSideText(gameObject, PieceType);
             pieceViewService.ChangePieceDownSideText(gameObject, PieceType == Front ? Back : Front);
 
-            pieceViewService.ChangeIcon(gameObject, PieceType, Back);
+            pieceViewService.ChangeIcon(gameObject, pieceHighlightOwnerImpl.PlayerColor, PieceType, Back);
         }
     }
 }

@@ -77,7 +77,7 @@ namespace ECS.Implementor.Hand
 
         private void ChangePieceIcon()
         {
-            handViewService.ChangePieceIcon(gameObject, PieceType, Back);
+            handViewService.ChangePieceIcon(gameObject, PlayerColor, PieceType, Back);
         }
     }
 }

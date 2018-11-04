@@ -1,4 +1,5 @@
 ﻿using Data.Enums.Piece;
+using Data.Enums.Player;
 using UnityEngine;
 using View.Piece;
 
@@ -35,11 +36,17 @@ namespace View.Hand
             downSideText.text = "";
         }
 
-        internal void ChangePieceIcon(GameObject handPieceGameObject, PieceType pieceType, PieceType back)
+        internal void ChangePieceIcon(
+            GameObject handPieceGameObject, PlayerColor teamColor, PieceType pieceType, PieceType back)
         {
             string resourcesPath = pieceViewService.CalcResourcesPath(pieceType, back);
             SpriteRenderer spriteRenderer = handPieceGameObject.transform.Find("Icon").GetComponent<SpriteRenderer>();
             spriteRenderer.sprite = Resources.Load<Sprite>(resourcesPath);
+
+            if (teamColor == PlayerColor.WHITE)
+            {
+                spriteRenderer.transform.localRotation = Quaternion.Euler(180, 180, 0);
+            }
         }
     }
 }
