@@ -22,10 +22,19 @@ namespace ECS.Engine.Setup
     {
         public IEntitiesDB entitiesDB { private get; set; }
 
+        private bool isMobile;
+        private string persistentDataPath;
+
         private HandService handService = new HandService();
         private PieceFindService pieceFindService = new PieceFindService();
         private PieceSetService pieceSetService = new PieceSetService();
         private TurnService turnService = new TurnService();
+
+        public SetupGameGameEngine(bool isMobile, string persistentDataPath)
+        {
+            this.isMobile = isMobile;
+            this.persistentDataPath = persistentDataPath;
+        }
 
         public void Ready()
         { }
@@ -56,8 +65,14 @@ namespace ECS.Engine.Setup
 
         private void LoadSavedGame()
         {
+            string fileName = "saved_game.txt";
+            if (isMobile)
+            {
+                fileName = Path.Combine(persistentDataPath, fileName);
+            }
+
             // For simplicity, I'm not error checking this file.
-            string[] lines = File.ReadAllLines("saved_game.txt");
+            string[] lines = File.ReadAllLines(fileName);
             SetTurnStatus(lines[0]);
 
             int index = 1;

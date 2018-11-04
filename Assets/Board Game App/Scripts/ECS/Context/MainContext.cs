@@ -59,7 +59,6 @@ namespace ECS.Context
         }
 
         #region InitAssets
-
         private void InitAssets()
         {
             //Do not copy this. initially I thought it was a good idea to use
@@ -82,7 +81,12 @@ namespace ECS.Context
             //to build new entities dynamically
             entityFactory = enginesRoot.GenerateEntityFactory();
 
-            new SetupEngines(enginesRoot, entityFactory).Setup();
+            new SetupEngines(
+                enginesRoot,
+                entityFactory,
+                Application.platform == RuntimePlatform.Android,
+                Application.persistentDataPath)
+                .Setup();
         }
         #endregion
 

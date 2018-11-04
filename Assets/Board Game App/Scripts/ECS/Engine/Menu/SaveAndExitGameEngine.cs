@@ -16,10 +16,18 @@ namespace ECS.Engine.Menu
         public IEntitiesDB entitiesDB { private get; set; }
 
         private Action gotoTitleScreen;
+        private bool isMobile;
+        private string persistentDataPath;
 
         private HandService handService = new HandService();
         private PieceFindService pieceFindService = new PieceFindService();
         private TurnService turnService = new TurnService();
+
+        public SaveAndExitGameEngine(bool isMobile, string persistentDataPath)
+        {
+            this.isMobile = isMobile;
+            this.persistentDataPath = persistentDataPath;
+        }
 
         public void Ready()
         { }
@@ -52,7 +60,13 @@ namespace ECS.Engine.Menu
             HandPieceEV[] handPieces = handService.FindAllHandPieces(entitiesDB);
             PieceEV[] pieces = pieceFindService.FindAllBoardPieces(entitiesDB);
 
-            using (var tw = new StreamWriter("saved_game.txt", false))
+            string fileName = "saved_game.txt";
+            if (isMobile)
+            {
+                fileName = Path.Combine(persistentDataPath, fileName);
+            }
+
+            using (var tw = new StreamWriter(fileName, false))
             {
                 tw.WriteLine(CreateTurnSaveInfoString());
 

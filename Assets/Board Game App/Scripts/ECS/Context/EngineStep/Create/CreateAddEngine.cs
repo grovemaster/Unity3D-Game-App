@@ -42,15 +42,21 @@ namespace ECS.Context.EngineStep.Create
         private EnginesRoot enginesRoot;
         private Dictionary<string, IEngine> engines;
         private Dictionary<string, Sequencer> sequences;
+        private bool isMobile;
+        private string persistentDataPath;
 
         public CreateAddEngine(
             EnginesRoot enginesRoot,
             Dictionary<string, IEngine> engines,
-            Dictionary<string, Sequencer> sequences)
+            Dictionary<string, Sequencer> sequences,
+            bool isMobile,
+            string persistentDataPath)
         {
             this.enginesRoot = enginesRoot;
             this.engines = engines;
             this.sequences = sequences;
+            this.isMobile = isMobile;
+            this.persistentDataPath = persistentDataPath;
         }
 
         public void CreateEngines()
@@ -122,8 +128,8 @@ namespace ECS.Context.EngineStep.Create
             engines.Add("immobileCapture", new ImmobileCaptureEngine());
             engines.Add("gotoTurnEnd", new GotoTurnEndEngine(sequences["towerModalAnswer"]));
 
-            engines.Add("saveAndExitGame", new SaveAndExitGameEngine());
-            engines.Add("setupGameGame", new SetupGameGameEngine());
+            engines.Add("saveAndExitGame", new SaveAndExitGameEngine(isMobile, persistentDataPath));
+            engines.Add("setupGameGame", new SetupGameGameEngine(isMobile, persistentDataPath));
         }
 
         public void AddEngines()

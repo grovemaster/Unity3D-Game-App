@@ -19,13 +19,13 @@ namespace ECS.Context.EngineStep
         private CreateAddEngine createAddEngine;
         private SetupStep setupStep;
 
-        public SetupEngines(EnginesRoot enginesRoot, IEntityFactory entityFactory)
+        public SetupEngines(EnginesRoot enginesRoot, IEntityFactory entityFactory, bool isMobile, string persistentDataPath)
         {
             this.enginesRoot = enginesRoot;
             this.entityFactory = entityFactory;
             setupStep = new SetupStep(steps, engines);
             setupSequence = new SetupSequence(sequences, steps, engines);
-            createAddEngine = new CreateAddEngine(enginesRoot, engines, sequences);
+            createAddEngine = new CreateAddEngine(enginesRoot, engines, sequences, isMobile, persistentDataPath);
         }
 
         public void Setup()
