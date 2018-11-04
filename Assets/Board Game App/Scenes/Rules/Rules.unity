@@ -350,12 +350,15 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Rules are based on
-
-    https://mmmmalo.tumblr.com/post/74510568781/rules-of-gungi
-
-    Except when they are changed or clarified.  For example: If you use Forced Recovery,
-    Forced Rearrangement does not occur.'
+  m_Text: "Rules are based on\nhttps://mmmmalo.tumblr.com/post/74510568781/rules-of-gungi\nExcept
+    when they are changed or clarified.  For example: * If you use Forced Recovery,
+    Forced Rearrangement does not occur.\n* Enemy jumper can always jump piece that
+    cannot receive MRE\r\n* No pawn drop checkmate that qualifies because only way
+    out is to commit pawn drop checkmate\r\n* Cannot hop friendly pieces\r\n* If use
+    forced recovery, cannot use forced rearrangement\r\n* If using forced recovery
+    would cause or not resolve check, cannot use forced recovery\r\n* Can drop onto
+    enemy pieces with Earth Link\n\nNot implemented:\n* 4 Turn repitition foul\n*
+    Consecutive substitution foul"
 --- !u!222 &1353578867
 CanvasRenderer:
   m_ObjectHideFlags: 0

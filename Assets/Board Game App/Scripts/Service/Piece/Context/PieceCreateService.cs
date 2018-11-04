@@ -38,7 +38,6 @@ namespace Service.Piece.Context
             entityFactory.BuildEntity<PieceED>(piece.GetInstanceID(), piece.GetComponents<IImplementor>());
 
             piece.name = "Piece " + front.ToString() + " " + back.ToString();
-            piece.tag = "Piece";
 
             pieceImpl.Front = front;
             pieceImpl.Back = back;
