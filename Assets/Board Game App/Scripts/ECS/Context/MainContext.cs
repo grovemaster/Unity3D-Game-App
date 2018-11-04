@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq;
-using Data.Enums.Piece;
+﻿using Data.Enums.Piece;
 using Data.Enums.Piece.Side;
 using Data.Enums.Player;
 using ECS.Context.EngineStep;

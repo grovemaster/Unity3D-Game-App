@@ -78,6 +78,12 @@ namespace Service.Piece.Find
                 .Where(piece => piece.PlayerOwner.PlayerColor == team && piece.Tier.TopOfTower).ToArray();
         }
 
+        public PieceEV[] FindPiecesByType(PieceType front, PieceType back, IEntitiesDB entitiesDB)
+        {
+            return FindAllBoardPieces(entitiesDB)
+                .Where(piece => piece.Piece.Front == front && piece.Piece.Back == back).ToArray();
+        }
+
         public List<PieceEV> FindPiecesByTeamAndAbility(PreMoveAbility preMoveAbility, PlayerColor teamColor, IEntitiesDB entitiesDB)
         {
             return FindAllBoardPieces(entitiesDB).Where(piece =>

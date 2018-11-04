@@ -100,7 +100,7 @@ namespace ECS.Engine.Menu
             return piece.PlayerOwner.PlayerColor + ","
                 + "PIECE,"
                 + piece.Piece.PieceType.ToString() + ","
-                + piece.Piece.Back.ToString() + ","
+                + piece.Piece.Front.ToString() + ","
                 + piece.Piece.Back.ToString() + ","
                 + piece.Tier.Tier + ","
                 + topOfTower + ","

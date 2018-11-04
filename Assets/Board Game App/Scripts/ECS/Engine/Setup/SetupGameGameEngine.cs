@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Data.Enums.Piece;
 using Data.Enums.Player;
@@ -13,6 +14,7 @@ using Service.Piece.Set;
 using Service.Turn;
 using Svelto.ECS;
 using UI.GameState;
+using UnityEngine;
 
 namespace ECS.Engine.Setup
 {
@@ -54,7 +56,26 @@ namespace ECS.Engine.Setup
 
         private void LoadSavedGame()
         {
-            throw new NotImplementedException();
+            // For simplicity, I'm not error checking this file.
+            string[] lines = File.ReadAllLines("saved_game.txt");
+            SetTurnStatus(lines[0]);
+
+            int index = 1;
+            while (index < lines.Length && IsHandPieceLine(lines[index])) {
+                string[] data = lines[index].Split(',');
+                MovePiecesToHand(data);
+
+                index++;
+            }
+
+            List<PieceEV> pieces = pieceFindService.FindAllBoardPieces(entitiesDB).ToList();
+
+            for (; index < lines.Length; ++index)
+            {
+                string[] data = lines[index].Split(',');
+                PieceEV pieceToRemoveFromList = PositionPiece(data, pieces);
+                pieces.Remove(pieceToRemoveFromList); // Prevent future line from re-position already-positioned piece
+            }
         }
 
         private void SetTurnStatus(PlayerColor turnPlayer, bool initialArrangementInEffect)
@@ -68,6 +89,15 @@ namespace ECS.Engine.Setup
                     turnToChange.TurnPlayer.PlayerColor = turnPlayer;
                     turnToChange.InitialArrangement.IsInitialArrangementInEffect = initialArrangementInEffect;
                 });
+        }
+
+        private void SetTurnStatus(string line)
+        {
+            string[] data = line.Split(',');
+            bool initialArrangementInEffect = data[0].Equals("1") ? true : false;
+            PlayerColor turnPlayer = ConvertToPlayerColor(data[1]);
+
+            SetTurnStatus(turnPlayer, initialArrangementInEffect);
         }
 
         private void MoveAllPiecesToHand()
@@ -107,6 +137,58 @@ namespace ECS.Engine.Setup
                 pieceSetService.SetPieceLocationToHandLocation(piece, entitiesDB);
                 piece.Visibility.IsVisible.value = false;
             });
+        }
+
+        private bool IsHandPieceLine(string line)
+        {
+            return line.Contains("HAND PIECE");
+        }
+
+        private void MovePiecesToHand(string[] data)
+        {
+            PlayerColor teamColor = ConvertToPlayerColor(data[0]);
+            PieceType front = ConvertToPieceType(data[2]);
+            PieceType back = ConvertToPieceType(data[3]);
+            int numPiecesToHand = Convert.ToInt32(data[4]);
+            PieceEV[] pieces = pieceFindService.FindPiecesByType(front, back, entitiesDB);
+
+            for (int i = 0; i < numPiecesToHand; ++i)
+            {
+                handService.AddPieceToHand(pieces[i], entitiesDB, teamColor);
+                pieceSetService.SetPieceLocationToHandLocation(pieces[i], entitiesDB);
+                pieces[i].Visibility.IsVisible.value = false;
+            }
+        }
+
+        private PieceEV PositionPiece(string[] data, List<PieceEV> pieces)
+        {
+            PlayerColor teamColor = ConvertToPlayerColor(data[0]);
+            PieceType pieceType = ConvertToPieceType(data[2]);
+            PieceType front = ConvertToPieceType(data[3]);
+            PieceType back = ConvertToPieceType(data[4]);
+            int tier = Convert.ToInt32(data[5]);
+            bool topOfTower = data[6] == "1" ? true : false;
+            Vector2 location = new Vector2(Convert.ToInt32(data[7]), Convert.ToInt32(data[8]));
+            PieceEV pieceToPosition = pieces.Find(piece =>
+                piece.Piece.Front == front && piece.Piece.Back == back);
+
+            pieceSetService.SetPiecePlayerOwner(pieceToPosition, teamColor, entitiesDB);
+            pieceSetService.SetPieceLocationAndTier(pieceToPosition, location, tier, entitiesDB);
+            pieceSetService.SetTopOfTower(pieceToPosition, entitiesDB, topOfTower);
+            pieceToPosition.MovePiece.NewLocation = location;
+            pieceToPosition.ChangeColorTrigger.PlayChangeColor = true;
+
+            return pieceToPosition;
+        }
+
+        private PlayerColor ConvertToPlayerColor(string input)
+        {
+            return (PlayerColor)Enum.Parse(typeof(PlayerColor), input);
+        }
+
+        private PieceType ConvertToPieceType(string input)
+        {
+            return (PieceType)Enum.Parse(typeof(PieceType), input);
         }
     }
 }
