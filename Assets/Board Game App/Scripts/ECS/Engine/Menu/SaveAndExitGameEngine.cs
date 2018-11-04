@@ -26,7 +26,7 @@ namespace ECS.Engine.Menu
 
         protected override void Add(ref TitleEV entityView)
         {
-            this.gotoTitleScreen = entityView.Title.ClickAction;
+            gotoTitleScreen = entityView.Title.ClickAction;
             entityView.Title.Clicked.NotifyOnValueSet(OnPressed);
         }
 

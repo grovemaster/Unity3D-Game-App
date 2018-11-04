@@ -932,7 +932,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 275322272}
-        m_MethodName: LoadNewGameScene
+        m_MethodName: LoadContinueGameScene
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

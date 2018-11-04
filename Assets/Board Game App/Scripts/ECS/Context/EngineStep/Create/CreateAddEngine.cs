@@ -28,6 +28,7 @@ using ECS.Engine.Piece.Ability.TierExchange;
 using ECS.Engine.Piece.Capture;
 using ECS.Engine.Piece.Click;
 using ECS.Engine.Piece.Move;
+using ECS.Engine.Setup;
 using ECS.Engine.Turn;
 using Engine.Check.Drop;
 using Engine.Piece.Ability.ForcedRearrangement.Goto;
@@ -122,6 +123,7 @@ namespace ECS.Context.EngineStep.Create
             engines.Add("gotoTurnEnd", new GotoTurnEndEngine(sequences["towerModalAnswer"]));
 
             engines.Add("saveAndExitGame", new SaveAndExitGameEngine());
+            engines.Add("setupGameGame", new SetupGameGameEngine());
         }
 
         public void AddEngines()
@@ -194,6 +196,7 @@ namespace ECS.Context.EngineStep.Create
             enginesRoot.AddEngine(engines["gotoTurnEnd"]);
 
             enginesRoot.AddEngine(engines["saveAndExitGame"]);
+            enginesRoot.AddEngine(engines["setupGameGame"]);
         }
     }
 }

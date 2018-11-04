@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using UI.GameState;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace UI.TitleScreen
@@ -17,7 +18,14 @@ namespace UI.TitleScreen
 
         public void LoadNewGameScene()
         {
-            SceneManager.LoadScene("BoardGame");
+            LoadOrNew.ContinueOrNew = "New";
+            LoadGameScene();
+        }
+
+        public void LoadContinueGameScene()
+        {
+            LoadOrNew.ContinueOrNew = "Continue";
+            LoadGameScene();
         }
 
         public void ExitGame()
@@ -29,6 +37,11 @@ namespace UI.TitleScreen
 #else
             Application.Quit();
 #endif
+        }
+
+        private void LoadGameScene()
+        {
+            SceneManager.LoadScene("BoardGame");
         }
     }
 }
