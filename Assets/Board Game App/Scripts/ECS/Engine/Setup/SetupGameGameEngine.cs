@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using Data.Enums.Piece;
 using Data.Enums.Player;
+using Data.Step.Turn;
 using ECS.EntityView.Hand;
 using ECS.EntityView.Menu;
 using ECS.EntityView.Piece;
@@ -22,6 +23,8 @@ namespace ECS.Engine.Setup
     {
         public IEntitiesDB entitiesDB { private get; set; }
 
+        private readonly ISequencer setupGameSequencer;
+
         private bool isMobile;
         private string persistentDataPath;
 
@@ -30,8 +33,12 @@ namespace ECS.Engine.Setup
         private PieceSetService pieceSetService = new PieceSetService();
         private TurnService turnService = new TurnService();
 
-        public SetupGameGameEngine(bool isMobile, string persistentDataPath)
+        public SetupGameGameEngine(
+            ISequencer setupGameSequencer,
+            bool isMobile,
+            string persistentDataPath)
         {
+            this.setupGameSequencer = setupGameSequencer;
             this.isMobile = isMobile;
             this.persistentDataPath = persistentDataPath;
         }
@@ -50,6 +57,7 @@ namespace ECS.Engine.Setup
             else
             {
                 LoadSavedGame();
+                GotoTurnStartStep();
             }
         }
 
@@ -204,6 +212,12 @@ namespace ECS.Engine.Setup
         private PieceType ConvertToPieceType(string input)
         {
             return (PieceType)Enum.Parse(typeof(PieceType), input);
+        }
+
+        private void GotoTurnStartStep()
+        {
+            var token = new TurnStartStepState();
+            setupGameSequencer.Next(this, ref token);
         }
     }
 }

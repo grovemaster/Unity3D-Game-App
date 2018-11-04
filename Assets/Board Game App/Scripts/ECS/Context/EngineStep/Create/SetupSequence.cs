@@ -37,6 +37,7 @@ namespace ECS.Context.EngineStep.Create
             sequences.Add("captureStackModalAnswer", new Sequencer());
             sequences.Add("confirmModalAnswer", new Sequencer());
             sequences.Add("dropModalAnswer", new Sequencer());
+            sequences.Add("setupGame", new Sequencer());
         }
 
         public void SetSequences()
@@ -49,6 +50,7 @@ namespace ECS.Context.EngineStep.Create
             SetSequenceCaptureStackModal();
             SetSequenceConfirmModal();
             SetSequenceDropFrontBackModal();
+            SetSequenceSetupGame();
         }
 
         private void SetBoardPressSequence()
@@ -352,6 +354,21 @@ namespace ECS.Context.EngineStep.Create
                         new To
                         {
                             steps["drop"]
+                        }
+                    }
+                });
+        }
+
+        private void SetSequenceSetupGame()
+        {
+            sequences["setupGame"].SetSequence(
+                new Steps
+                {
+                    {
+                        engines["setupGameGame"],
+                        new To
+                        {
+                            steps["highlightAllDestinationTiles"]
                         }
                     }
                 });

@@ -40,7 +40,7 @@ namespace ECS.Engine.Piece
                 PieceEntityId = entityId,
                 TileEntityId = null
             };
-            
+
             boardPressSequence.Next(this, ref pressState);
 
         }

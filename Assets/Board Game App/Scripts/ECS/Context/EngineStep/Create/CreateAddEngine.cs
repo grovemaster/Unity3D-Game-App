@@ -129,7 +129,7 @@ namespace ECS.Context.EngineStep.Create
             engines.Add("gotoTurnEnd", new GotoTurnEndEngine(sequences["towerModalAnswer"]));
 
             engines.Add("saveAndExitGame", new SaveAndExitGameEngine(isMobile, persistentDataPath));
-            engines.Add("setupGameGame", new SetupGameGameEngine(isMobile, persistentDataPath));
+            engines.Add("setupGameGame", new SetupGameGameEngine(sequences["setupGame"], isMobile, persistentDataPath));
         }
 
         public void AddEngines()
