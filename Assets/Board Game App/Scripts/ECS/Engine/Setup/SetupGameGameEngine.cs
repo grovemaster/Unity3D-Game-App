@@ -196,9 +196,9 @@ namespace ECS.Engine.Setup
             PieceEV pieceToPosition = pieces.Find(piece =>
                 piece.Piece.Front == front && piece.Piece.Back == back);
 
-            pieceSetService.SetPieceSide(pieceToPosition, pieceType == front ? PieceSide.FRONT : PieceSide.BACK, entitiesDB);
             pieceSetService.SetPiecePlayerOwner(pieceToPosition, teamColor, entitiesDB);
             pieceSetService.SetPieceLocationAndTier(pieceToPosition, location, tier, entitiesDB);
+            pieceSetService.SetPieceSide(pieceToPosition, pieceType == front ? PieceSide.FRONT : PieceSide.BACK, entitiesDB);
             pieceSetService.SetTopOfTower(pieceToPosition, entitiesDB, topOfTower);
             pieceToPosition.MovePiece.NewLocation = location;
             pieceToPosition.ChangeColorTrigger.PlayChangeColor = true;

@@ -31,8 +31,8 @@ namespace Service.Drop
                 pieceSetService.SetTopOfTowerToFalse(piecesAtLocation[piecesAtLocation.Count - 1], entitiesDB);
             }
 
-            pieceSetService.SetPieceLocationAndTier(pieceToDrop, location, piecesAtLocation.Count + 1, entitiesDB);
             pieceSetService.SetPiecePlayerOwner(pieceToDrop, playerOwner, entitiesDB);
+            pieceSetService.SetPieceLocationAndTier(pieceToDrop, location, piecesAtLocation.Count + 1, entitiesDB);
             pieceSetService.SetPieceSide(pieceToDrop, side, entitiesDB);
             pieceToDrop.MovePiece.NewLocation = location;
             pieceToDrop.Visibility.IsVisible.value = true;
